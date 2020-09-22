@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{5AE2C8AF-53CD-491E-8FFD-4ACB9F827BA2}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>SynthCh10Gen</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <ProjectName>SynthCh10Gen</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>..\SQLite\sqlite-amalgamation-3320300;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>..\SQLite\sqlite-amalgamation-3320300;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_USE_32BIT_TIME_T;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>..\XPlaneControl;..\..\irig106\SW.public.git\irig106lib\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_USE_32BIT_TIME_T;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>..\XPlaneControl;..\..\irig106\SW.public.git\irig106lib\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\config.h" />
+    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_1553f1.h" />
+    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_index.h" />
+    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_time.h" />
+    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats.h" />
+    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_b.h" />
+    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_common.h" />
+    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_g.h" />
+    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_p.h" />
+    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_r.h" />
+    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_video.h" />
+    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_index.h" />
+    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_time.h" />
+    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\irig106ch10.h" />
+    <ClInclude Include="..\irig106lib\src\i106_decode_tmats_c.h" />
+    <ClInclude Include="..\irig106lib\src\i106_decode_tmats_d.h" />
+    <ClInclude Include="..\irig106lib\src\i106_decode_tmats_m.h" />
+    <ClInclude Include="..\SQLite\sqlite-amalgamation-3320300\sqlite3.h" />
+    <ClInclude Include="Ch10Format_1553.h" />
+    <ClInclude Include="Ch10Format_1553_Nav.h" />
+    <ClInclude Include="Ch10Writer_1553.h" />
+    <ClInclude Include="Ch10Writer_Index.h" />
+    <ClInclude Include="Ch10Writer_Time.h" />
+    <ClInclude Include="Ch10Writer_Video.h" />
+    <ClInclude Include="SimState.h" />
+    <ClInclude Include="SimTimer.h" />
+    <ClInclude Include="Source_BMNavDB.h" />
+    <ClInclude Include="Source_BMNavTxt.h" />
+    <ClInclude Include="Source_VideoDB.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_1553f1.c" />
+    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_index.c" />
+    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_time.c" />
+    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats.c" />
+    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_b.c" />
+    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_g.c" />
+    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_p.c" />
+    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_r.c" />
+    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_video.c" />
+    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_index.c" />
+    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_time.c" />
+    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\irig106ch10.c" />
+    <ClCompile Include="..\irig106lib\src\i106_decode_tmats_c.c" />
+    <ClCompile Include="..\irig106lib\src\i106_decode_tmats_d.c" />
+    <ClCompile Include="..\irig106lib\src\i106_decode_tmats_m.c" />
+    <ClCompile Include="..\SQLite\sqlite-amalgamation-3320300\sqlite3.c" />
+    <ClCompile Include="Ch10Writer_Index.cpp" />
+    <ClCompile Include="Ch10Writer_Video.cpp" />
+    <ClCompile Include="Source_BMNavDB.cpp" />
+    <ClCompile Include="Source_BMNavTxt.cpp" />
+    <ClCompile Include="Source_VideoDB.cpp" />
+    <ClCompile Include="SynthCh10Gen.cpp" />
+    <ClCompile Include="Ch10Format_1553.cpp" />
+    <ClCompile Include="Ch10Format_1553_Nav.cpp" />
+    <ClCompile Include="Ch10Writer_1553.cpp" />
+    <ClCompile Include="Ch10Writer_Time.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\MpegEncoder">
+      <UniqueIdentifier>{0628c7b6-0a65-4bee-8d45-9b4bd91fee73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\XPlaneControl">
+      <UniqueIdentifier>{6c32cc54-2d08-4f94-b202-cfec96b46d37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DXGIManager">
+      <UniqueIdentifier>{20ae31f5-25d6-4a5c-b757-6ce439e4c4e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SQLite3">
+      <UniqueIdentifier>{fa5898c2-8087-48b7-8eb0-2c757524d3de}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="BM6toXPlaneVideo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\XPlaneControl\XPlaneControl.cpp">
+      <Filter>Source Files\XPlaneControl</Filter>
+    </ClCompile>
+    <ClCompile Include="DXGIManager.cpp">
+      <Filter>Source Files\DXGIManager</Filter>
+    </ClCompile>
+    <ClCompile Include="MpegEncoder.cpp">
+      <Filter>Source Files\MpegEncoder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SynthCh10Gen\Source_BMNavDB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SQLite\sqlite-amalgamation-3320300\sqlite3.c">
+      <Filter>SQLite3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SynthCh10Gen\Source_BMNavTxt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\XPlaneControl\XPlaneControl.h">
+      <Filter>Source Files\XPlaneControl</Filter>
+    </ClInclude>
+    <ClInclude Include="DXGIManager.hpp">
+      <Filter>Source Files\DXGIManager</Filter>
+    </ClInclude>
+    <ClInclude Include="MpegEncoder.h">
+      <Filter>Source Files\MpegEncoder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SynthCh10Gen\SimState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SynthCh10Gen\Source_BMNavDB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SQLite\sqlite-amalgamation-3320300\sqlite3.h">
+      <Filter>SQLite3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SynthCh10Gen\Source_BMNavTxt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
