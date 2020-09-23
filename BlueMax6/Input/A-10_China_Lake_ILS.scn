@@ -1,0 +1,107 @@
+BlueMaxRunTitle A-10 ILS
+
+Aircraft A-10A
+
+CallSign FOLK1
+
+EntityID 0:0:0:0
+
+ZuluTime 00:00:00.00
+
+DtedTerrain On
+
+InitialPitch 0
+
+InitialPositionLL 35.6959:N 117.6915:W
+
+InitialAltitudeMSLf 2110
+
+InitialTrueHeading 154.25
+
+InitialAirspeedKtas 50
+
+InitialThroPosition Auto
+
+InitialGearPosition Down
+
+LoadStores 00 
+LoadStores 01 
+LoadStores 02 
+LoadStores 03 
+LoadStores 04 
+LoadStores 05 
+LoadStores 06 
+LoadStores 07 
+LoadStores 08 
+LoadStores 09 
+LoadStores 10 
+LoadStores 11 
+
+InternalFuelFraction 100
+
+OutputFileName A-10_China_Lake_ILS_
+
+OutputRateSec 0.04
+
+ScreenOutput On
+FlightOutput Off
+UserOutput On
+ReplayOutput Off
+WaypointOutput Off
+MissionOutput Off
+EAROutput Off
+TGFPOutput Off
+TSPIOutput Off
+RoutePlot On
+
+RealTimeRunFactor 1.0
+
+HOTASControlMode Off
+
+UserVariable actime aclatd aclond acaltf acktas acvifps acvxi acvyi acvzi acaxi acayi acazi acphid acthtad acpsid acmagd acaoad acthro acnzb acazb acgear
+
+InitialFlapPosition 50
+
+InitialSpbkPosition 0
+
+InitialSwngPosition 0
+
+InitialWhbkPosition 0
+
+InitialSlatPosition 50
+
+InitialSplrPosition 0
+
+InitializeBlueMax
+
+ManeuverLimits Autopilot
+AutopilotMaxRoll 45
+AutopilotMinPitch -10
+AutopilotMaxPitch +25
+
+CmdAltitudeMSLf 2400
+CmdGearPosition 2200
+CmdAirspeedMach BestRateOfClimb
+CmdFlapPosition Auto
+CmdSegmentEndMode Acquisition
+CmdFlySegment 
+
+WriteMessage Low Pass Takeoff
+CmdTrueHeading 154.25
+CmdGroundRangeNm 2
+CmdAltitudeMSLf 2400
+CmdAirspeedKtas 250
+CmdFlapPosition 0
+CmdSlatPosition 0
+CmdFlySegment 
+
+WriteMessage China Lake Landing 14
+CmdWaypointLL 35.6959:N 117.6915:W
+CmdWaypointNavMode ILSLanding
+CmdRunwayTrue 155.0
+CmdAltitudeMSLf 
+CmdAirspeedKtas 150
+CmdFlySegment
+
+
+ExitBlueMax
