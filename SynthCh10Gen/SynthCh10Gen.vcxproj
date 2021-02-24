@@ -73,14 +73,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>..\SQLite\sqlite-amalgamation-3320300;$(IncludePath)</IncludePath>
+    <IncludePath>..\3rdParty\SQLite\sqlite-amalgamation-3320300;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\SQLite\sqlite-amalgamation-3320300;$(IncludePath)</IncludePath>
+    <IncludePath>..\3rdParty\SQLite\sqlite-amalgamation-3320300;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -162,18 +162,18 @@
     <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_time.h" />
     <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats.h" />
     <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_b.h" />
+    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_c.h" />
     <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_common.h" />
+    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_d.h" />
     <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_g.h" />
+    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_m.h" />
     <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_p.h" />
     <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_r.h" />
     <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_video.h" />
     <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_index.h" />
     <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_time.h" />
     <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\irig106ch10.h" />
-    <ClInclude Include="..\irig106lib\src\i106_decode_tmats_c.h" />
-    <ClInclude Include="..\irig106lib\src\i106_decode_tmats_d.h" />
-    <ClInclude Include="..\irig106lib\src\i106_decode_tmats_m.h" />
-    <ClInclude Include="..\SQLite\sqlite-amalgamation-3320300\sqlite3.h" />
+    <ClInclude Include="..\3rdParty\SQLite\sqlite3.h" />
     <ClInclude Include="Ch10Format_1553.h" />
     <ClInclude Include="Ch10Format_1553_Nav.h" />
     <ClInclude Include="Ch10Writer_1553.h" />
@@ -192,17 +192,17 @@
     <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_time.c" />
     <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats.c" />
     <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_b.c" />
+    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_c.c" />
+    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_d.c" />
     <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_g.c" />
+    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_m.c" />
     <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_p.c" />
     <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_r.c" />
     <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_video.c" />
     <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_index.c" />
     <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_time.c" />
     <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\irig106ch10.c" />
-    <ClCompile Include="..\irig106lib\src\i106_decode_tmats_c.c" />
-    <ClCompile Include="..\irig106lib\src\i106_decode_tmats_d.c" />
-    <ClCompile Include="..\irig106lib\src\i106_decode_tmats_m.c" />
-    <ClCompile Include="..\SQLite\sqlite-amalgamation-3320300\sqlite3.c" />
+    <ClCompile Include="..\3rdParty\SQLite\sqlite3.c" />
     <ClCompile Include="Ch10Writer_Index.cpp" />
     <ClCompile Include="Ch10Writer_Video.cpp" />
     <ClCompile Include="Source_BMNavDB.cpp" />

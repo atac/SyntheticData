@@ -72,9 +72,6 @@
     <ClInclude Include="Source_BMNavDB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\SQLite\sqlite-amalgamation-3320300\sqlite3.h">
-      <Filter>SQLite3</Filter>
-    </ClInclude>
     <ClInclude Include="Source_VideoDB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -99,13 +96,16 @@
     <ClInclude Include="Ch10Writer_Index.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\irig106lib\src\i106_decode_tmats_c.h">
+    <ClInclude Include="..\3rdParty\SQLite\sqlite3.h">
+      <Filter>SQLite3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_c.h">
       <Filter>irig106lib</Filter>
     </ClInclude>
-    <ClInclude Include="..\irig106lib\src\i106_decode_tmats_d.h">
+    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_d.h">
       <Filter>irig106lib</Filter>
     </ClInclude>
-    <ClInclude Include="..\irig106lib\src\i106_decode_tmats_m.h">
+    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_m.h">
       <Filter>irig106lib</Filter>
     </ClInclude>
   </ItemGroup>
@@ -155,9 +155,6 @@
     <ClCompile Include="Source_BMNavDB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\SQLite\sqlite-amalgamation-3320300\sqlite3.c">
-      <Filter>SQLite3</Filter>
-    </ClCompile>
     <ClCompile Include="Source_VideoDB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -179,13 +176,16 @@
     <ClCompile Include="Ch10Writer_Index.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\irig106lib\src\i106_decode_tmats_c.c">
+    <ClCompile Include="..\3rdParty\SQLite\sqlite3.c">
+      <Filter>SQLite3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_c.c">
       <Filter>irig106lib</Filter>
     </ClCompile>
-    <ClCompile Include="..\irig106lib\src\i106_decode_tmats_d.c">
+    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_d.c">
       <Filter>irig106lib</Filter>
     </ClCompile>
-    <ClCompile Include="..\irig106lib\src\i106_decode_tmats_m.c">
+    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_m.c">
       <Filter>irig106lib</Filter>
     </ClCompile>
   </ItemGroup>
