@@ -42,11 +42,11 @@
     <ClCompile Include="..\SynthCh10Gen\Source_BMNavDB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\SQLite\sqlite-amalgamation-3320300\sqlite3.c">
-      <Filter>SQLite3</Filter>
-    </ClCompile>
     <ClCompile Include="..\SynthCh10Gen\Source_BMNavTxt.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\SQLite\sqlite3.c">
+      <Filter>SQLite3</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -65,11 +65,11 @@
     <ClInclude Include="..\SynthCh10Gen\Source_BMNavDB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\SQLite\sqlite-amalgamation-3320300\sqlite3.h">
-      <Filter>SQLite3</Filter>
-    </ClInclude>
     <ClInclude Include="..\SynthCh10Gen\Source_BMNavTxt.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\SQLite\sqlite3.h">
+      <Filter>SQLite3</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
