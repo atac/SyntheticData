@@ -1,5 +1,4 @@
-// BM6toDB.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+// BM6toDB.cpp : 
 
 #include <iostream>
 #include <string>
@@ -97,6 +96,12 @@ int main(int iArgc, char * aszArgv[])
 #ifdef SQLITE
 //    strcpy(&(szOutFile[strlen(szOutFile)]), ".db");
     iStatus = sqlite3_open(szOutFile, &pDB);
+
+    // Drop the data table if it already exists
+    sSQL = "DROP TABLE IF EXISTS " TABLE_NAME_BLUEMAX ";";
+    iStatus = sqlite3_exec(pDB, sSQL.c_str(), NULL, NULL, NULL);
+    if (iStatus != SQLITE_OK)
+        printf("SQLite DROP TABLE error - %s\n", sqlite3_errmsg(pDB));
 
     // Create the data table and index for BlueMax data
     std::string     sColumnNames;
