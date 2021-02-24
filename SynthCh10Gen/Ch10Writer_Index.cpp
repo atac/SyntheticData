@@ -40,7 +40,13 @@ void ClCh10Writer_Index::Init(int iHandle, unsigned int uChanID)
     {
     this->iHandle                  = iHandle;
     this->uChanID                  = uChanID;
-    this->uSeqNum                  = 0;
+
+#pragma message ("WARNING - Index writer sequence number hack")
+    // The TMATS packet will have sequence number "0". Setting "1" here is just
+    // a hack to make a legal Ch 10 file. This really should be handled by creating
+    // a base class for both the TMATS writer and this index writer.
+    this->uSeqNum                  = 1;
+
     this->suPrevRootPacket.lOffset = -1;
     }
 
