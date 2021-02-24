@@ -1,10 +1,13 @@
 
 #include <cassert>
+#include <cmath>
+#include <chrono>
 #include <cstdio>
 #include <string>
-#include <chrono>
 
 #include "Source_NasaNavTxt.h"
+
+const double M_PI = 3.141592653589793238463;    // value of pi
 
 /*
 NASA Variables
@@ -298,9 +301,21 @@ bool ClSource_NasaNavTxt::Open(std::string sFilename)
 
 //    display_vector_contents(szLine, CsvFields);
 
-    // Step through all the header label found
-    for (CONST_VECTOR_ITR itLabel = CsvDataLabels.begin(); itLabel != CsvDataLabels.end(); ++itLabel)
+    // Step through all the header labels found
+    for (VECTOR_ITR itLabel = CsvDataLabels.begin(); itLabel != CsvDataLabels.end(); ++itLabel)
         {
+        // Replace known standard data fields (latitude, longitude, etc.) with their standard data labels
+        if      (*itLabel == "LATP") *itLabel = "AC_LAT";
+        else if (*itLabel == "LONP") *itLabel = "AC_LON";
+        else if (*itLabel == "ALT")  *itLabel = "AC_ALT";
+        else if (*itLabel == "TAS")  *itLabel = "AC_TAS";
+        else if (*itLabel == "TH")   *itLabel = "AC_TRUE_HDG";
+        else if (*itLabel == "MH")   *itLabel = "AC_MAG_HDR";
+        else if (*itLabel == "PTCH") *itLabel = "AC_PITCH";
+        else if (*itLabel == "ROLL") *itLabel = "AC_ROLL";
+        else if (*itLabel == "AOAC") *itLabel = "AC_AOA";
+        else if (*itLabel == "VRTG") *itLabel = "AC_ACCEL_DOWN";
+
         // Make the data label with the appropriate prefix
         sDataLabelKey = sPrefix + *itLabel;
 
@@ -311,12 +326,17 @@ bool ClSource_NasaNavTxt::Open(std::string sFilename)
         pclSimState->insert(sDataLabelKey,-1.0);
 
         }
-//    display_vector_contents(szLine, CsvHeaders);
+//    display_vector_contents(szLine, CsvDataLabels);
 
     // Make t
 
-    // Create additional SimState variables for derived parameters
-    pclSimState->insert(sPrefix + "DATE_TIME_REL", -1.0);
+    // Create additional SimState variables for required derived parameters
+    pclSimState->insert(sPrefix + "AC_TIME", -1.0);
+    pclSimState->insert(sPrefix + "AC_VEL_NORTH", -1.0);
+    pclSimState->insert(sPrefix + "AC_VEL_EAST", -1.0);
+    pclSimState->insert(sPrefix + "AC_VEL_DOWN", -1.0);
+    pclSimState->insert(sPrefix + "AC_ACCEL_NORTH", -1.0);
+    pclSimState->insert(sPrefix + "AC_ACCEL_EAST", -1.0);
 
     // Initialize variables
     fStartTime = -1.0;
@@ -339,6 +359,15 @@ void ClSource_NasaNavTxt::Close()
     } // end Close()
 
 // ----------------------------------------------------------------------------
+
+// Heading to radians
+#define HDG2RAD(heading)    ((90.0 - heading) * M_PI / 180.0l)
+
+// Gs to Ft/Sec^2
+#define G2FPS2(accel)       (accel * 32.17)
+
+// Knots to Ft/Sec
+#define KTS2FPS(speed)      (speed * 6076.0 / 3600.0)
 
 /// Read the next line of NASA data
 
@@ -372,8 +401,12 @@ bool ClSource_NasaNavTxt::ReadNextLine()
     
     for (CONST_MAP_ITR itCsvMap = CsvMap.begin(); itCsvMap != CsvMap.end(); ++itCsvMap)
         {
-        // Handle any special cases
-        if (itCsvMap->first == "DATE_TIME")
+        double  fDecodedVal;
+
+        fDecodedVal = std::stod(itCsvMap->second);
+
+        // Handle any special conversion cases
+        if (itCsvMap->first == sPrefix + "DATE_TIME_ABS")
             {
             bool    bStatus;
             double  fDecodedTime;
@@ -381,7 +414,7 @@ bool ClSource_NasaNavTxt::ReadNextLine()
 
             bStatus = ConvertNasaTime(itCsvMap->second, &fDecodedTime);
             assert(bStatus);
-            pclSimState->update(sPrefix+"DATE_TIME", fDecodedTime);
+            pclSimState->update(sPrefix+"DATE_TIME_ABS", fDecodedTime);
 
             // Check for first time to set start time
             if (fStartTime < 0)
@@ -389,8 +422,12 @@ bool ClSource_NasaNavTxt::ReadNextLine()
 
             // Make and store relative time
             fRelTime = fDecodedTime - fStartTime;
-            pclSimState->update(sPrefix+"DATE_TIME_REL", fRelTime);
+            pclSimState->update(sPrefix+"AC_TIME", fRelTime);
             }
+
+        // Convert G's to fps^2
+        else if (itCsvMap->first == sPrefix + "AC_ACCEL_DOWN")
+            pclSimState->update(sPrefix+itCsvMap->first, G2FPS2(std::stod(itCsvMap->second)));
 
         // Default is to convert to a double and store it
         else
@@ -398,6 +435,13 @@ bool ClSource_NasaNavTxt::ReadNextLine()
             // a lot of string concatination.
             pclSimState->update(sPrefix+itCsvMap->first, std::stod(itCsvMap->second));
         }
+
+    // After data is copied then calculate any necessary derived parameters
+    pclSimState->update(sPrefix+"AC_VEL_NORTH",   (double)(KTS2FPS(pclSimState->fState["GS"]) * sin(HDG2RAD(pclSimState->fState["AC_TRUE_HDG"]))));
+    pclSimState->update(sPrefix+"AC_VEL_EAST",    (double)(KTS2FPS(pclSimState->fState["GS"]) * cos(HDG2RAD(pclSimState->fState["AC_TRUE_HDG"]))));
+    pclSimState->update(sPrefix+"AC_VEL_DOWN",    (double)(-1.0 * pclSimState->fState["IVV"] / 60.0));
+    pclSimState->update(sPrefix+"AC_ACCEL_NORTH", (double)(G2FPS2(pclSimState->fState["FPAC"]) * sin(HDG2RAD(pclSimState->fState["AC_TRUE_HDG"]))));
+    pclSimState->update(sPrefix+"AC_ACCEL_EAST",  (double)(G2FPS2(pclSimState->fState["FPAC"]) * cos(HDG2RAD(pclSimState->fState["AC_TRUE_HDG"]))));
 
     return true;
     }
