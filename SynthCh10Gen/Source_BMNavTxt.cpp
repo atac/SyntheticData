@@ -35,10 +35,12 @@ double fDmsToD(char * szDMS);
 // Constructor / Destructor
 // ----------------------------------------------------------------------------
 
-ClSource_BMNavTxt::ClSource_BMNavTxt(ClSimState * pclSimState, std::string sPrefix)
+ClSource_BMNavTxt::ClSource_BMNavTxt(ClSimState * pclSimState, std::string sPrefix) :
+    ClSource_Nav(pclSimState, sPrefix)
     {
     this->pclSimState = pclSimState;
     this->sPrefix     = sPrefix;
+    this->enInputType = this->InputBMText;
     }
 
 
@@ -84,7 +86,27 @@ bool ClSource_BMNavTxt::Open(std::string sFilename)
         szLabel = strtok(NULL, "\t");
         if (iTokens == 1)
             {
-            sDataLabelKey = sPrefix + szTrimmedLabel;
+            // Replace certain labels with their standard label counterparts
+            if      (strcmp(szTrimmedLabel, "actime" ) == 0) sDataLabelKey = sPrefix + "AC_TIME";
+            else if (strcmp(szTrimmedLabel, "atlatd" ) == 0) sDataLabelKey = sPrefix + "AC_LAT";
+            else if (strcmp(szTrimmedLabel, "aclond" ) == 0) sDataLabelKey = sPrefix + "AC_LON";
+            else if (strcmp(szTrimmedLabel, "acaltf" ) == 0) sDataLabelKey = sPrefix + "AC_ALT";
+            else if (strcmp(szTrimmedLabel, "acktas" ) == 0) sDataLabelKey = sPrefix + "AC_TAS";
+            else if (strcmp(szTrimmedLabel, "acvxi"  ) == 0) sDataLabelKey = sPrefix + "AC_VEL_NORTH";
+            else if (strcmp(szTrimmedLabel, "acvyi"  ) == 0) sDataLabelKey = sPrefix + "AC_VEL_EAST";
+            else if (strcmp(szTrimmedLabel, "acvzi"  ) == 0) sDataLabelKey = sPrefix + "AC_VEL_DOWN";
+            else if (strcmp(szTrimmedLabel, "acaxi"  ) == 0) sDataLabelKey = sPrefix + "AC_ACCEL_NORTH";
+            else if (strcmp(szTrimmedLabel, "acayi"  ) == 0) sDataLabelKey = sPrefix + "AC_ACCEL_EAST";
+            else if (strcmp(szTrimmedLabel, "acazi"  ) == 0) sDataLabelKey = sPrefix + "AC_ACCEL_DOWN";
+            else if (strcmp(szTrimmedLabel, "acphid" ) == 0) sDataLabelKey = sPrefix + "AC_ROLL";
+            else if (strcmp(szTrimmedLabel, "acthtad") == 0) sDataLabelKey = sPrefix + "AC_PITCH";
+            else if (strcmp(szTrimmedLabel, "acpsid" ) == 0) sDataLabelKey = sPrefix + "AC_TRUE_HDG";
+            else if (strcmp(szTrimmedLabel, "acmagd" ) == 0) sDataLabelKey = sPrefix + "AC_MAG_HDG";
+            else if (strcmp(szTrimmedLabel, "acaoad" ) == 0) sDataLabelKey = sPrefix + "AC_AOA";
+            else if (strcmp(szTrimmedLabel, "acthro" ) == 0) sDataLabelKey = sPrefix + "AC_THROTTLE";
+            else                                             sDataLabelKey = sPrefix + szTrimmedLabel;
+
+            // Insert the label into the list of column labels
             DataLabel.insert(DataLabel.end(), sDataLabelKey);
             pclSimState->insert(sDataLabelKey,-1.0);
             }

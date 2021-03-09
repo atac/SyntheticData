@@ -12,11 +12,13 @@
 // Constructor / Destructor
 // ----------------------------------------------------------------------------
 
-ClSource_BMNavDB::ClSource_BMNavDB(ClSimState * pclSimState, std::string sPrefix)
+ClSource_BMNavDB::ClSource_BMNavDB(ClSimState * pclSimState, std::string sPrefix) :
+    ClSource_Nav(pclSimState, sPrefix)
     {
     this->pDB         = NULL;
     this->pclSimState = pclSimState;
     this->sPrefix     = sPrefix;
+    this->enInputType = this->InputBMSqlite;
     }
 
 

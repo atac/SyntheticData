@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <string>
 
+#include "Source_Nav.h"
 #include "Source_NasaNavTxt.h"
 
 const double M_PI = 3.141592653589793238463;    // value of pi
@@ -231,10 +232,12 @@ bool ConvertNasaTime(std::string sNasaTime, double *fDecodedTime);
 // Constructor / Destructor
 // ----------------------------------------------------------------------------
 
-ClSource_NasaNavTxt::ClSource_NasaNavTxt(ClSimState * pclSimState, std::string sPrefix)
+ClSource_NasaNavTxt::ClSource_NasaNavTxt(ClSimState * pclSimState, std::string sPrefix) :
+    ClSource_Nav(pclSimState, sPrefix)
     {
     this->pclSimState = pclSimState;
     this->sPrefix     = sPrefix;
+    this->enInputType = this->InputNasaCsv;
     }
 
 
@@ -406,7 +409,7 @@ bool ClSource_NasaNavTxt::ReadNextLine()
         fDecodedVal = std::stod(itCsvMap->second);
 
         // Handle any special conversion cases
-        if (itCsvMap->first == sPrefix + "DATE_TIME_ABS")
+        if (itCsvMap->first == sPrefix + "DATE_TIME")
             {
             bool    bStatus;
             double  fDecodedTime;
@@ -414,7 +417,7 @@ bool ClSource_NasaNavTxt::ReadNextLine()
 
             bStatus = ConvertNasaTime(itCsvMap->second, &fDecodedTime);
             assert(bStatus);
-            pclSimState->update(sPrefix+"DATE_TIME_ABS", fDecodedTime);
+            pclSimState->update(sPrefix+"DATE_TIME", fDecodedTime);
 
             // Check for first time to set start time
             if (fStartTime < 0)
@@ -471,7 +474,7 @@ bool ConvertNasaTime(std::string sNasaTime, double *fDecodedTime)
     suNasaTime.tm_sec   = (int)fSecond;
 
     // Convert to a time_t
-    lNasaTime = mktime(&suNasaTime);
+    lNasaTime = _mkgmtime(&suNasaTime);
 
     // Make a floating point representation
     *fDecodedTime = lNasaTime + (fSecond - suNasaTime.tm_sec);

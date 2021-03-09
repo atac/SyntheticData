@@ -4,11 +4,13 @@
 #include <vector>
 #include <unordered_map>
 
+#include "Source_Nav.h"
 #include "SimState.h"
 
 #define BLUEMAX_ASSOC
 
-class ClSource_BMNavTxt
+class ClSource_BMNavTxt : 
+        public ClSource_Nav
     {
     public:
         ClSource_BMNavTxt(ClSimState * pclSimState, std::string sPrefix);
@@ -17,10 +19,10 @@ class ClSource_BMNavTxt
 public:
     // Class variables
     FILE                                      * hBMInput;
-    std::string                                 sPrefix;
+//    std::string                                 sPrefix;
     std::vector<std::string>                    DataLabel;
     //std::unordered_map<std::string, double>   * pSimState;
-    ClSimState                                * pclSimState;
+//    ClSimState                                * pclSimState;
 
     // Methods
 public:

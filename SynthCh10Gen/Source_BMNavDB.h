@@ -6,11 +6,13 @@
 
 #include "sqlite3.h"
 
+#include "Source_Nav.h"
 #include "SimState.h"
 
 #define BLUEMAX_ASSOC
 
-class ClSource_BMNavDB
+class ClSource_BMNavDB : 
+        public ClSource_Nav
     {
     public:
         ClSource_BMNavDB(ClSimState * pclSimState, std::string sPrefix);
@@ -23,9 +25,9 @@ public:
     std::string                 sSQL;
     sqlite3_stmt              * pSqlStmt;
 
-    std::string                 sPrefix;
+//    std::string                 sPrefix;
     std::vector<std::string>    asColLabel;
-    ClSimState                * pclSimState;
+//    ClSimState                * pclSimState;
 
     // Methods
 public:

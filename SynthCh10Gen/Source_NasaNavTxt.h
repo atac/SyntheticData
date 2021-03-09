@@ -10,11 +10,11 @@
 // https://github.com/rakeshgk/csv-parser
 #include "csv_parser.hpp"
 
+#include "Source_Nav.h"
 #include "SimState.h"
 
-#define BLUEMAX_ASSOC
-
-class ClSource_NasaNavTxt
+class ClSource_NasaNavTxt : 
+        public ClSource_Nav
     {
     public:
         ClSource_NasaNavTxt(ClSimState * pclSimState, std::string sPrefix);
@@ -25,12 +25,12 @@ protected:
     FILE                                      * hNasaInput;
     CSV_Parser                                  CsvParser;
     CSV_FIELDS                                  CsvDataLabels;
-    double                                      fStartTime;
 
 public:
-    std::string                                 sPrefix;
+    double                                      fStartTime;
+//    std::string                                 sPrefix;
 //    std::vector<std::string>                    SqlColumnNames;
-    ClSimState                                * pclSimState;
+//    ClSimState                                * pclSimState;
 
     // Methods
 public:
