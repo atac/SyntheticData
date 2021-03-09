@@ -19,6 +19,9 @@
     <Filter Include="SQLite3">
       <UniqueIdentifier>{a9983b43-8c56-4208-9ef0-4936c374f2de}</UniqueIdentifier>
     </Filter>
+    <Filter Include="CVS Parser">
+      <UniqueIdentifier>{24f87873-50aa-4f02-ac25-39c01cbadd55}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SimTimer.h">
@@ -108,6 +111,15 @@
     <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_m.h">
       <Filter>irig106lib</Filter>
     </ClInclude>
+    <ClInclude Include="Source_NasaNavTxt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source_Nav.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\csv-parser\csv_parser.hpp">
+      <Filter>CVS Parser</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Ch10Writer_1553.cpp">
@@ -187,6 +199,12 @@
     </ClCompile>
     <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_m.c">
       <Filter>irig106lib</Filter>
+    </ClCompile>
+    <ClCompile Include="Source_NasaNavTxt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\csv-parser\csv_parser.cpp">
+      <Filter>CVS Parser</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -94,7 +94,7 @@
       <PreprocessorDefinitions>_USE_32BIT_TIME_T;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\XPlaneControl;..\..\irig106\SW.public.git\irig106lib\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\XPlaneControl;..\..\irig106\SW.public.git\irig106lib\src;..\3rdParty\boost_1_75_0;..\3rdParty\csv-parser;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,7 +127,7 @@
       <PreprocessorDefinitions>_USE_32BIT_TIME_T;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\XPlaneControl;..\..\irig106\SW.public.git\irig106lib\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\XPlaneControl;..\..\irig106\SW.public.git\irig106lib\src;..\3rdParty\boost_1_75_0;..\3rdParty\csv-parser;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -173,6 +173,7 @@
     <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_index.h" />
     <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_time.h" />
     <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\irig106ch10.h" />
+    <ClInclude Include="..\3rdParty\csv-parser\csv_parser.hpp" />
     <ClInclude Include="..\3rdParty\SQLite\sqlite3.h" />
     <ClInclude Include="Ch10Format_1553.h" />
     <ClInclude Include="Ch10Format_1553_Nav.h" />
@@ -184,6 +185,8 @@
     <ClInclude Include="SimTimer.h" />
     <ClInclude Include="Source_BMNavDB.h" />
     <ClInclude Include="Source_BMNavTxt.h" />
+    <ClInclude Include="Source_NasaNavTxt.h" />
+    <ClInclude Include="Source_Nav.h" />
     <ClInclude Include="Source_VideoDB.h" />
   </ItemGroup>
   <ItemGroup>
@@ -202,11 +205,13 @@
     <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_index.c" />
     <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_time.c" />
     <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\irig106ch10.c" />
+    <ClCompile Include="..\3rdParty\csv-parser\csv_parser.cpp" />
     <ClCompile Include="..\3rdParty\SQLite\sqlite3.c" />
     <ClCompile Include="Ch10Writer_Index.cpp" />
     <ClCompile Include="Ch10Writer_Video.cpp" />
     <ClCompile Include="Source_BMNavDB.cpp" />
     <ClCompile Include="Source_BMNavTxt.cpp" />
+    <ClCompile Include="Source_NasaNavTxt.cpp" />
     <ClCompile Include="Source_VideoDB.cpp" />
     <ClCompile Include="SynthCh10Gen.cpp" />
     <ClCompile Include="Ch10Format_1553.cpp" />
