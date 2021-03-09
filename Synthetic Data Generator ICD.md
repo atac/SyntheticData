@@ -20,9 +20,9 @@ in one of the “Channel Layouts” defined below.
 A synthetic data file will be formatted in accordance with a specific “IRIG File Layout” as defined in the following sections. For example, IRIG File Layout 1 defined in Section 3.1 contains (or may contain) specific TMATS, Time, Video, PCM, and MIL-STD-1553 data channels. Each IRIG data channel, such as the MIL-STD-1553 channel, contains data of the specified type and formats as defined in Section 4. In this way different IRIG File Layout definitions can be defined in a “mix and match” fashion from defined data channel types.
 
 
-## IRIG Synthetic Data File Layouts {#File-Layouts}
+## IRIG Synthetic Data File Layouts
 
-### Synthetic Data File Layout 1 {#File-Layout-1}
+### Synthetic Data File Layout 1
 
 | Ch ID | IRIG Type | Description |
 | :---: | --------- | ----------- |
@@ -58,16 +58,16 @@ Note: The 1553 Command Word is depicted as "RT Num - T/R Bit - Subaddress - Word
 ---
 ---
 
-## Individual IRIG Data Channel Layouts {#Channel-Layouts}
+## Individual IRIG Data Channel Layouts
 
 
 
-### IRIG 1553 Subaddress Data Layouts {#Channel-Layouts-1553}
+### IRIG 1553 Subaddress Data Layouts
 
 Below are definitions of various 1553 messages. Each message layout section defines up to
 32 16-bit words associated with one 1553 subaddress.
 
-#### IRIG 1553 Subaddress Data Layout B100 - Synthetic GPS/INS Navigation {#Channel-Layouts-1553-B100}
+#### IRIG 1553 Subaddress Data Layout B100 - Synthetic GPS/INS Navigation
 
 ##### Word 1 - Status
 
@@ -76,8 +76,8 @@ Below are definitions of various 1553 messages. Each message layout section defi
 |    |    |    |    |    |    |    |    |    | AL | VP | VV | VA | TH | MH | PR |
 
 Bit 6 – Position data valid  
-    0 = Not Valid  
-    1 = Valid
+: 0 = Not Valid  
+: 1 = Valid
 
 Bit 5 – Altitude data valid  
 	0 = Not Valid  
