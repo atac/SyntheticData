@@ -57,8 +57,8 @@ public:
       uint16_t  uCXX_LSW;           // 18
        int16_t  sCXY_MSW;           // 19
       uint16_t  uCXY_LSW;           // 20
-       int16_t  sCXZ_MSW;           // 21
-      uint16_t  uCXZ_LSW;           // 22
+       int16_t  sLat_MSW;           // 21
+      uint16_t  uLat_LSW;           // 22
        int16_t  sLon_MSW;           // 23
       uint16_t  uLon_LSW;           // 24
        int16_t  sAlt;               // 25
