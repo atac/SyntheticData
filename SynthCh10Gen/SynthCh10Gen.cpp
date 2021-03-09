@@ -32,9 +32,11 @@
 #include "i106_decode_index.h"
 
 #include "SimState.h"
+#include "Source_Nav.h"
 #include "Source_BMNavTxt.h"
 #include "Source_BMNavDB.h"
 #include "Source_VideoDB.h"
+#include "Source_NasaNavTxt.h"
 #include "SimTimer.h"
 #include "Ch10Format_1553.h"
 #include "Ch10Format_1553_Nav.h"
@@ -69,8 +71,6 @@ using namespace Irig106;
 // 1553 Parameters
 #define RT_NAV          6
 #define RT_CONTROLLER  27
-
-enum EnInputType  { InputUnknown,  InputSqlite,  InputText  } ;
 
 /*
  * Data structures
@@ -109,19 +109,21 @@ void vUsage(void);
 
 int main(int iArgc, char * aszArgv[])
 {
-    char                szInFile[256];     // Input file name
-    char                szOutFile[256];    // Output file name
-    EnInputType         enInputType  = InputUnknown;
-    bool                bStatus;
+    char                    szInFile[256];     // Input file name
+    char                    szOutFile[256];    // Output file name
+    bool                    bStatus;
+    bool                    bVerbose;
 
     // Data Sources
-    ClSource_BMNavTxt * pSource_BMNavTxt;
-    ClSource_BMNavDB  * pSource_BMNavDB;
-    ClSource_VideoDB  * pSource_Video_HUD;
-    ClSource_VideoDB  * pSource_Video_Cockpit;
-    ClSource_VideoDB  * pSource_Video_Chase;
+    ClSource_Nav          * pSource_Nav;
+    ClSource_BMNavTxt     * pSource_BMNavTxt;
+    ClSource_BMNavDB      * pSource_BMNavDB;
+    ClSource_NasaNavTxt   * pSource_NasaNavTxt;
+    ClSource_VideoDB      * pSource_Video_HUD;
+    ClSource_VideoDB      * pSource_Video_Cockpit;
+    ClSource_VideoDB      * pSource_Video_Chase;
 
-    int                 iI106Handle;
+    int                     iI106Handle;
 
     // 1553 messages
 //  ClCh10Format_1553_Nav   suNav_1Hz(RT_NAV, 1, 29, 32);
@@ -145,7 +147,7 @@ int main(int iArgc, char * aszArgv[])
     ClSimTimer      clSimTimer_60S(600000000);  // 60 sec (for root index packets)
 
     ClSimState      clSimState;
-    double          fBluemaxTime;           // Bluemax data time (seconds)
+    double          fNavSrcTime;            // Nav sourc data time (seconds)
     double          fStartSimClockTime;     // Starting simulation Date/Time
     double          fCurrSimClockTime;      // Current simulation Data/Time
     double          fNextPrintTime;         
@@ -154,9 +156,11 @@ int main(int iArgc, char * aszArgv[])
     szInFile[0]         = '\0';
     szOutFile[0]        = '\0';
     bStatus             = false;
+    bVerbose            = false;
+    pSource_Nav         = NULL;
 
-    fBluemaxTime        = 0.0;
-    fStartSimClockTime  = double(time(NULL));
+    fNavSrcTime         =  0.0;
+    fStartSimClockTime  = -1.0;
     clSimState.clear();
 
     // Process command line
@@ -168,6 +172,10 @@ int main(int iArgc, char * aszArgv[])
 
       case '-' :
         switch (aszArgv[iArgIdx][1]) {
+
+          case 'v' :
+            bVerbose = true;
+            break;
 
           case 's' :                   // Data start date and time
             {
@@ -190,26 +198,40 @@ int main(int iArgc, char * aszArgv[])
             }
             break;
 
-          case 'd' :                   // Input database file
-            if (enInputType != InputUnknown)
+          case 'b' :                   // Input BlueMax database file
+            if (pSource_Nav != NULL)
                 {
                 vUsage();
                 return 1;
                 }
             iArgIdx++;
             strcpy(szInFile, aszArgv[iArgIdx]);
-            enInputType = InputSqlite;
+            pSource_BMNavDB = new ClSource_BMNavDB (&clSimState, ""); 
+            pSource_Nav = dynamic_cast<ClSource_Nav *>(pSource_BMNavDB);
             break;
 
-          case 't' :                   // Input text file
-            if (enInputType != InputUnknown)
+          case 'B' :                   // Input BlueMax text file
+            if (pSource_Nav != NULL)
                 {
                 vUsage();
                 return 1;
                 }
             iArgIdx++;
             strcpy(szInFile, aszArgv[iArgIdx]);
-            enInputType = InputText;
+            pSource_BMNavTxt = new ClSource_BMNavTxt(&clSimState, ""); 
+            pSource_Nav = dynamic_cast<ClSource_Nav *>(pSource_BMNavTxt);
+            break;
+
+          case 'N' :                   // Input NASA text file
+            if (pSource_Nav != NULL)
+                {
+                vUsage();
+                return 1;
+                }
+            iArgIdx++;
+            strcpy(szInFile, aszArgv[iArgIdx]);
+            pSource_NasaNavTxt = new ClSource_NasaNavTxt(&clSimState, ""); 
+            pSource_Nav = dynamic_cast<ClSource_Nav *>(pSource_NasaNavTxt);
             break;
 
           default :
@@ -230,51 +252,45 @@ int main(int iArgc, char * aszArgv[])
         return 1;
         }
 
-    // Init some more stuff
-    fCurrSimClockTime   = fStartSimClockTime;
-    fNextPrintTime      =  0.0;
-    clSimTimer_40ms.FromNow();
-    clSimTimer_100ms.FromNow();
-    clSimTimer_1S.FromNow();
-    clSimTimer_6S.FromNow();
-    clSimTimer_60S.FromNow();
-
     // Prepare inputs and outputs
     // --------------------------
 
-    // Make data sources and open input files
-    pSource_BMNavDB       = new ClSource_BMNavDB (&clSimState, "BM."); 
-    pSource_BMNavTxt      = new ClSource_BMNavTxt(&clSimState, "BM."); 
-    pSource_Video_HUD     = new ClSource_VideoDB();
-    pSource_Video_Cockpit = new ClSource_VideoDB();
-    pSource_Video_Chase   = new ClSource_VideoDB();
+    // Setup video for various source types
+#if 0
+        pSource_Video_HUD     = new ClSource_VideoDB();
+        pSource_Video_Cockpit = new ClSource_VideoDB();
+        pSource_Video_Chase   = new ClSource_VideoDB();
+#endif
 
-    switch (enInputType)
+    bStatus = pSource_Nav->Open(szInFile);
+    if (bStatus == false)
+        return 1;
+    pSource_Nav->ReadNextLine();
+
+    // If need start time and the nav source is NASA then use the time stamp
+    // of the first line of NASA data.
+    if (fStartSimClockTime < 0.0)
         {
-        case InputSqlite : 
-            bStatus = pSource_BMNavDB->Open(szInFile);
-            if (bStatus == false)
-                return 1;
-            pSource_BMNavDB->ReadNextLine();
-            break;
-        case InputText   : 
-            bStatus = pSource_BMNavTxt->Open(szInFile);
-            if (bStatus == false)
-                return 1;
-            pSource_BMNavTxt->ReadNextLine();
-            break;
-        } // end switch on input type
+        if (pSource_Nav->enInputType == ClSource_Nav::InputNasaCsv)
+            fStartSimClockTime = dynamic_cast<ClSource_NasaNavTxt *>(pSource_Nav)->fStartTime;
+        else
+            fStartSimClockTime  = double(time(NULL));
+        } // end if start time needs to be set to something
 
     // Open video sources
+#if 0
     pSource_Video_HUD->Open(szInFile, "Video_HUD");
     pSource_Video_Cockpit->Open(szInFile, "Video_F4_Cockpit");
     pSource_Video_Chase->Open(szInFile, "Video_F4_Chase");
+#endif
 
     // Make Chapter 10 writers
     pCh10Writer_Time          = new ClCh10Writer_Time();
+#if 0
     pCh10Writer_Video_HUD     = new ClCh10Writer_VideoF0();
     pCh10Writer_Video_Cockpit = new ClCh10Writer_VideoF0();
     pCh10Writer_Video_Chase   = new ClCh10Writer_VideoF0();
+#endif
     pCh10Writer_1553          = new ClCh10Writer_1553();
     pCh10Writer_Index         = new ClCh10Writer_Index();
 
@@ -286,14 +302,27 @@ int main(int iArgc, char * aszArgv[])
         return 1;
         }
 
+    // Init clock and other stuff
+    // --------------------------
+
+    fCurrSimClockTime   = fStartSimClockTime;
+    fNextPrintTime      =  0.0;
+    clSimTimer_40ms.FromNow();
+    clSimTimer_100ms.FromNow();
+    clSimTimer_1S.FromNow();
+    clSimTimer_6S.FromNow();
+    clSimTimer_60S.FromNow();
+
     // Setup messages that will be written
     // -----------------------------------
 
     // Setup the output channels
     pCh10Writer_Time->Init(iI106Handle, 1);
+#if 0
     pCh10Writer_Video_HUD->Init(iI106Handle, 10);
     pCh10Writer_Video_Cockpit->Init(iI106Handle, 11);
     pCh10Writer_Video_Chase->Init(iI106Handle, 12);
+#endif
     pCh10Writer_1553->Init(iI106Handle, 30);
     pCh10Writer_Index->Init(iI106Handle, 0);
 
@@ -317,44 +346,41 @@ int main(int iArgc, char * aszArgv[])
         // Update input(s)
         // ---------------
 
-        // Bluemax input data
-        while (clSimState.fState["BM.actime"] < fBluemaxTime)
+        // Aircraft nav input data
+        while (clSimState.fState["AC_TIME"] < fNavSrcTime)
             {
-            switch (enInputType)
-                {
-                case InputSqlite : bStatus = pSource_BMNavDB->ReadNextLine();  break;
-                case InputText   : bStatus = pSource_BMNavTxt->ReadNextLine(); break;
-                } // end switch on input type
+            bStatus = pSource_Nav->ReadNextLine();
 
             // Break out if input is exhausted
             if (bStatus == false)
                 break;
 
-            } // end while reading Bluemax XLS data
+            } // end while reading aircraft nav data
 
         // Break out if input is exhausted
         if (bStatus == false)
             break;
 
-        // Make BlueMax based nav message(s)
+        // Make nav message(s)
 //      suNav_1Hz.MakeMsg(&clSimState);
         suNav_25Hz.MakeMsg(&clSimState);
 
         // Get current video data
+#if 0
         // Since video data and BlueMax data pace each other, when new BlueMax data
         // available then new video would also normally be available.
-        pSource_Video_HUD->Read(clSimState.lState["BM.RowNum"]);
+        pSource_Video_HUD->Read(clSimState.lState["RowNum"]);
         if (pSource_Video_HUD->bVideoDataValid)
             pCh10Writer_Video_HUD->Write(&ClSimTimer::lSimClockTicks, pSource_Video_HUD->pachTSData, pSource_Video_HUD->iTSDataLength);
 
-        pSource_Video_Cockpit->Read(clSimState.lState["BM.RowNum"]);
+        pSource_Video_Cockpit->Read(clSimState.lState["RowNum"]);
         if (pSource_Video_Cockpit->bVideoDataValid)
             pCh10Writer_Video_Cockpit->Write(&ClSimTimer::lSimClockTicks, pSource_Video_Cockpit->pachTSData, pSource_Video_Cockpit->iTSDataLength);
 
-        pSource_Video_Chase->Read(clSimState.lState["BM.RowNum"]);
+        pSource_Video_Chase->Read(clSimState.lState["RowNum"]);
         if (pSource_Video_Chase->bVideoDataValid)
             pCh10Writer_Video_Chase->Write(&ClSimTimer::lSimClockTicks, pSource_Video_Chase->pachTSData, pSource_Video_Chase->iTSDataLength);
-
+#endif
         // 40 msec / 25 Hz events
         // ----------------------
         if (clSimTimer_40ms.Expired())
@@ -388,7 +414,8 @@ int main(int iArgc, char * aszArgv[])
 //            suNav_1Hz.SetRTC(&ClSimTimer::lSimClockTicks);
 //            pCh10Writer_1553->AppendMsg(&suNav_1Hz);
 
-            printf("%f %f %f %f\n", clSimState.fState["BM.actime"], clSimState.fState["BM.aclatd"], clSimState.fState["BM.aclond"], clSimState.fState["BM.acktas"]);
+            if (bVerbose)
+                printf("%f %f %f %f\n", clSimState.fState["AC_TIME"], clSimState.fState["AC_LAT"], clSimState.fState["AC_LON"], clSimState.fState["AC_TAS"]);
             } // end 1 Hz events
 
         // 6 second events
@@ -416,7 +443,7 @@ int main(int iArgc, char * aszArgv[])
 
         // Update the various clocks
         ClSimTimer::Tick();
-        fBluemaxTime        = ClSimTimer::fSimElapsedTime;
+        fNavSrcTime         = ClSimTimer::fSimElapsedTime;
         fCurrSimClockTime   = fStartSimClockTime + ClSimTimer::fSimElapsedTime;
         } // end while reading until done
 
@@ -424,21 +451,27 @@ int main(int iArgc, char * aszArgv[])
     // --------------
 
     // Close input sources
+#if 0
     switch (enInputType)
         {
-        case InputSqlite : 
+        case InputBMSqlite : 
             pSource_BMNavDB->Close();
             break;
-        case InputText   : 
+        case InputBMText   : 
             pSource_BMNavTxt->Close();
             break;
         } // end switch on input type
+#else
+    pSource_Nav->Close();
+#endif
 
     // Write the final index root packet
     pCh10Writer_Index->WriteRootPacket();
 
     // Close outputs
     enI106Ch10Close(iI106Handle);
+
+    printf("%s Done!\n", szInFile);
 
     return 0;
 }
@@ -472,8 +505,11 @@ void WriteTmats(int iI106Handle, double fCurrSimClockTime)
     uint32_t            ulDataBuffSize;
     SuTmats_ChanSpec  * psuTmats_ChanSpec;
     int                 iRSrcNum = 1;
+#if 0
     const int           iTotalRSrcs = 5;
-
+#else
+    const int           iTotalRSrcs = 2;
+#endif
     // Make a time string for the TMATS in the format 08-19-2014-17-33-59
     time_t        iCurrSimClockTime;
     char          szCurrSimClockTime[100];
@@ -506,9 +542,11 @@ void WriteTmats(int iI106Handle, double fCurrSimClockTime)
     ssTMATS << pCh10Writer_Time->TMATS(1, iRSrcNum++);
 
     // Video section
+#if 0
     ssTMATS << pCh10Writer_Video_HUD->TMATS(1, iRSrcNum++, "VIDEO_HUD");
     ssTMATS << pCh10Writer_Video_Cockpit->TMATS(1, iRSrcNum++, "VIDEO_COCKPIT");
     ssTMATS << pCh10Writer_Video_Chase->TMATS(1, iRSrcNum++, "VIDEO_CHASE");
+#endif
 
     // 1553 section
     ssTMATS << pCh10Writer_1553->TMATS(1, iRSrcNum++);
@@ -558,9 +596,11 @@ void vUsage(void)
     {
     printf("\nSynthCh10Gen  " __DATE__ " " __TIME__ "\n");
     printf("Convert a Bluemax simulation file to a Ch 10 1553 nav message file\n");
-    printf("Usage: SynthCh10Gen  [flags] <output file>\n");
-    printf("   -s m-d-y-h-m-s  Data start time   \n");
-    printf("   -d filename     Input database file name     \n");
-    printf("   -t filename     Input text file name         \n");
-    printf("   <output file>   Output Ch 10 file name       \n");
+    printf("Usage: SynthCh10Gen  [flags] <output file>            \n");
+    printf("   -v              Verbose                            \n");
+    printf("   -s m-d-y-h-m-s  Data start time                    \n");
+    printf("   -b filename     Input BlueMax database file name   \n");
+    printf("   -B filename     Input BlueMax text data file name  \n");
+    printf("   -N filename     Input NASA CSV data file name      \n");
+    printf("   <output file>   Output Ch 10 file name             \n");
     }
