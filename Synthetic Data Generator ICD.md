@@ -14,10 +14,19 @@ It is anticipated, though, that synthetic data files may be similar to each othe
 may be tailored to demonstrate particular data types or values.
 
 A synthetic IRIG 106 data file is a complete and properly formed data file in 
-compliance with IRIG 106. The data in the synthetic data file contains one or more 
+compliance with IRIG 106. A synthetic data file will be of a particular **Data File Layout** as
+described in the sections below. 
+
+A particular synthetic data file contains one or more 
 IRIG 106 data channels. Each synthetic data channel present is formed and formatted 
-in one of the “Channel Layouts” defined below.
-A synthetic data file will be formatted in accordance with a specific “IRIG File Layout” as defined in the following sections. For example, IRIG File Layout 1 defined in Section 3.1 contains (or may contain) specific TMATS, Time, Video, PCM, and MIL-STD-1553 data channels. Each IRIG data channel, such as the MIL-STD-1553 channel, contains data of the specified type and formats as defined in Section 4. In this way different IRIG File Layout definitions can be defined in a “mix and match” fashion from defined data channel types.
+in one of the **Data Channel Layouts** defined below.
+
+A synthetic data file will be formatted in accordance with a specific “IRIG File Layout” as defined 
+in the following sections. For example, IRIG Data File Layout 1 defined below contains (or may contain) 
+specific TMATS, Time, Video, PCM, and MIL-STD-1553 data channels. Each IRIG data channel, such as the 
+MIL-STD-1553 channel, contains data of the specified type and formats as defined later in this document. 
+In this way different IRIG File Layout definitions can be defined in a “mix and match” fashion from 
+defined data channel types.
 
 ---
 
@@ -45,16 +54,15 @@ File Layout 1 Channel ID 30 is a MIL-STD-1553 channel. It may have various 1553 
 as described below.
 
 
-
 | RT Number | RT Description |
 | :-------: | -------------- |
 |     6     | Nav device such as an INS / GPS |
 
 Note: The 1553 Command Word is depicted as "RT Num - T/R Bit - Subaddress - Word Count" in the table below.
 
-| 1553 Cmd Word | Description |
-| :-----------: | ----------- |
-| 6-T-29-32     | 1553 Message Layout B100 - Synthetic GPS/INS Navigation at 25 Hz rate |
+| 1553 Cmd Word |  Rate       | Description |
+| :-----------: | :---------: | ----------- |
+| 6-T-29-32     | 25 Hz       | 1553 Message Layout B100 - Synthetic GPS/INS Navigation Position |
 
 ---
 
@@ -240,5 +248,5 @@ LSB = 4 feet
 
 #### IRIG PCM Frame Data Layout 1
 
-
+(More to come)
 
