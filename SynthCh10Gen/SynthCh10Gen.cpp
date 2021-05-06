@@ -102,7 +102,7 @@ ClCh10Writer_Index    * pCh10Writer_Index;
  */
 
 void SimClockToRel(int iI106Handle, double dSimTime, uint8_t abyRelTime[]);
-void WriteTmats(int iI106Handle, double fCurrSimClockTime);
+void WriteTmats(int iI106Handle, std::string sProgramName, double fCurrSimClockTime);
 void vUsage(void);
 
 // ============================================================================
@@ -113,6 +113,7 @@ int main(int iArgc, char * aszArgv[])
     char                    szOutFile[256];    // Output file name
     bool                    bStatus;
     bool                    bVerbose;
+    std::string             sProgramName = "Synth Data";
 
     // Data Sources
     ClSource_Nav          * pSource_Nav;
@@ -175,6 +176,11 @@ int main(int iArgc, char * aszArgv[])
 
           case 'v' :
             bVerbose = true;
+            break;
+
+          case 'p' :                   // Data set name
+            iArgIdx++;
+            sProgramName = aszArgv[iArgIdx];
             break;
 
           case 's' :                   // Data start date and time
@@ -330,7 +336,7 @@ int main(int iArgc, char * aszArgv[])
     pCh10Writer_Time->SetRelTime(ClSimTimer::lSimClockTicks, fStartSimClockTime);
 
     // Write initial TMATS and first time packet
-    WriteTmats(iI106Handle, fCurrSimClockTime);
+    WriteTmats(iI106Handle, sProgramName, fCurrSimClockTime);
     pCh10Writer_Time->Write(fCurrSimClockTime);
 
     // Start writing
@@ -497,7 +503,7 @@ void SimClockToRel(int iI106Handle, double dSimTime, uint8_t abyRelTime[])
 // TMATS write routines
 // ============================================================================
 
-void WriteTmats(int iI106Handle, double fCurrSimClockTime)
+void WriteTmats(int iI106Handle, std::string sProgramName, double fCurrSimClockTime)
     {
     SuI106Ch10Header    suI106Hdr;
     std::stringstream   ssTMATS;
@@ -510,6 +516,14 @@ void WriteTmats(int iI106Handle, double fCurrSimClockTime)
 #else
     const int           iTotalRSrcs = 2;
 #endif
+    // Make current time string
+    time_t        iCurrTime;
+    char          szCurrTime[100];
+    struct tm   * psuCurrTime;
+    iCurrTime = time(NULL);
+    psuCurrTime = gmtime(&iCurrTime);
+    strftime(szCurrTime, sizeof(szCurrTime), "%m-%d-%Y-%H-%M-%S", psuCurrTime);
+
     // Make a time string for the TMATS in the format 08-19-2014-17-33-59
     time_t        iCurrSimClockTime;
     char          szCurrSimClockTime[100];
@@ -520,11 +534,19 @@ void WriteTmats(int iI106Handle, double fCurrSimClockTime)
 
     ssTMATS.clear();
     ssTMATS <<
-        "G\\PN:A10 SIM;\n"
+        "COMMENT:**********************************************************************;\n"
+        "COMMENT: Synthetic data file created with SynthCh10Gen on " << szCurrTime << ";\n"
+        "COMMENT: See https://github.com/atac/SyntheticData for details;\n"
+        "COMMENT:**********************************************************************;\n";
+    ssTMATS <<
+        "G\\PN:" << sProgramName << ";\n";
+    ssTMATS <<
         "G\\106:07;\n"
         "G\\DSI\\N:1;\n"
+        "G\\SC:UNCLASSIFIED;\n"
         "G\\DSI-1:DATASOURCE;\n"
         "G\\DST-1:STO;\n"
+        "G\\DSC-1:UNCLASSIFIED;\n"
         "R-1\\ID:DATASOURCE;\n"
         "R-1\\RID:SynthCh10Gen;\n"
         "R-1\\NSB:0;\n"
@@ -598,6 +620,7 @@ void vUsage(void)
     printf("Convert a Bluemax simulation file to a Ch 10 1553 nav message file\n");
     printf("Usage: SynthCh10Gen  [flags] <output file>            \n");
     printf("   -v              Verbose                            \n");
+    printf("   -p              Data set name                      \n");
     printf("   -s m-d-y-h-m-s  Data start time                    \n");
     printf("   -b filename     Input BlueMax database file name   \n");
     printf("   -B filename     Input BlueMax text data file name  \n");
