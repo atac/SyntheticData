@@ -5,10 +5,12 @@ Created on Wed Sep  2 20:18:23 2020
 @author: Bob Baggerman
 """
 
+import sys
+import os
+
 #import numexpr
 from scipy.io import loadmat
 import pandas as pd
-import os
 
 # -----------------------------------------------------------------------------
 
@@ -169,17 +171,39 @@ def make_flight_dataframe(nasa_mat, trimmed=True):
 # Main routine
 # -----------------------------------------------------------------------------
 
+# read_nasa_mat.py <data dir> <filename.mat>
+#
+#   <data dir>     - Matlab data directory to process.
+#   <filename.mat> - Specific Matlab file to process. If not specified
+#                    then all file in <data dir> are processed.
+
 if __name__=='__main__':
 
-    # Load the Matlab data file(s)
+    # Setup directories and file names
+    root_data_dir  = "./"
+    dataset_dir    = None
+    data_file_list = None
+ 
+    # If no command line parameters then use these
+    if len(sys.argv) < 2:
+        dataset_dir = "Tail_652_1/"
+        data_file_list = ("652200101120916.mat",)   # File OK
+#        data_file_list = ("652200108031352.mat",)   # File Broken
 
-    root_data_dir   = "./"
-    dataset_dir     = "Tail_652_1/"
+    # Get the working directory name
+    if len(sys.argv) >= 2:
+        dataset_dir = sys.argv[1] + "/"
+        
     matlab_data_dir = root_data_dir + "Matlab/" + dataset_dir
     csv_data_dir    = root_data_dir + "CSV/"    + dataset_dir
+    
+    # Get the file names list
+    if len(sys.argv) >= 3:
+        data_file_list = sys.argv[2]
 
-#   data_file_list = ("652200101092009.mat",)
-    data_file_list = os.listdir(matlab_data_dir)
+    # If there is no file names list then make one
+    if data_file_list == None:
+        data_file_list = os.listdir(matlab_data_dir)
 
     # Set the output filename extension. Necessary to check if output file
     # has already been generated so we can skip in that case. Don't forget to
