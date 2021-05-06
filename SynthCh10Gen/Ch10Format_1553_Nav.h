@@ -47,12 +47,9 @@ public:
        int16_t  sPitch;             // 11
       uint16_t  uTrueHeading;       // 12
       uint16_t  uMagHeading;        // 13
-       int16_t        :  5;         // 14
-       int16_t  sAccX : 11;         // 14
-       int16_t        :  5;         // 15
-       int16_t  sAccY : 11;         // 15
-       int16_t        :  5;         // 16
-       int16_t  sAccZ : 11;         // 16
+       int16_t  sAccX;              // 14
+       int16_t  sAccY;              // 15
+       int16_t  sAccZ;              // 16
        int16_t  sCXX_MSW;           // 17
       uint16_t  uCXX_LSW;           // 18
        int16_t  sCXY_MSW;           // 19

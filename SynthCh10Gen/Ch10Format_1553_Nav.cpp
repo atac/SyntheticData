@@ -62,9 +62,9 @@ void ClCh10Format_1553_Nav::MakeMsg(ClSimState * pclSimState)
     psuInsData->sPitch       = ( int16_t)(pclSimState->fState["AC_PITCH"]     / 180.0 * (double)0x7fff);
     psuInsData->uTrueHeading = (uint16_t)(pclSimState->fState["AC_TRUE_HDG"]  / 180.0 * (double)0x7fff);
     psuInsData->uMagHeading  = (uint16_t)(pclSimState->fState["AC_MAG_HDG"]   / 180.0 * (double)0x7fff);
-    psuInsData->sAccX        = (int16_t)pclSimState->fState["AC_ACCEL_NORTH"];
-    psuInsData->sAccY        = (int16_t)pclSimState->fState["AC_ACCEL_EAST"];
-    psuInsData->sAccZ        = (int16_t)pclSimState->fState["AC_ACCEL_DOWN"];
+    psuInsData->sAccX        = (int16_t)pclSimState->fState["AC_ACCEL_NORTH"] * 32.0;
+    psuInsData->sAccY        = (int16_t)pclSimState->fState["AC_ACCEL_EAST"]  * 32.0;
+    psuInsData->sAccZ        = (int16_t)pclSimState->fState["AC_ACCEL_DOWN"]  * 32.0;
     //psuInsData->sCXX_MSW
     //psuInsData->uCXX_LSW
     //psuInsData->sCXY_MSW
