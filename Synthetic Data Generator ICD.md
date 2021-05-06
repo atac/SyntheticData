@@ -99,38 +99,20 @@ in MIL-STD-1553. Also note that Word 1 is the first 1553 word. There is no Word 
 
 ##### Word 2 - Not Used
 
-##### Word 3,4 - X Velocity
+##### Words 3 to 8 - Velocity
 
 | Word | Bit Position | Description |
 | :--: | :----------: | ----------- |
 |   3  | 15 - 0       | X Velocity MSW |
 |   4  | 15 - 0       | X Velocity LSW |
-
-32 bit two’s-complement signed integer representing aircraft inertial velocity in the 
-local X (North) direction in feet per second.  
-LSB = 4 feet per second
-
-##### Word 5,6 - Y Velocity
-
-| Word | Bit Position | Description |
-| :--: | :----------: | ----------- |
 |   5  | 15 - 0       | Y Velocity MSW |
 |   6  | 15 - 0       | Y Velocity LSW |
-
-32 bit two’s-complement signed integer representing aircraft inertial velocity in the 
-local Y (East) direction in feet per second.  
-LSB = 4 feet per second
-
-##### Word 7,8 - Z Velocity
-
-| Word | Bit Position | Description |
-| :--: | :----------: | ----------- |
 |   7  | 15 - 0       | Z Velocity MSW |
 |   8  | 15 - 0       | Z Velocity LSW |
 
 32 bit two’s-complement signed integer representing aircraft inertial velocity in the 
-local Z (Down) direction in feet per second.  
-LSB = 4 feet per second
+local X (North) direction in feet per second.  
+LSB = 1 / 262,144 (3.814697E-6) feet per second
 
 ##### Word 9 - Azimuth
 
@@ -161,74 +143,39 @@ Positive = Left wing up
 MSB = 180 degrees  
 Positive = Nose up
 
-##### Word 12 - True Heading
+##### Word 12 to 13 - Heading
 
 | Word | Bit Position | Description |
 | :--: | :----------: | ----------- |
 |  12  | 15 - 0       | True Heading |
-
-16 bit two’s-complement signed integer aircraft heading from True North in degrees  
-MSB = 180 degrees
-
-##### Word 13 - Magnetic Heading
-
-| Word | Bit Position | Description |
-| :--: | :----------: | ----------- |
 |  13  | 15 - 0       | Magnetic Heading |
 
-16 bit two’s-complement signed integer aircraft heading from Magnetic North in degrees  
+16 bit two’s-complement signed integer aircraft heading from North in degrees  
 MSB = 180 degrees
 
-##### Word 14 - X Acceleration
+##### Words 14 to 16 - Acceleration
 
 | Word | Bit Position | Description |
 | :--: | :----------: | ----------- |
-|  14  | 15 - 5       | X Acceleration |
-|  14  | 4 - 0        | Not used       |
+|  14  | 15 - 0       | X Acceleration |
+|  15  | 15 - 0       | Y Acceleration |
+|  16  | 15 - 0       | Z Acceleration |
 
-Bits 5 - 15 – 11 bit two’s complement signed integer representing aircraft acceleration local X (North) direction in feet / second\^2.  
-LSB = 1 foot / second\^2
-
-##### Word 15 - Y Acceleration
-
-| Word | Bit Position | Description |
-| :--: | :----------: | ----------- |
-|  15  | 15 - 5       | Y Acceleration |
-|  15  | 4 - 0        | Not used       |
-
-Bits 5 - 15 – 11 bit two’s complement signed integer representing aircraft acceleration local Y (East) direction in feet / second\^2.  
-LSB = 1 foot / second\^2
-
-##### Word 16 - Z Acceleration
-
-| Word | Bit Position | Description |
-| :--: | :----------: | ----------- |
-|  16  | 15 - 5       | Z Acceleration |
-|  16  | 4 - 0        | Not used       |
-
-Bits 5 - 15 – 11 bit two’s complement signed integer representing aircraft acceleration local Z (Down) direction in feet / second\^2.  
-LSB = 1 foot / second\^2
+Bits 0 - 15 – Two’s complement signed integer representing aircraft acceleration local X (North), Y (North), Z (Down) direction in feet / second\^2.  
+LSB = 1/32 (0.03125) foot / second\^2
 
 ##### Word 17 to 20 - Not Used
 
-##### Word 21,22 - Latitude
+##### Word 21 to 24 - Latitude and Longitude
 
 | Word | Bit Position | Description |
 | :--: | :----------: | ----------- |
 |  21  | 15 - 0       | Latitude MSW |
 |  22  | 15 - 0       | Latitude LSW |
-
-32 bit two’s-complement signed integer representing aircraft latitude in semi-circles.  
-MSB = 180 degrees
-
-##### Word 23,24 - Longitude
-
-| Word | Bit Position | Description |
-| :--: | :----------: | ----------- |
 |  23  | 15 - 0       | Longitude MSW |
 |  24  | 15 - 0       | Longitude LSW |
 
-32 bit two’s-complement signed integer representing aircraft longitude in semi-circles.  
+32 bit two’s-complement signed integer representing aircraft latitude / longitude in semi-circles.  
 MSB = 180 degrees
 
 ##### Word 25 - Altitude
