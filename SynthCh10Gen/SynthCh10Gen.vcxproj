@@ -23,33 +23,33 @@
     <ProjectGuid>{5AE2C8AF-53CD-491E-8FFD-4ACB9F827BA2}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>SynthCh10Gen</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>SynthCh10Gen</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -94,7 +94,7 @@
       <PreprocessorDefinitions>_USE_32BIT_TIME_T;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\XPlaneControl;..\..\irig106\SW.public.git\irig106lib\src;..\3rdParty\boost_1_75_0;..\3rdParty\csv-parser;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\XPlaneControl;..\3rdParty\irig106lib\src;..\3rdParty\boost_1_75_0;..\3rdParty\SQLite;..\3rdParty\csv-parser;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,7 +127,7 @@
       <PreprocessorDefinitions>_USE_32BIT_TIME_T;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\XPlaneControl;..\..\irig106\SW.public.git\irig106lib\src;..\3rdParty\boost_1_75_0;..\3rdParty\csv-parser;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\XPlaneControl;..\3rdParty\irig106lib\src;..\3rdParty\boost_1_75_0;..\3rdParty\SQLite;..\3rdParty\csv-parser;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -156,23 +156,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\config.h" />
-    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_1553f1.h" />
-    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_index.h" />
-    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_time.h" />
-    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats.h" />
-    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_b.h" />
-    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_c.h" />
-    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_common.h" />
-    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_d.h" />
-    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_g.h" />
-    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_m.h" />
-    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_p.h" />
-    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_r.h" />
-    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_video.h" />
-    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_index.h" />
-    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\i106_time.h" />
-    <ClInclude Include="..\..\irig106\SW.public.git\irig106lib\src\irig106ch10.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\config.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_1553f1.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_index.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_time.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats_b.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats_c.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats_common.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats_d.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats_g.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats_m.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats_p.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats_r.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_video.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_index.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_time.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\irig106ch10.h" />
     <ClInclude Include="..\3rdParty\csv-parser\csv_parser.hpp" />
     <ClInclude Include="..\3rdParty\SQLite\sqlite3.h" />
     <ClInclude Include="Ch10Format_1553.h" />
@@ -190,21 +190,21 @@
     <ClInclude Include="Source_VideoDB.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_1553f1.c" />
-    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_index.c" />
-    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_time.c" />
-    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats.c" />
-    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_b.c" />
-    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_c.c" />
-    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_d.c" />
-    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_g.c" />
-    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_m.c" />
-    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_p.c" />
-    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_tmats_r.c" />
-    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_decode_video.c" />
-    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_index.c" />
-    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\i106_time.c" />
-    <ClCompile Include="..\..\irig106\SW.public.git\irig106lib\src\irig106ch10.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_1553f1.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_index.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_time.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_tmats.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_tmats_b.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_tmats_c.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_tmats_d.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_tmats_g.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_tmats_m.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_tmats_p.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_tmats_r.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_video.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_index.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_time.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\irig106ch10.c" />
     <ClCompile Include="..\3rdParty\csv-parser\csv_parser.cpp" />
     <ClCompile Include="..\3rdParty\SQLite\sqlite3.c" />
     <ClCompile Include="Ch10Writer_Index.cpp" />
