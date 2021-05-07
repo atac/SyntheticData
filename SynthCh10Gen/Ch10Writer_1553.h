@@ -46,6 +46,7 @@ class ClCh10Writer_1553
 public:
     int                 iHandle;
     unsigned int        uChanID;
+    std::string         sCDLN;                  // Linking Channel Data Link Name for TMATS
 
     // Methods
 public:

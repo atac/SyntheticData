@@ -39,6 +39,11 @@ void ClCh10Writer_1553::Init(int iHandle, unsigned int uChanID)
     suWriteMsg1553.psu1553CSDW->uTTB    = 1;    // Time tag is first bit of first word
     suWriteMsg1553.psu1553CSDW->uMsgCnt = 0;
 
+    // TMATS Channel Data Link Name for this channel
+    std::stringstream   ssCDLN;
+    ssCDLN << "1553InChan" << uChanID;
+    sCDLN = ssCDLN.str();
+
     }
 
 
@@ -56,7 +61,7 @@ std::string ClCh10Writer_1553::TMATS(int iRSection, int iEnumN)
         "R-" << iRSection << "\\CHE-"  << iEnumN << ":T;\n"
         "R-" << iRSection << "\\DSI-"  << iEnumN << ":1553InChan" << uChanID << ";\n"
         "R-" << iRSection << "\\CDT-"  << iEnumN << ":1553IN;\n"
-        "R-" << iRSection << "\\CDLN-" << iEnumN << ":1553InChan" << uChanID << ";\n";
+        "R-" << iRSection << "\\CDLN-" << iEnumN << ":" << sCDLN << ";\n";
 
     return ssTMATS.str();
     } // end TMATS()

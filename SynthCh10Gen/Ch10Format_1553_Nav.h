@@ -3,9 +3,9 @@
 //#include <cstdio>
 //#include <cassert>
 //#include <ctime>
-//#include <string>       // std::string
-//#include <iostream>     // std::cout
-//#include <sstream>      // std::stringstream
+#include <string>       // std::string
+#include <iostream>     // std::cout
+#include <sstream>      // std::stringstream
 //#include <string.h>
 //#include <stdlib.h>
 //#include <math.h>
@@ -73,6 +73,7 @@ public:
     // Methods
 
     void MakeMsg(ClSimState * pclSimState);
+    std::string TMATS(int & iBIndex, int & iCIndex, std::string sCDLN);
 
     };
 

@@ -88,6 +88,10 @@ int64_t                 ClSimTimer::lTicksPerSecond;
 int64_t                 ClSimTimer::lTicksPerStep;
 double                  ClSimTimer::fSimElapsedTime;
 
+// Ch 10 data formatters
+// ClCh10Format_1553_Nav * p1553Fmt_Nav_1Hz;
+ClCh10Format_1553_Nav * p1553Fmt_Nav_25Hz;
+
 // Chapter 10 writers
 ClCh10Writer_Time     * pCh10Writer_Time;
 ClCh10Writer_1553     * pCh10Writer_1553;
@@ -125,10 +129,6 @@ int main(int iArgc, char * aszArgv[])
     ClSource_VideoDB      * pSource_Video_Chase;
 
     int                     iI106Handle;
-
-    // 1553 messages
-//  ClCh10Format_1553_Nav   suNav_1Hz(RT_NAV, 1, 29, 32);
-    ClCh10Format_1553_Nav   suNav_25Hz(RT_NAV, 1, 29, 32);
 
     unsigned long       ulBuffSize = 0L;
     unsigned char     * pvBuff  = NULL;
@@ -290,6 +290,10 @@ int main(int iArgc, char * aszArgv[])
     pSource_Video_Chase->Open(szInFile, "Video_F4_Chase");
 #endif
 
+    // Data formatters
+//  p1553Fmt_Nav_1Hz  = new ClCh10Format_1553_Nav(RT_NAV, 1, 29, 32);
+    p1553Fmt_Nav_25Hz = new ClCh10Format_1553_Nav(RT_NAV, 1, 29, 32);
+
     // Make Chapter 10 writers
     pCh10Writer_Time          = new ClCh10Writer_Time();
 #if 0
@@ -369,7 +373,7 @@ int main(int iArgc, char * aszArgv[])
 
         // Make nav message(s)
 //      suNav_1Hz.MakeMsg(&clSimState);
-        suNav_25Hz.MakeMsg(&clSimState);
+        p1553Fmt_Nav_25Hz->MakeMsg(&clSimState);
 
         // Get current video data
 #if 0
@@ -392,8 +396,8 @@ int main(int iArgc, char * aszArgv[])
         if (clSimTimer_40ms.Expired())
             {
             clSimTimer_40ms.FromPrev();
-            suNav_25Hz.SetRTC(&ClSimTimer::lSimClockTicks);
-            pCh10Writer_1553->AppendMsg(&suNav_25Hz);
+            p1553Fmt_Nav_25Hz->SetRTC(&ClSimTimer::lSimClockTicks);
+            pCh10Writer_1553->AppendMsg(p1553Fmt_Nav_25Hz);
             } // end 40 msec / 25 Hz events
 
         // 100 msec events
@@ -511,6 +515,9 @@ void WriteTmats(int iI106Handle, std::string sProgramName, double fCurrSimClockT
     uint32_t            ulDataBuffSize;
     SuTmats_ChanSpec  * psuTmats_ChanSpec;
     int                 iRSrcNum = 1;
+    int                 iBIndex  = 1;
+    int                 iCIndex  = 1;
+
 #if 0
     const int           iTotalRSrcs = 5;
 #else
@@ -570,8 +577,9 @@ void WriteTmats(int iI106Handle, std::string sProgramName, double fCurrSimClockT
     ssTMATS << pCh10Writer_Video_Chase->TMATS(1, iRSrcNum++, "VIDEO_CHASE");
 #endif
 
-    // 1553 section
+    // 1553 R section, then linked B and C sections
     ssTMATS << pCh10Writer_1553->TMATS(1, iRSrcNum++);
+    ssTMATS << p1553Fmt_Nav_25Hz->TMATS(iBIndex, iCIndex, pCh10Writer_1553->sCDLN);
 
     assert(iRSrcNum-1 == iTotalRSrcs);
 
