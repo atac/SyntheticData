@@ -206,11 +206,11 @@ actime      Time
 aclatd      Latitude (degrees)
 aclond      Longitude (degrees)
 acaltf      Aircraft altitude above sea level (ft)
-acktas      True Airspeed
-acvifps     Total Velocity
-acvxi       X Velocity
-acvyi       Y Velocity
-acvzi       Z Velocity
+acktas      True Airspeed (kts)
+acvifps     Total Velocity  (f/s)
+acvxi       X Velocity (f/s)
+acvyi       Y Velocity (f/s)
+acvzi       Z Velocity (f/s)
 acaxi       Aircraft inertial x-coordinate acceleration (f/s^2)
 acayi       Aircraft inertial y-coordinate acceleration (f/s^2)
 acazi       Aircraft inertial z-coordinate acceleration (f/s^2)
