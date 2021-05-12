@@ -1,0 +1,188 @@
+Name        Units       Rate        Description
+----------  ----------  ----------  ------------------------
+1107        <units>     0.25        SYNC WORD FOR SUBFRAME 1
+2670        <units>     0.25        SYNC WORD FOR SUBFRAME 2
+5107        <units>     0.25        SYNC WORD FOR SUBFRAME 3
+6670        <units>     0.25        SYNC WORD FOR SUBFRAME 4
+ACID                    0.25        AIRCRAFT NUMBER
+DATE.DAY    Day         0.25        Date (Day)
+DATE.MONTH  Month       0.25        Date (Month)
+DATE.YEAR   Year        0.25        Date (Year)
+DVER.1                  0.25        DATABASE ID VERSION CHAR 1
+DVER.2                  0.25        DATABASE ID VERSION CHAR 2
+ECYC.1      HOURS       0.25        ENGINE CYCLE 1 LSP
+ECYC.2      HOURS       0.25        ENGINE CYCLE 2 LSP
+ECYC.3      HOURS       0.25        ENGINE CYCLE 3 LSP
+ECYC.4      HOURS       0.25        ENGINE CYCLE 4 LSP
+EHRS.1      HOURS       0.25        ENGINE HOURS 1 LSP
+EHRS.2      HOURS       0.25        ENGINE HOURS 2 LSP
+EHRS.3      HOURS       0.25        ENGINE HOURS 3 LSP
+EHRS.4      HOURS       0.25        ENGINE HOURS 4 LSP
+ESN.1       UNITS       0.25        ENGINE SERIAL NUMBER 1 LSP
+ESN.2       UNITS       0.25        ENGINE SERIAL NUMBER 2 LSP
+ESN.3       UNITS       0.25        ENGINE SERIAL NUMBER 3 LSP
+ESN.4       UNITS       0.25        ENGINE SERIAL NUMBER 4 LSP
+FRMC                    0.25        FRAME COUNTER
+A/T                     1           THRUST AUTOMATIC ON
+ABRK        DEG         1           AIRBRAKE POSITION
+ACMT                    1           ACMS TIMING USED T1HZ
+AIL.1       DEG         1           AILERON POSITION LH
+AIL.2       DEG         1           AILERON POSITION RH
+ALTS        FEET        1           SELECTED ALTITUDE LSP
+APFD                    1           AP FD STATUS
+ATEN                    1           A/T ENGAGE STATUS
+BLV                     1           BLEED AIR ALL VALVES
+BPGR.1      PSI         1           BRAKE PRESSURE LH GREEN
+BPGR.2      PSI         1           BRAKE PRESSURE RH GREEN
+BPYR.1      PSI         1           BRAKE PRESSURE LH YELLOW
+BPYR.2      PSI         1           BRAKE PRESSURE RH YELLOW
+CALT                    1           CABIN HIGH ALTITUDE
+CASS        KNOTS       1           SELECTED AIRSPEED
+CRSS        DEG         1           SELECTED COURSE
+DFGS                    1           DFGS 1&2 MASTER
+DWPT                    1           DISTANCE TO WAYPOINT LSP
+EAI                     1           ENGINE ANTICE ALL POSITIONS
+ELEV.1      DEG         1           ELEVATOR POSITION LEFT
+ELEV.2      DEG         1           ELEVATOR POSITION RIGHT
+EVNT                    1           EVENT MARKER
+FADF                    1           FADEC FAIL ALL ENGINES
+FADS                    1           FADEC STATUS ALL ENGINES
+FGC3                    1           DFGS STATUS 3
+FIRE.1                  1           ENGINE FIRE #1
+FIRE.2                  1           ENGINE FIRE #2
+FIRE.3                  1           ENGINE FIRE #3
+FIRE.4                  1           ENGINE FIRE #4
+FLAP        COUNTS      1           T.E. FLAP POSITION
+FQTY.1      LBS         1           FUEL QUANTITY TANK 1 LSB
+FQTY.2      LSB         1           FUEL QUANTITY TANK 2 LSB
+FQTY.3      LSB         1           FUEL QUANTITY TANK 3 LSB
+FQTY.4      LSB         1           FUEL QUANTITY TANK 4 LSB
+GLS         DDM         1           GLIDESLOPE DEVIATION
+GPWS                    1           GPWS 1-5
+HDGS        DEG         1           SELECTED HEADING
+HF1                     1           HF KEYING #1
+HF2                     1           HF KEYING #2
+HYDG                    1           LOW HYDRAULIC PRESSURE GREEN
+HYDY                    1           LOW HYDRAULIC PRESSURE YELLOW
+ILSF                    1           ILS FREQUENCY LSP
+LATP        DEG         1           LATITUDE POSITION LSP
+LGDN                    1           GEARS L&R DOWN LOCKED (0 = true)
+LGUP                    1           GEARS L&R UP LOCKED (0 = true)
+LMOD                    1           LATERAL ENGAGE MODES
+LOC         DDM         1           LOCALIZER DEVIATION
+LONP        DEG         1           LONGITUDE POSITION LSP
+MNS         MMACH       1           SELECTED MACH
+MRK                     1           MARKERS- INNER, MIDDLE, OUTER
+MW                      1           MASTER WARNING
+N1CO                    1           N1 COMPENSATION
+OIP.1       PSI         1           OIL PRESSURE 1
+OIP.2       PSI         1           OIL PRESSURE 2
+OIP.3       PSI         1           OIL PRESSURE 3
+OIP.4       PSI         1           OIL PRESSURE 4
+OIPL                    1           LOW OIL PRESSURE ALL ENGINES
+OIT.1       DEG         1           OIL TEMPERATURE 1
+OIT.2       DEG         1           OIL TEMPERATURE 2
+OIT.3       DEG         1           OIL TEMPERATURE 3
+OIT.4       DEG         1           OIL TEMPERATURE 4
+PACK                    1           PACK AIR CONDITIONING ALL
+PH                      1           FLIGHT PHASE FROM ACMS
+POVT                    1           PYLON OVERHEAT ALL ENGINES
+PTRM        DEG         1           PITCH TRIM POSITION
+PUSH                    1           STICK PUSHER
+SAT         DEG         1           STATIC AIR TEMPERATURE
+SMKB                    1           ANIMAL BAY SMOKE
+SMOK                    1           SMOKE WARNING
+SNAP                    1           MANUAL SNAPSHOT SWITCH
+SPL.1       DEG         1           ROLL SPOILER LEFT
+SPL.2       DEG         1           ROLL SPOILER RIGHT
+SPLG                    1           SPOILER DEPLOY GREEN
+SPLY                    1           SPOILER DEPLOY YELLOW
+TAI                     1           TAIL ANTICE ON
+TAT         DEG         1           TOTAL AIR TEMPERATURE
+TCAS                    1           TCAS LSP
+TMAG                    1           TRUE/MAG HEADING SELECT
+TMODE                   1           THRUST MODE
+VHF1                    1           VHF KEYING #1
+VHF2                    1           VHF KEYING #2
+VHF3                    1           VHF KEYING #3
+VMODE                   1           VERTICAL ENGAGE MODES
+VSPS        FT/MIN      1           SELECTED VERTICAL SPEED
+WAI.1                   1           INNER WING DEICE
+WAI.2                   1           OUTER WING ANTICE
+WOW                     1           WEIGHT ON WHEELS (0 = true)
+WSHR                    1           WINDSHEAR WARNING
+APUF                    2           APU FIRE WARNING
+CCPC        COUNTS      2           CONTROL COLUMN POSITION CAPT (750 - 4000)
+CCPF        COUNTS      2           CONTROL COLUMN POSITION F/O
+CWPC        COUNTS      2           CONTROL WHEEL POSITION CAPT
+CWPF        COUNTS      2           CONTROL WHEEL POSITION F/O
+GMT.HOUR    Hour        2           GREENWICH MEAN TIME (HOUR)
+GMT.MINUTE  Minute      2           GREENWICH MEAN TIME (MINUTE)
+GMT.SEC     Second      2           GREENWICH MEAN TIME (SECOND)
+MSQT.1                  2           SQUAT SWITCH LEFT MAIN GEAR
+MSQT.2                  2           SQUAT SWITCH RIGHT MAIN GEAR
+PI          MB          2           IMPACT PRESSURE LSP
+PS          IN          2           STATIC PRESSURE LSP
+PSA         MB          2           AVARAGE STATIC PRESSURE LSP
+PT          MB          2           TOTAL PRESSURE LSP
+RUDD        DEG         2           RUDDER POSITION
+RUDP        COUNTS      2           RUDDER PEDAL POSITION (1000 - 3000)
+SHKR                    2           STICK SHAKER
+TOCW                    2           TAKEOFF CONF WARNING
+ALT         FEET        4           PRESSURE ALTITUDE LSP
+ALTR        FT/MIN      4           ALTITUDE RATE
+AOA1        DEG         4           ANGLE OF ATTACK 1
+AOA2        DEG         4           ANGLE OF ATTACK 2
+AOAC        DEG         4           CORRECTED ANGLE OF ATTACK
+AOAI        DEG         4           INDICATED ANGLE OF ATTACK
+BAL1        FEET        4           BARO CORRECT ALTITUDE LSP
+BAL2        FEET        4           BARO CORRECT ALTITUDE LSP
+CAS         KNOTS       4           COMPUTED AIRSPEED LSP
+CASM        KNOTS       4           MAX ALLOWABLE AIRSPEED
+DA          DEG         4           DRIFT ANGLE
+EGT.1       DEG         4           EXHAUST GAS TEMPERATURE 1
+EGT.2       DEG         4           EXHAUST GAS TEMPERATURE 2
+EGT.3       DEG         4           EXHAUST GAS TEMPERATURE 3
+EGT.4       DEG         4           EXHAUST GAS TEMPERATURE 4
+FF.1        LBS/HR      4           FUEL FLOW 1
+FF.2        LBS/HR      4           FUEL FLOW 2
+FF.3        LBS/HR      4           FUEL FLOW 3
+FF.4        LBS/HR      4           FUEL FLOW 4
+GS          KNOTS       4           GROUND SPEED LSP
+LATG        G           4           LATERAL ACCELERATION
+LONG        G           4           LONGITUDINAL ACCELERATION
+MACH        MACH        4           MACH LSP
+MH          DEG         4           MAGNETIC HEADING LSP
+N1.1        %RPM        4           FAN SPEED 1 LSP
+N1.2        %RPM        4           FAN SPEED 2 LSP
+N1.3        %RPM        4           FAN SPEED 3 LSP
+N1.4        %RPM        4           FAN SPEED 4 LSP
+N1C         %RPM        4           N1 COMMAND LSP
+N1T         %RPM        4           N1 TARGET LSP
+N2.1        %RPM        4           CORE SPEED 1 LSP
+N2.2        %RPM        4           CORE SPEED 2 LSP
+N2.3        %RPM        4           CORE SPEED 3 LSP
+N2.4        %RPM        4           CORE SPEED 4 LSP
+NSQT                    4           SQUAT SWITCH NOSE MAIN GEAR
+PLA.1       DEG         4           POWER LEVER ANGLE 1 (roughly 0 to 90)
+PLA.2       DEG         4           POWER LEVER ANGLE 2
+PLA.3       DEG         4           POWER LEVER ANGLE 3
+PLA.4       DEG         4           POWER LEVER ANGLE 4
+TAS         KNOTS       4           TRUE AIRSPEED LSP
+TH          DEG         4           TRUE HEADING LSP (+/-180, 0 = north)
+TRK         DEG         4           TRACK ANGLE TRUE LSP
+TRKM        DEG         4           TRACK ANGLE MAG LSP
+VIB.1       IN/SEC      4           ENGINE VIBRATION 1
+VIB.2       IN/SEC      4           ENGINE VIBRATION 2
+VIB.3       IN/SEC      4           ENGINE VIBRATION 3
+VIB.4       IN/SEC      4           ENGINE VIBRATION 4
+WD          DEG         4           WIND DIRECTION TRUE
+WS          KNOTS       4           WIND SPEED
+PTCH        DEG         8           PITCH ANGLE LSP
+RALT        FEET        8           RADIO ALTITUDE LSP
+ROLL        DEG         8           ROLL ANGLE LSP (+ = left wing high)
+VRTG        G           8           VERTICAL ACCELERATION (+ = down, nominal = +1)
+BLAC        G           16          BODY LONGITUDINAL ACCELERATION
+CTAC        G           16          CROSS TRACK ACCELERATION
+FPAC        G           16          FLIGHT PATH ACCELERATION (X,Y component, + = forward)
+IVV         FT/MIN      16          INERTIAL VERTICAL SPEED LSP
