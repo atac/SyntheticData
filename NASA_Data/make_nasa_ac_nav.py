@@ -35,7 +35,7 @@ if __name__=='__main__':
  
     # If no command line parameters then use these
     if len(sys.argv) < 2:
-        dataset_dir = "Tail_652_1/"
+        dataset_dir = "Tail_652_1"
         data_file_list = ("652200101120916.mat",)   # File OK
 #        dataset_dir = "Tail_652_2/"
 #        data_file_list = ("652200108031352.mat",)   # File Broken
@@ -49,7 +49,7 @@ if __name__=='__main__':
     
     # Get the file names list
     if len(sys.argv) >= 3:
-        data_file_list = sys.argv[2]
+        data_file_list = { sys.argv[2] }
 
     # If there is no file names list then make one
     if data_file_list == None:
@@ -65,7 +65,7 @@ if __name__=='__main__':
     # SynthCh10Gen uses these fields
     # "LATP" "LONP" "ALT" "TAS" "TH" "MH" "PTCH" "ROLL" "AOAC" "VRTG"
     write_cols = None
-    write_cols = { "LATP", "LONP", "ALT", "TAS", "TH", "MH", "PTCH", "ROLL", "AOAC", "VRTG" }
+    write_cols = { "LATP", "LONP", "ALT", "TAS", "TH", "MH", "PTCH", "ROLL", "AOAC", "VRTG", "GS", "IVV", "FPAC" }
 
     # Iterate over the list of files to (maybe) process
     file_num = 1
@@ -79,8 +79,8 @@ if __name__=='__main__':
         # Only process if the file is a ".mat"
         if data_filename.endswith(".mat"):
 
-#           print("File {0} - {1}".format(file_num, matlab_data_dir + data_filename), end = '')
-            print("File {0} - {1}".format(file_num, matlab_data_dir + data_filename))
+            print("File {0} - {1}".format(file_num, matlab_data_dir + data_filename), end = '')
+          # print("File {0} - {1}".format(file_num, matlab_data_dir + data_filename))
             file_num += 1
 
             # Only process if output file does not exist yet
@@ -95,7 +95,7 @@ if __name__=='__main__':
                 # If no error making flight data then write it out
                 if nm.nasa_frame is not None:
     
-                    # Resample to 25 Hz
+                    # First upsample to 100 Hz
                     nm.nasa_frame = nm.nasa_frame.resample("10ms").asfreq()
                     nm.nasa_frame['LATP'].interpolate(inplace=True)
                     nm.nasa_frame['LONP'].interpolate(inplace=True)
@@ -107,6 +107,11 @@ if __name__=='__main__':
                     nm.nasa_frame['MH'  ].ffill(inplace=True)
                     nm.nasa_frame['VRTG'].ffill(inplace=True)
                     nm.nasa_frame['AOAC'].ffill(inplace=True)
+                    nm.nasa_frame['GS'  ].ffill(inplace=True)
+                    nm.nasa_frame['IVV' ].ffill(inplace=True)
+                    nm.nasa_frame['FPAC'].ffill(inplace=True)
+
+                    # Now downsample to 25 Hz
                     nm.nasa_frame = nm.nasa_frame.resample("40ms").asfreq()
     
                     # Make sure destination directory exists
