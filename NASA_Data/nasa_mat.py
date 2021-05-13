@@ -172,16 +172,18 @@ class NasaMat:
         """ Sometimes time is jacked up at the beginning. Find the first reasonable
             time and then figure out what the data start time must have been. """
             
-        # The original way
-#        return self.make_date_time(0)
-            
         # For now just get time out of the middle of the data and hope for the best
-        middle_date_index = int(self.var_array_len('DATE_YEAR') / 2)
-        middle_time       = datetime.datetime.fromisoformat(self.make_date_time(middle_date_index))
-        start_time_offset = datetime.timedelta(seconds = middle_date_index * 4)
-        start_time        = middle_time - start_time_offset
-        return  start_time.isoformat(sep=" ")
-        
+        try:
+            middle_date_index = int(self.var_array_len('DATE_YEAR') / 2)
+            middle_time       = datetime.datetime.fromisoformat(self.make_date_time(middle_date_index))
+            start_time_offset = datetime.timedelta(seconds = middle_date_index * 4)
+            start_time        = middle_time - start_time_offset
+            return start_time.isoformat(sep=" ")
+
+        # Error so return a null object
+        except:
+             return None
+
 # -----------------------------------------------------------------------------
 
     def make_time_series(self, key):
