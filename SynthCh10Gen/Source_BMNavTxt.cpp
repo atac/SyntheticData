@@ -88,7 +88,7 @@ bool ClSource_BMNavTxt::Open(std::string sFilename)
             {
             // Replace certain labels with their standard label counterparts
             if      (strcmp(szTrimmedLabel, "actime" ) == 0) sDataLabelKey = sPrefix + "AC_TIME";
-            else if (strcmp(szTrimmedLabel, "atlatd" ) == 0) sDataLabelKey = sPrefix + "AC_LAT";
+            else if (strcmp(szTrimmedLabel, "aclatd" ) == 0) sDataLabelKey = sPrefix + "AC_LAT";
             else if (strcmp(szTrimmedLabel, "aclond" ) == 0) sDataLabelKey = sPrefix + "AC_LON";
             else if (strcmp(szTrimmedLabel, "acaltf" ) == 0) sDataLabelKey = sPrefix + "AC_ALT";
             else if (strcmp(szTrimmedLabel, "acktas" ) == 0) sDataLabelKey = sPrefix + "AC_TAS";
