@@ -65,7 +65,7 @@ if __name__=='__main__':
     # SynthCh10Gen uses these fields
     # "LATP" "LONP" "ALT" "TAS" "TH" "MH" "PTCH" "ROLL" "AOAC" "VRTG"
     write_cols = None
-    write_cols = { "LATP", "LONP", "ALT", "TAS", "TH", "MH", "PTCH", "ROLL", "AOAC", "VRTG", "GS", "IVV", "FPAC" }
+    write_cols = [ "LATP", "LONP", "ALT", "TAS", "TH", "MH", "PTCH", "ROLL", "AOAC", "VRTG", "GS", "IVV", "FPAC" ]
 
     # Iterate over the list of files to (maybe) process
     file_num = 1
@@ -118,15 +118,17 @@ if __name__=='__main__':
                     if not os.path.isdir(csv_data_dir):
                         os.mkdir(csv_data_dir)
                     
-                    # Write it out
+                    # Rearrange the columns and write it out
                     print(" - write {0}".format(output_data_filename))
-                    nm.nasa_frame.to_csv(output_data_filename,index_label="DATE_TIME", columns=write_cols)
+                    output_frame = nm.nasa_frame[write_cols]
+                    output_frame.to_csv(output_data_filename,index_label="DATE_TIME")
+#                    nm.nasa_frame.to_csv(output_data_filename,index_label="DATE_TIME", columns=write_cols)
 #                   nm.nasa_frame.to_parquet(data_filename_root+output_filename_ext)
 #                   nm.nasa_frame.to_hdf(data_filename_root+output_filename_ext, "data_"+data_filename_base, mode="w", complevel=1)
             
                 # There was an error converting
-    #            else:
-    #                print(" - error making dataframe")
+                else:
+                    print(" - error making dataframe")
                 
             # Input file skipped
             else:
