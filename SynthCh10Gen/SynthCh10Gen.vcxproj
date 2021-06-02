@@ -185,6 +185,7 @@
     <ClInclude Include="SimTimer.h" />
     <ClInclude Include="Source_BMNavDB.h" />
     <ClInclude Include="Source_BMNavTxt.h" />
+    <ClInclude Include="Source_CsvTxt.h" />
     <ClInclude Include="Source_NasaNavTxt.h" />
     <ClInclude Include="Source_Nav.h" />
     <ClInclude Include="Source_VideoDB.h" />
@@ -211,6 +212,7 @@
     <ClCompile Include="Ch10Writer_Video.cpp" />
     <ClCompile Include="Source_BMNavDB.cpp" />
     <ClCompile Include="Source_BMNavTxt.cpp" />
+    <ClCompile Include="Source_CsvTxt.cpp" />
     <ClCompile Include="Source_NasaNavTxt.cpp" />
     <ClCompile Include="Source_VideoDB.cpp" />
     <ClCompile Include="SynthCh10Gen.cpp" />

@@ -111,11 +111,28 @@ void ClSource_BMNavDB::Close()
 bool ClSource_BMNavDB::ReadNextLine()
     {
     int         iStatus;
-    unsigned    uColIdx;
 
     // Get the next row of data
     iStatus = sqlite3_step(pSqlStmt);
     if (iStatus != SQLITE_ROW)
+        return false;
+
+    // Decode time
+    // TODO
+
+    return true;
+    }
+
+
+// ----------------------------------------------------------------------------
+
+bool ClSource_BMNavDB::UpdateSimState(double fSimElapsedTime)
+    {
+    unsigned    uColIdx;
+    bool        bStatus;
+
+    // Return if simulation time is less than current data time from this source
+    if (fSimElapsedTime < fRelTime)
         return false;
 
     // Get the individual column values
@@ -135,7 +152,8 @@ bool ClSource_BMNavDB::ReadNextLine()
             } // end switch on column type
         } // end for all columns
 
-    return true;
-    }
+    // Get the next line of data
+    bStatus = ReadNextLine();
 
-
+    return bStatus;
+    } // end UpdateSimState()

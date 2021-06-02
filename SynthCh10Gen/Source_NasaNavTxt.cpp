@@ -6,6 +6,7 @@
 #include <string>
 
 #include "Source_Nav.h"
+#include "Source_CsvTxt.h"
 #include "Source_NasaNavTxt.h"
 
 const double M_PI = 3.141592653589793238463;    // value of pi
@@ -233,7 +234,7 @@ bool ConvertNasaTime(std::string sNasaTime, double *fDecodedTime);
 // ----------------------------------------------------------------------------
 
 ClSource_NasaNavTxt::ClSource_NasaNavTxt(ClSimState * pclSimState, std::string sPrefix) :
-    ClSource_Nav(pclSimState, sPrefix)
+    ClSource_CsvTxt(pclSimState, sPrefix)
     {
     this->pclSimState = pclSimState;
     this->sPrefix     = sPrefix;
@@ -253,58 +254,15 @@ ClSource_NasaNavTxt::~ClSource_NasaNavTxt()
 // Methods
 // ----------------------------------------------------------------------------
 
-void display_vector_contents(const STR& input_line, const CSV_FIELDS& output_fields)
-{
-    CONST_VECTOR_ITR it = output_fields.begin();
-    int i = 0;
+// Read the header line, initialize the sim state, and otherwise get ready.
+// This is generally called from Open().
 
-    for( ; it != output_fields.end(); ++it)
+void ClSource_NasaNavTxt::Init()
     {
-        std :: cout << "Field [" << i++ << "] - " << *it << "\n";
-    }
-}
-
-void display_map_contents(const STR& input_line, const KEY_VAL_FIELDS& output_map)
-{
-    CONST_MAP_ITR it = output_map.begin();
-    for (; it != output_map.end(); ++it)
-    {
-        std :: cout << "Key - " << it->first << " ,Value - " << it->second << "\n";
-    }
-}
-
-/// Open the NASA data file
-
-bool ClSource_NasaNavTxt::Open(std::string sFilename)
-    {
-    char                szLine[2000];
-
     std::string         sDataLabelKey;
-    bool                bCsvStatus;
-
-    hNasaInput = fopen(sFilename.c_str(), "r");
-    if (hNasaInput == NULL)
-        return false;
-
-    // Get the first header line
-    fgets(szLine, sizeof(szLine), hNasaInput);
-
-    // Trim any CR or LF at the end
-    for (int iLineCharIdx = strlen(szLine)-1; iLineCharIdx > 0; iLineCharIdx--)
-        if ((szLine[iLineCharIdx] == 10) || (szLine[iLineCharIdx] == 13))
-            szLine[iLineCharIdx] = '\0';
-        else
-            break;
-
-    // Parse the header line
-//    State.clear();
-    CsvDataLabels.clear();
-    bCsvStatus = CsvParser.parse_line(szLine, CsvDataLabels);
-    assert(bCsvStatus == true);
-
-//    display_vector_contents(szLine, CsvFields);
 
     // Step through all the header labels found
+    // ONLY DO THIS FOR PRIMARY NAV SOURCES
     for (VECTOR_ITR itLabel = CsvDataLabels.begin(); itLabel != CsvDataLabels.end(); ++itLabel)
         {
         // Replace known standard data fields (latitude, longitude, etc.) with their standard data labels
@@ -319,6 +277,7 @@ bool ClSource_NasaNavTxt::Open(std::string sFilename)
         else if (*itLabel == "AOAC") *itLabel = "AC_AOA";
         else if (*itLabel == "VRTG") *itLabel = "AC_ACCEL_DOWN";
 
+#if 0
         // Make the data label with the appropriate prefix
         sDataLabelKey = sPrefix + *itLabel;
 
@@ -327,51 +286,30 @@ bool ClSource_NasaNavTxt::Open(std::string sFilename)
 
         // Insert an initial placeholder into SimState map
         pclSimState->insert(sDataLabelKey,-1.0);
-
+#endif
         }
+
 //    display_vector_contents(szLine, CsvDataLabels);
 
-    // Make t
-
     // Create additional SimState variables for required derived parameters
-    pclSimState->insert(sPrefix + "AC_TIME", -1.0);
-    pclSimState->insert(sPrefix + "AC_VEL_NORTH", -1.0);
-    pclSimState->insert(sPrefix + "AC_VEL_EAST", -1.0);
-    pclSimState->insert(sPrefix + "AC_VEL_DOWN", -1.0);
+    pclSimState->insert(sPrefix + "AC_TIME",        -1.0);
+    pclSimState->insert(sPrefix + "AC_VEL_NORTH",   -1.0);
+    pclSimState->insert(sPrefix + "AC_VEL_EAST",    -1.0);
+    pclSimState->insert(sPrefix + "AC_VEL_DOWN",    -1.0);
     pclSimState->insert(sPrefix + "AC_ACCEL_NORTH", -1.0);
-    pclSimState->insert(sPrefix + "AC_ACCEL_EAST", -1.0);
+    pclSimState->insert(sPrefix + "AC_ACCEL_EAST",  -1.0);
 
-    // Initialize variables
-    fStartTime = -1.0;
-
-    return true;
-
-    } // end Open()
-
-
-// ----------------------------------------------------------------------------
-
-/// Close the NASA data file
-
-void ClSource_NasaNavTxt::Close()
-    {
-    if (hNasaInput != NULL)
-        fclose(hNasaInput);
+    // Now do the standard CSV init
+    ClSource_CsvTxt::Init();
 
     return;
-    } // end Close()
+    } // end Init()
+
 
 // ----------------------------------------------------------------------------
 
-// Heading to radians
-#define HDG2RAD(heading)    ((90.0 - heading) * M_PI / 180.0l)
 
-// Gs to Ft/Sec^2
-#define G2FPS2(accel)       (accel * 32.17)
-
-// Knots to Ft/Sec
-#define KTS2FPS(speed)      (speed * 6076.0 / 3600.0)
-
+#if 0
 /// Read the next line of NASA data
 
 bool ClSource_NasaNavTxt::ReadNextLine()
@@ -381,8 +319,8 @@ bool ClSource_NasaNavTxt::ReadNextLine()
     KEY_VAL_FIELDS      CsvMap;
 
     // Get the next line        
-    fgets(szLine, sizeof(szLine), hNasaInput);
-    if (feof(hNasaInput))
+    fgets(szLine, sizeof(szLine), hCsvInput);
+    if (feof(hCsvInput))
         return false;
 
     // Trim any CR or LF at the end
@@ -393,9 +331,27 @@ bool ClSource_NasaNavTxt::ReadNextLine()
             break;
 
     // Parse the input data line
-    bCsvStatus = CsvParser.parse_line(szLine, CsvDataLabels, CsvMap);
+    CsvMap.clear();
+    bCsvStatus = CsvParser.parse_line(szLine, CsvDataLabels,  );
     assert(bCsvStatus == true);
 //    display_map_contents(szLine, CsvMap);
+
+    } // end ReadNextLine()
+#endif
+
+// ----------------------------------------------------------------------------
+
+/// Copy the current simulation data into the current sim state at the 
+/// appropriate time.
+/// Return false when end of file.
+
+bool ClSource_NasaNavTxt::UpdateSimState(double fSimElapsedTime)
+    {
+    bool        bStatus;
+
+    // Return if simulation time is less than current data time from this source
+    if (fSimElapsedTime < fRelTime)
+        return true;
 
     // Copy parsed data into the SimState variable. Yeah, I know copying large quantities
     // of data is bad for performance but that is how it is done for now. In the future I 
@@ -404,6 +360,7 @@ bool ClSource_NasaNavTxt::ReadNextLine()
     
     for (CONST_MAP_ITR itCsvMap = CsvMap.begin(); itCsvMap != CsvMap.end(); ++itCsvMap)
         {
+#if 0
         double  fDecodedVal;
 
         fDecodedVal = std::stod(itCsvMap->second);
@@ -415,7 +372,7 @@ bool ClSource_NasaNavTxt::ReadNextLine()
             double  fDecodedTime;
             double  fRelTime;
 
-            bStatus = ConvertNasaTime(itCsvMap->second, &fDecodedTime);
+            bStatus = ConvertTime(itCsvMap->second, &fDecodedTime);
             assert(bStatus);
             pclSimState->update(sPrefix+"DATE_TIME", fDecodedTime);
 
@@ -427,6 +384,13 @@ bool ClSource_NasaNavTxt::ReadNextLine()
             fRelTime = fDecodedTime - fStartTime;
             pclSimState->update(sPrefix+"AC_TIME", fRelTime);
             }
+#else
+        if (itCsvMap->first == sPrefix + "DATE_TIME")
+            {
+            // Relative time has already been calculated so store it
+            pclSimState->update(sPrefix+"AC_TIME", fRelTime);
+            }
+#endif
 
         // Convert G's to fps^2
         else if (itCsvMap->first == sPrefix + "AC_ACCEL_DOWN")
@@ -434,10 +398,13 @@ bool ClSource_NasaNavTxt::ReadNextLine()
 
         // Default is to convert to a double and store it
         else
+            {
             // I wonder if the "sPrefix+" construct should be optimized. It seems like
             // a lot of string concatination.
+//            double fDecodedVal = std::stod(itCsvMap->second);
             pclSimState->update(sPrefix+itCsvMap->first, std::stod(itCsvMap->second));
-        }
+            } // end if default copy
+        } // end for all CSV labeled data
 
     // After data is copied then calculate any necessary derived parameters
     pclSimState->update(sPrefix+"AC_VEL_NORTH",   (double)(KTS2FPS(pclSimState->fState["GS"]) * sin(HDG2RAD(pclSimState->fState["AC_TRUE_HDG"]))));
@@ -446,38 +413,10 @@ bool ClSource_NasaNavTxt::ReadNextLine()
     pclSimState->update(sPrefix+"AC_ACCEL_NORTH", (double)(G2FPS2(pclSimState->fState["FPAC"]) * sin(HDG2RAD(pclSimState->fState["AC_TRUE_HDG"]))));
     pclSimState->update(sPrefix+"AC_ACCEL_EAST",  (double)(G2FPS2(pclSimState->fState["FPAC"]) * cos(HDG2RAD(pclSimState->fState["AC_TRUE_HDG"]))));
 
-    return true;
-    }
+    // Get the next line of data
+    bStatus = ReadNextLine();
+
+    return bStatus;
+    } // end UpdateSimState()
 
 
-// ----------------------------------------------------------------------------
-
-bool ConvertNasaTime(std::string sNasaTime, double *fDecodedTime)
-    {
-    // 2004-02-02 06:30:24.000
-
-    struct tm   suNasaTime;
-    time_t      lNasaTime;
-    double      fSecond;
-    int         iTokens;
-
-    // Decode the time string
-    iTokens = sscanf(sNasaTime.c_str(), "%d-%d-%d %d:%d:%lf", 
-            &suNasaTime.tm_year, &suNasaTime.tm_mon, &suNasaTime.tm_mday,
-            &suNasaTime.tm_hour, &suNasaTime.tm_min, &fSecond);
-    if (iTokens != 6)
-        return false;
-
-    // Fix up some tm fields
-    suNasaTime.tm_year -= 1900;
-    suNasaTime.tm_mon  -= 1;
-    suNasaTime.tm_sec   = (int)fSecond;
-
-    // Convert to a time_t
-    lNasaTime = _mkgmtime(&suNasaTime);
-
-    // Make a floating point representation
-    *fDecodedTime = lNasaTime + (fSecond - suNasaTime.tm_sec);
-
-    return true;
-    }

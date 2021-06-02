@@ -77,7 +77,6 @@ bool ClSource_BMNavTxt::Open(std::string sFilename)
     // This is the current minimum list
     // UserVariable actime aclatd aclond acaltf acktas acvifps acvxi acvyi acvzi acaxi acayi acazi acphid acthtad acpsid acmagd
     DataLabel.clear();
-//    State.clear();
     iTokens = 1;
     szLabel = strtok(szLine, "\t");
     while (iTokens == 1)
@@ -88,7 +87,7 @@ bool ClSource_BMNavTxt::Open(std::string sFilename)
             {
             // Replace certain labels with their standard label counterparts
             if      (strcmp(szTrimmedLabel, "actime" ) == 0) sDataLabelKey = sPrefix + "AC_TIME";
-            else if (strcmp(szTrimmedLabel, "atlatd" ) == 0) sDataLabelKey = sPrefix + "AC_LAT";
+            else if (strcmp(szTrimmedLabel, "aclatd" ) == 0) sDataLabelKey = sPrefix + "AC_LAT";
             else if (strcmp(szTrimmedLabel, "aclond" ) == 0) sDataLabelKey = sPrefix + "AC_LON";
             else if (strcmp(szTrimmedLabel, "acaltf" ) == 0) sDataLabelKey = sPrefix + "AC_ALT";
             else if (strcmp(szTrimmedLabel, "acktas" ) == 0) sDataLabelKey = sPrefix + "AC_TAS";
@@ -136,11 +135,29 @@ void ClSource_BMNavTxt::Close()
 bool ClSource_BMNavTxt::ReadNextLine()
     {
 //    int                 iItems;
-    char                szLine[2000];
+//    char                szLine[2000];
 
     // Get the next line        
     fgets(szLine, sizeof(szLine), hBMInput);
     if (feof(hBMInput))
+        return false;
+
+    // Decode time
+    // TODO
+
+    return true;
+    }
+
+
+
+// ----------------------------------------------------------------------------
+
+bool ClSource_BMNavTxt::UpdateSimState(double fSimElapsedTime)
+    {
+    bool    bStatus;
+
+    // Return if simulation time is less than current data time from this source
+    if (fSimElapsedTime < fRelTime)
         return false;
 
     // Tokenize the line and store values with the appropriate data label
@@ -160,9 +177,11 @@ bool ClSource_BMNavTxt::ReadNextLine()
             }
         } // end while tokenizing line
 
-    return true;
-    }
+    // Get the next line of data
+    bStatus = ReadNextLine();
 
+    return bStatus;
+    } // end UpdateSimState()
 
 // ----------------------------------------------------------------------------
 

@@ -11,6 +11,8 @@
 
 #define BLUEMAX_ASSOC
 
+#pragma message("WARNING - Source_BMNavDB has been restructured to make it compile but still has serious flaws that need to be fixed.")
+
 class ClSource_BMNavDB : 
         public ClSource_Nav
     {
@@ -25,15 +27,14 @@ public:
     std::string                 sSQL;
     sqlite3_stmt              * pSqlStmt;
 
-//    std::string                 sPrefix;
     std::vector<std::string>    asColLabel;
-//    ClSimState                * pclSimState;
 
     // Methods
 public:
-    bool Open(std::string sFilename);
-    void Close();
-    bool ReadNextLine();
+    bool    Open(std::string sFilename);
+    void    Close();
+    bool    ReadNextLine();
+    bool    UpdateSimState(double fSimElapsedTime);
 
     };
 

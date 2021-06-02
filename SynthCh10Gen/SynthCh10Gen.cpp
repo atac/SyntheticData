@@ -1,5 +1,30 @@
-// SynthCh10Gen.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+/* SynthCh10Gen.cpp - This program reads various data sources and generates 
+    Ch 10 data files.
+
+This program is a framework for reading various data sources and generating
+valid IRIG 106 Ch 10 data files. There are three main types of objects in this
+software.
+
+1) Data Sources - These objects read state data. Currently there are software
+modules for reading CSV files, BlueMax formatted files (tab delimited), and 
+data from a SQLite database.
+
+2) Data Formatters - These object take simulation state data at an instant and
+make valid Ch 10 formatted messages.
+
+3) Data Writers - These objects take the appropriately formatted data and write
+it to a Ch 10 channel in a data file.
+
+This simulation engine is structured to simulate one recorder in a single aircraft.
+Everything is paced from a single primary navigation data source. This nav data
+source determines simulation start and stop times as well as the aircraft position
+and attitude as it moves along the simulation. The data file time will be determined
+by the time stamps of the primary nav data source. Simulation time, however, is a relative
+time from the beginning of the primary nav data sources. Simulation time starts at 0.0 and
+increases at the defined tick rate.
+
+*/
+
 
 #include <cstdio>
 #include <cassert>
@@ -130,17 +155,17 @@ int main(int iArgc, char * aszArgv[])
 
     int                     iI106Handle;
 
-    unsigned long       ulBuffSize = 0L;
-    unsigned char     * pvBuff  = NULL;
+    unsigned long           ulBuffSize = 0L;
+    unsigned char         * pvBuff  = NULL;
 
-    EnI106Status        enStatus;
-//  Irig106::SuTmatsInfo         suTmatsInfo;
+    EnI106Status            enStatus;
 
     // Various simulation clocks and time
     ClSimTimer::lSimClockTicks  =        0;
-    ClSimTimer::lTicksPerSecond = 10000000;
-    ClSimTimer::lTicksPerStep   =   400000;     // 40 msec / 25 Hz
+    ClSimTimer::lTicksPerSecond = 10000000;     // 10 MHz, same as IRIG RTC
+    ClSimTimer::lTicksPerStep   =   100000;     // 10 msec / 100 Hz
     ClSimTimer::fSimElapsedTime =      0.0;
+    ClSimTimer      clSimTimer_10ms(100000);    // 10 msec / 100 Hz
     ClSimTimer      clSimTimer_40ms(400000);    // 40 msec / 25 Hz
     ClSimTimer      clSimTimer_100ms(1000000);  // 100 msec / 10 Hz
     ClSimTimer      clSimTimer_1S(10000000);    // 1 sec
@@ -271,7 +296,6 @@ int main(int iArgc, char * aszArgv[])
     bStatus = pSource_Nav->Open(szInFile);
     if (bStatus == false)
         return 1;
-    pSource_Nav->ReadNextLine();
 
     // If need start time and the nav source is NASA then use the time stamp
     // of the first line of NASA data.
@@ -317,6 +341,7 @@ int main(int iArgc, char * aszArgv[])
 
     fCurrSimClockTime   = fStartSimClockTime;
     fNextPrintTime      =  0.0;
+    clSimTimer_10ms.FromNow();
     clSimTimer_40ms.FromNow();
     clSimTimer_100ms.FromNow();
     clSimTimer_1S.FromNow();
@@ -356,20 +381,15 @@ int main(int iArgc, char * aszArgv[])
         // Update input(s)
         // ---------------
 
-        // Aircraft nav input data
-        while (clSimState.fState["AC_TIME"] < fNavSrcTime)
-            {
-            bStatus = pSource_Nav->ReadNextLine();
-
-            // Break out if input is exhausted
-            if (bStatus == false)
-                break;
-
-            } // end while reading aircraft nav data
+        // Read the primary nav data source
+        bStatus = pSource_Nav->UpdateSimState(fNavSrcTime);
 
         // Break out if input is exhausted
         if (bStatus == false)
             break;
+
+        // Read any other input data sources
+        // TODO
 
         // Make nav message(s)
 //      suNav_1Hz.MakeMsg(&clSimState);

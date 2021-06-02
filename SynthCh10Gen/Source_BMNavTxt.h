@@ -9,6 +9,8 @@
 
 #define BLUEMAX_ASSOC
 
+#pragma message("WARNING - Source_BMNavTxt has been restructured to make it compile but still has serious flaws that need to be fixed.")
+
 class ClSource_BMNavTxt : 
         public ClSource_Nav
     {
@@ -19,16 +21,15 @@ class ClSource_BMNavTxt :
 public:
     // Class variables
     FILE                                      * hBMInput;
-//    std::string                                 sPrefix;
     std::vector<std::string>                    DataLabel;
-    //std::unordered_map<std::string, double>   * pSimState;
-//    ClSimState                                * pclSimState;
+    char                                        szLine[2000];
 
     // Methods
 public:
-    bool Open(std::string sFilename);
-    void Close();
-    bool ReadNextLine();
+    bool    Open(std::string sFilename);
+    void    Close();
+    bool    ReadNextLine();
+    bool    UpdateSimState(double fSimElapsedTime);
 
     };
 
