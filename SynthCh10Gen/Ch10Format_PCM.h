@@ -46,13 +46,14 @@ public:
 public:
     SuPcmF1_IntraPktHeader  suIPH;
     SuPcmFrame              suPcmDataFrame;
+    const unsigned long     ulDataLen = sizeof(SuPcmFrame);
 
     // Methods
 public:
     void SetRTC(int64_t * pullRelTime);
 
-    virtual void MakeMsg(ClSimState * pclSimState) = 0;
-    virtual std::string TMATS(int & iBIndex, int & iCIndex, std::string sCDLN) = 0;
+    virtual void MakeMsg(ClSimState * pclSimState);
+    virtual std::string TMATS(int & iBIndex, int & iCIndex, std::string sCDLN);
 
     };
 

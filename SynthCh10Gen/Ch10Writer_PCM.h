@@ -52,8 +52,8 @@ public:
     // Methods
 public:
     void Init(int iHandle, unsigned int uChanID);
-    std::string TMATS(int iRSection, int iEnumN);
-    void AppendMsg(SuPcmF1_IntraPktHeader * psuPCM_IPH, uint16_t auData[], unsigned ulDataLen);
+    std::string TMATS(int iRSection, int iEnumN, int & iPIndex);
+    void AppendMsg(ClCh10Format_PCM_SynthFmt1 * psuPcmFrame);
     void Commit();
 
     };

@@ -29,6 +29,10 @@ ClCh10Writer_PCM::~ClCh10Writer_PCM()
 // Methods
 // ----------------------------------------------------------------------------
 
+// Initialize the Ch 10 header and the PCM Channel Specific Data Word. For now
+// this writer class only supports PCM packed mode. Other PCM modes may be
+// supported in the future.
+
 void ClCh10Writer_PCM::Init(int iHandle, unsigned int uChanID)
     {
     this->iHandle = iHandle;
@@ -47,7 +51,12 @@ void ClCh10Writer_PCM::Init(int iHandle, unsigned int uChanID)
 
     // Init CSDW
     memset(suWriteMsgPCM.psuPCM_CSDW, 0, 4);
-//    suWriteMsgPCM.psuPCM_CSDW->
+    suWriteMsgPCM.psuPCM_CSDW->bIntraPktHdr   = 1;  // Frame includes Intrapacket header
+    suWriteMsgPCM.psuPCM_CSDW->bMajorFrInd    = 0;  // Start of major frame
+    suWriteMsgPCM.psuPCM_CSDW->uMajorFrStatus = 3;  // Locked
+    suWriteMsgPCM.psuPCM_CSDW->uMinorFrStatus = 3;  // Locked
+    suWriteMsgPCM.psuPCM_CSDW->bAlignment     = 0;  // 16 bit alignment
+    suWriteMsgPCM.psuPCM_CSDW->bPackedMode    = 1;  // Packed mode
 
     // TMATS Channel Data Link Name for this channel
     std::stringstream   ssCDLN;
@@ -61,7 +70,7 @@ void ClCh10Writer_PCM::Init(int iHandle, unsigned int uChanID)
 
 // Return a string with the TMATS R section for this channel
 
-std::string ClCh10Writer_PCM::TMATS(int iRSection, int iEnumN)
+std::string ClCh10Writer_PCM::TMATS(int iRSection, int iEnumN, int & iPIndex)
     {
     std::stringstream   ssTMATS;
 
@@ -71,7 +80,36 @@ std::string ClCh10Writer_PCM::TMATS(int iRSection, int iEnumN)
         "R-" << iRSection << "\\CHE-"  << iEnumN << ":T;\n"
         "R-" << iRSection << "\\DSI-"  << iEnumN << ":PCMInChan" << uChanID << ";\n"
         "R-" << iRSection << "\\CDT-"  << iEnumN << ":PCMIN;\n"
+        "R-" << iRSection << "\\PDTF-"  << iEnumN << ":1;\n"
+        "R-" << iRSection << "\\PDP-"  << iEnumN << ":PACKED;\n"
         "R-" << iRSection << "\\CDLN-" << iEnumN << ":" << sCDLN << ";\n";
+
+    ssTMATS <<
+        "P-" << iPIndex << "\\DLN:" << sCDLN << ";\n"
+        "P-" << iPIndex << "\\D1:NRZ-L;\n"
+        "P-" << iPIndex << "\\D2:5000000;\n" // FIX
+        "P-" << iPIndex << "\\D3:U;\n"
+        "P-" << iPIndex << "\\D4:N;\n"
+        "P-" << iPIndex << "\\D5:N;\n"
+        "P-" << iPIndex << "\\D6:N;\n"
+        "P-" << iPIndex << "\\D7:N;\n"
+        "P-" << iPIndex << "\\D8:N/A;\n"
+        "P-" << iPIndex << "\\TF:ONE;\n"
+        "P-" << iPIndex << "\\F1:16;\n"
+        "P-" << iPIndex << "\\F2:M;\n"
+        "P-" << iPIndex << "\\F3:NO;\n"
+        "P-" << iPIndex << "\\MF\\N:1;\n"
+        "P-" << iPIndex << "\\MF1:31;\n" // FIX
+        "P-" << iPIndex << "\\MF2:512;\n"    // FIX
+        "P-" << iPIndex << "\\MF3:FPT;\n"
+        "P-" << iPIndex << "\\P-1\\MF4:32;\n"
+        "P-" << iPIndex << "\\MF5:11111110011010110010100001000000;\n"
+        "P-" << iPIndex << "\\SYNC1:2;\n"
+        "P-" << iPIndex << "\\SYNC2:0;\n"
+        "P-" << iPIndex << "\\SYNC3:2;\n"
+        "P-" << iPIndex << "\\SYNC4:0;\n"
+        "P-" << iPIndex << "\\ISF\\N:0;\n";
+    iPIndex++;
 
     return ssTMATS.str();
     } // end TMATS()
@@ -80,7 +118,7 @@ std::string ClCh10Writer_PCM::TMATS(int iRSection, int iEnumN)
 
 // Append a PCM frame/subframe to the end of a PCM packet.
 
-void ClCh10Writer_PCM::AppendMsg(SuPcmF1_IntraPktHeader * psuPCM_IPH, uint16_t auData[], unsigned ulDataLen)
+void ClCh10Writer_PCM::AppendMsg(ClCh10Format_PCM_SynthFmt1 * psuPcmFrame)
     {
     unsigned        uCurrBufferOffset;
 
@@ -88,7 +126,7 @@ void ClCh10Writer_PCM::AppendMsg(SuPcmF1_IntraPktHeader * psuPCM_IPH, uint16_t a
     if (suWriteMsgPCM.suCh10Header.ulDataLen <= 4)
         {
         // This assumes intra-packet time is in RTC format
-        memcpy(suWriteMsgPCM.suCh10Header.aubyRefTime, psuPCM_IPH->aubyIntPktTime, 6);
+        memcpy(suWriteMsgPCM.suCh10Header.aubyRefTime, psuPcmFrame->suIPH.aubyIntPktTime, 6);
         }
 
     uCurrBufferOffset = suWriteMsgPCM.suCh10Header.ulDataLen;
@@ -96,7 +134,7 @@ void ClCh10Writer_PCM::AppendMsg(SuPcmF1_IntraPktHeader * psuPCM_IPH, uint16_t a
     // Expand the PCM packet buffer if necessary
     if (suWriteMsgPCM.psuPCM_CSDW->bIntraPktHdr == 1)
         suWriteMsgPCM.suCh10Header.ulDataLen += sizeof(SuPcmF1_IntraPktHeader);
-    suWriteMsgPCM.suCh10Header.ulDataLen += ulDataLen;
+    suWriteMsgPCM.suCh10Header.ulDataLen += psuPcmFrame->ulDataLen;
 
     if (suWriteMsgPCM.suCh10Header.ulDataLen > suWriteMsgPCM.uBuffLen)
         {
@@ -110,13 +148,13 @@ void ClCh10Writer_PCM::AppendMsg(SuPcmF1_IntraPktHeader * psuPCM_IPH, uint16_t a
     // Intrapacket header
     if (suWriteMsgPCM.psuPCM_CSDW->bIntraPktHdr == 1)
         {
-        memcpy(suWriteMsgPCM.pchDataBuff + uCurrBufferOffset, psuPCM_IPH, sizeof(SuPcmF1_IntraPktHeader));
+        memcpy(suWriteMsgPCM.pchDataBuff + uCurrBufferOffset, &(psuPcmFrame->suIPH), sizeof(SuPcmF1_IntraPktHeader));
         uCurrBufferOffset += sizeof(SuPcmF1_IntraPktHeader);
         }
 
     // Data
-    memcpy(suWriteMsgPCM.pchDataBuff + uCurrBufferOffset, auData, ulDataLen);
-    uCurrBufferOffset += ulDataLen;
+    memcpy(suWriteMsgPCM.pchDataBuff + uCurrBufferOffset, &(psuPcmFrame->suPcmDataFrame), psuPcmFrame->ulDataLen);
+    uCurrBufferOffset += psuPcmFrame->ulDataLen;
 
     } // end AppendMsg()
 
