@@ -5,3 +5,6 @@ Ch10
 CSV
 OutputData
 /.vs
+boost_*
+SQLite*
+ffmpeg*

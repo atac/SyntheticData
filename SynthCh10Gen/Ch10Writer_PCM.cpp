@@ -44,7 +44,7 @@ void ClCh10Writer_PCM::Init(int iHandle, unsigned int uChanID)
     suWriteMsgPCM.suCh10Header.ulDataLen = 4;
 
     // Setup a buffer with enough memory to handle CSDW for now
-    suWriteMsgPCM.uBuffLen = 4;
+    suWriteMsgPCM.uBuffLen = 1000;
     suWriteMsgPCM.suCh10Header.ulDataLen = 4;
     suWriteMsgPCM.pchDataBuff = (unsigned char *)malloc(suWriteMsgPCM.uBuffLen);
     suWriteMsgPCM.psuPCM_CSDW = (SuPcmF1_ChanSpec *)suWriteMsgPCM.pchDataBuff;
@@ -138,7 +138,7 @@ void ClCh10Writer_PCM::AppendMsg(ClCh10Format_PCM_SynthFmt1 * psuPcmFrame)
 
     if (suWriteMsgPCM.suCh10Header.ulDataLen > suWriteMsgPCM.uBuffLen)
         {
-        suWriteMsgPCM.uBuffLen += 1000;
+        suWriteMsgPCM.uBuffLen = suWriteMsgPCM.suCh10Header.ulDataLen + 1000;
         suWriteMsgPCM.pchDataBuff = (unsigned char *)realloc(suWriteMsgPCM.pchDataBuff, suWriteMsgPCM.uBuffLen);
         suWriteMsgPCM.psuPCM_CSDW = (SuPcmF1_ChanSpec *)suWriteMsgPCM.pchDataBuff;
         }
@@ -153,7 +153,7 @@ void ClCh10Writer_PCM::AppendMsg(ClCh10Format_PCM_SynthFmt1 * psuPcmFrame)
         }
 
     // Data
-    memcpy(suWriteMsgPCM.pchDataBuff + uCurrBufferOffset, &(psuPcmFrame->suPcmFrame), psuPcmFrame->ulDataLen);
+    memcpy(suWriteMsgPCM.pchDataBuff + uCurrBufferOffset, &(psuPcmFrame->suPcmFrame_Fmt1), psuPcmFrame->ulDataLen);
     uCurrBufferOffset += psuPcmFrame->ulDataLen;
 
     } // end AppendMsg()
