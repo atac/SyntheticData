@@ -80,8 +80,8 @@ std::string ClCh10Writer_PCM::TMATS(int iRSection, int iEnumN, int & iPIndex)
         "R-" << iRSection << "\\CHE-"  << iEnumN << ":T;\n"
         "R-" << iRSection << "\\DSI-"  << iEnumN << ":PCMInChan" << uChanID << ";\n"
         "R-" << iRSection << "\\CDT-"  << iEnumN << ":PCMIN;\n"
-        "R-" << iRSection << "\\PDTF-"  << iEnumN << ":1;\n"
-        "R-" << iRSection << "\\PDP-"  << iEnumN << ":PACKED;\n"
+        "R-" << iRSection << "\\PDTF-" << iEnumN << ":1;\n"
+        "R-" << iRSection << "\\PDP-"  << iEnumN << ":PFS;\n"
         "R-" << iRSection << "\\CDLN-" << iEnumN << ":" << sCDLN << ";\n";
 
     ssTMATS <<
@@ -153,7 +153,7 @@ void ClCh10Writer_PCM::AppendMsg(ClCh10Format_PCM_SynthFmt1 * psuPcmFrame)
         }
 
     // Data
-    memcpy(suWriteMsgPCM.pchDataBuff + uCurrBufferOffset, &(psuPcmFrame->suPcmDataFrame), psuPcmFrame->ulDataLen);
+    memcpy(suWriteMsgPCM.pchDataBuff + uCurrBufferOffset, &(psuPcmFrame->suPcmFrame), psuPcmFrame->ulDataLen);
     uCurrBufferOffset += psuPcmFrame->ulDataLen;
 
     } // end AppendMsg()

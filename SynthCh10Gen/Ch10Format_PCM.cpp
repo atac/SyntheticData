@@ -18,8 +18,6 @@
 #include "irig106ch10.h"
 #include "i106_time.h"
 #include "i106_decode_tmats.h"
-#include "i106_decode_tmats_r.h"
-#include "i106_decode_pcmf1.h"
 
 using namespace Irig106;
 
@@ -35,6 +33,13 @@ using namespace Irig106;
 ClCh10Format_PCM_SynthFmt1::ClCh10Format_PCM_SynthFmt1()
     {
     memset(&suIPH, 0, sizeof(SuPcmF1_IntraPktHeader));
+
+    // Fill in intrapacket header
+    suIPH.uMajorFrStatus = 3;
+    suIPH.uMinorFrStatus = 3;
+
+    // Fill in PCM data frame
+    suPcmFrame.uFrameSync = 0xFE6B2840;
     }
 
 // ----------------------------------------------------------------------------
@@ -62,13 +67,14 @@ void ClCh10Format_PCM_SynthFmt1::SetRTC(int64_t * pullRelTime)
 
 void ClCh10Format_PCM_SynthFmt1::MakeMsg(ClSimState * pclSimState)
     {
-  
+    // Fill in PCM data frame
+    suPcmFrame;
     }
 
 
 // ----------------------------------------------------------------------------
 
-std::string ClCh10Format_PCM_SynthFmt1::TMATS(int & iBIndex, int & iCIndex, std::string sCDLN)
+std::string ClCh10Format_PCM_SynthFmt1::TMATS(int & iDIndex, int & iCIndex, std::string sCDLN)
     {
     return std::string("");
     }
