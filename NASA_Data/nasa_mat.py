@@ -102,7 +102,7 @@ class NasaMat:
             
        # Load the Matlab data file
         self.nasa_mat = loadmat(matlab_filename, variable_names=var_names_read)
-    
+
         # Get rid of some unused data columns
         if '__header__' in self.nasa_mat:
             del self.nasa_mat['__header__']
@@ -255,16 +255,32 @@ class NasaMat:
             first_valid_data_timestamp = self.nasa_frame[valid_series].first_valid_index()
             last_valid_data_timestamp  = self.nasa_frame[valid_series].last_valid_index()
 
-            # Fill in missing data between the first and last valid data points. 
-            # Lat and Lon are interpolated. Everything else is forward fill.
-            self.nasa_frame['LATP'] = self.nasa_frame.loc[first_valid_data_timestamp:last_valid_data_timestamp,'LATP'].interpolate()
-            self.nasa_frame['LONP'] = self.nasa_frame.loc[first_valid_data_timestamp:last_valid_data_timestamp,'LONP'].interpolate()
-            self.nasa_frame.ffill(inplace=True)
-
             if (trimmed):
                 self.nasa_frame = self.nasa_frame[first_valid_data_timestamp:last_valid_data_timestamp]
     
         # Error so return a null object
         except:
              self.nasa_frame = None
+
+# -----------------------------------------------------------------------------
+
+    def fill_flight_dataframe(self, interp_fields=None):
+        """ Fill in missing data between the first and last valid data points.
+            Fields listed in the interp_fields set get interpolated between values.
+            Every other field is just forward filled.
+            This probably won't work well with invalid data that is typically
+            at the beginning and/or end of NASA data sets. Having trimmed=True in
+            the make_flight_dataframe() is a good way to get rid of bad data.
+        """
     
+        # Any error will return a null frame object
+        try:
+            # Fill in missing data between the first and last valid data points. 
+            # Lat and Lon are interpolated. Everything else is forward fill.
+            for key in interp_fields:
+                self.nasa_frame[key].interpolate(inplace=True)
+
+            self.nasa_frame.ffill(inplace=True)
+
+        except:
+            pass
