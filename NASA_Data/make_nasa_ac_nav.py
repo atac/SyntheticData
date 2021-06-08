@@ -35,7 +35,7 @@ if __name__=='__main__':
  
     # If no command line parameters then use these
     if len(sys.argv) < 2:
-        dataset_dir = "Tail_652_1"
+        dataset_dir = "Tail_652_1/"
         data_file_list = ("652200101120916.mat",)   # File OK
 #        dataset_dir = "Tail_652_2/"
 #        data_file_list = ("652200108031352.mat",)   # File Broken
