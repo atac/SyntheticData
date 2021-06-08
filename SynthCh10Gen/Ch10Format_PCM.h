@@ -29,7 +29,7 @@ using namespace Irig106;
 class ClCh10Format_PCM_SynthFmt1
     {
 public:
-    ClCh10Format_PCM_SynthFmt1();
+    ClCh10Format_PCM_SynthFmt1(float fFrameRate);
     ~ClCh10Format_PCM_SynthFmt1();
 
     // Data structure for PCM data frame. Note that there are not multiple
@@ -99,12 +99,13 @@ public:
 public:
     SuPcmF1_IntraPktHeader  suIPH;
     SuPcmFrame_Fmt1         suPcmFrame_Fmt1;
-    const unsigned long     ulDataLen = sizeof(SuPcmFrame_Fmt1);
+    unsigned                uWordLen;       // Word length in bits
+    unsigned                uFrameLen;      // PCM frame length in bytes
+    float                   fFrameRate;     // Frame rate in Hz
 
     // Methods
 public:
     void SetRTC(int64_t * pullRelTime);
-
     virtual void MakeMsg(ClSimState * pclSimState);
     virtual std::string TMATS(int & iDIndex, int & iCIndex, std::string sCDLN);
 

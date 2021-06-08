@@ -152,9 +152,11 @@ int main(int iArgc, char * aszArgv[])
     ClSource_BMNavTxt     * pSource_BMNavTxt;
     ClSource_BMNavDB      * pSource_BMNavDB;
     ClSource_NasaNavTxt   * pSource_NasaNavTxt;
+#if 0
     ClSource_VideoDB      * pSource_Video_HUD;
     ClSource_VideoDB      * pSource_Video_Cockpit;
     ClSource_VideoDB      * pSource_Video_Chase;
+#endif
     int                     iI106Handle;
 
     unsigned long           ulBuffSize = 0L;
@@ -319,7 +321,7 @@ int main(int iArgc, char * aszArgv[])
     // Data formatters
 //  p1553Fmt_Nav_1Hz  = new ClCh10Format_1553_Nav(RT_NAV, 1, 29, 32);
     p1553Fmt_Nav_25Hz = new ClCh10Format_1553_Nav(RT_NAV, 1, 29, 32);
-    pPCM_SynthFmt1    = new ClCh10Format_PCM_SynthFmt1();
+    pPCM_SynthFmt1    = new ClCh10Format_PCM_SynthFmt1(100);    // 100 Hz rate
 
     // Make Chapter 10 writers
     pCh10Writer_Time          = new ClCh10Writer_Time();
@@ -365,6 +367,13 @@ int main(int iArgc, char * aszArgv[])
 #endif
     pCh10Writer_PCM->Init(iI106Handle, 20);
     pCh10Writer_1553->Init(iI106Handle, 30);
+
+    // This is a bit of a hack. Moving forward all writers will need a list of
+    // formatters that will provide data, if for no other reason than to generate
+    // meaningful TMATS. For now provide the PCM writer a reference to the PCM
+    // formatter object. In the future this will be generalized for all writers
+    // and formatters.
+    pCh10Writer_PCM->pSynthPcmFmt1 = pPCM_SynthFmt1;
 
     // Get time setup
     pCh10Writer_Time->SetRelTime(ClSimTimer::lSimClockTicks, fStartSimClockTime);

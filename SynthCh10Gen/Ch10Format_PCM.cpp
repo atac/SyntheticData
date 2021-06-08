@@ -30,18 +30,22 @@ using namespace Irig106;
 // ----------------------------------------------------------------------------
 
 // Construct PCM packet
-ClCh10Format_PCM_SynthFmt1::ClCh10Format_PCM_SynthFmt1()
+ClCh10Format_PCM_SynthFmt1::ClCh10Format_PCM_SynthFmt1(float fFrameRate)
     {
     // Make sure the size of the PCM frame is still correct
     assert(sizeof(struct SuPcmFrame_Fmt1) == 160);
 
+    this->uWordLen   = 16;
+    this->uFrameLen  = sizeof(SuPcmFrame_Fmt1);
+    this->fFrameRate = fFrameRate;
+
     memset(&suIPH, 0, sizeof(SuPcmF1_IntraPktHeader));
 
-    // Fill in intrapacket header
+    // Init in intrapacket header
     suIPH.uMajorFrStatus = 3;
     suIPH.uMinorFrStatus = 3;
 
-    // Fill in PCM data frame
+    // Init the PCM data frame
     memset(&suPcmFrame_Fmt1, 0, sizeof(struct SuPcmFrame_Fmt1));
     suPcmFrame_Fmt1.uFrameSync = 0xFE6B2840;
     }
