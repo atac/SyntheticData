@@ -69,6 +69,7 @@ increases at the defined tick rate.
 #include "Ch10Writer_Time.h"
 #include "Ch10Writer_Video.h"
 #include "Ch10Writer_Index.h"
+#include "Ch10Writer_PCM.h"
 
 using namespace Irig106;
 
@@ -114,16 +115,18 @@ int64_t                 ClSimTimer::lTicksPerStep;
 double                  ClSimTimer::fSimElapsedTime;
 
 // Ch 10 data formatters
-// ClCh10Format_1553_Nav * p1553Fmt_Nav_1Hz;
-ClCh10Format_1553_Nav * p1553Fmt_Nav_25Hz;
+// ClCh10Format_1553_Nav      * p1553Fmt_Nav_1Hz;
+ClCh10Format_1553_Nav       * p1553Fmt_Nav_25Hz;
+ClCh10Format_PCM_SynthFmt1  * pPCM_SynthFmt1;
 
 // Chapter 10 writers
-ClCh10Writer_Time     * pCh10Writer_Time;
-ClCh10Writer_1553     * pCh10Writer_1553;
-ClCh10Writer_VideoF0  * pCh10Writer_Video_HUD;
-ClCh10Writer_VideoF0  * pCh10Writer_Video_Cockpit;
-ClCh10Writer_VideoF0  * pCh10Writer_Video_Chase;
-ClCh10Writer_Index    * pCh10Writer_Index;
+ClCh10Writer_Time           * pCh10Writer_Time;
+ClCh10Writer_1553           * pCh10Writer_1553;
+ClCh10Writer_VideoF0        * pCh10Writer_Video_HUD;
+ClCh10Writer_VideoF0        * pCh10Writer_Video_Cockpit;
+ClCh10Writer_VideoF0        * pCh10Writer_Video_Chase;
+ClCh10Writer_Index          * pCh10Writer_Index;
+ClCh10Writer_PCM            * pCh10Writer_PCM;
 
 /*
  * Function prototypes
@@ -149,10 +152,11 @@ int main(int iArgc, char * aszArgv[])
     ClSource_BMNavTxt     * pSource_BMNavTxt;
     ClSource_BMNavDB      * pSource_BMNavDB;
     ClSource_NasaNavTxt   * pSource_NasaNavTxt;
+#if 0
     ClSource_VideoDB      * pSource_Video_HUD;
     ClSource_VideoDB      * pSource_Video_Cockpit;
     ClSource_VideoDB      * pSource_Video_Chase;
-
+#endif
     int                     iI106Handle;
 
     unsigned long           ulBuffSize = 0L;
@@ -172,7 +176,7 @@ int main(int iArgc, char * aszArgv[])
     ClSimTimer      clSimTimer_6S(60000000);    // 6 sec (for node index packets)
     ClSimTimer      clSimTimer_60S(600000000);  // 60 sec (for root index packets)
 
-    ClSimState      clSimState;
+    ClSimState      clSimState;                 // This holds all the simulation state data
     double          fNavSrcTime;            // Nav sourc data time (seconds)
     double          fStartSimClockTime;     // Starting simulation Date/Time
     double          fCurrSimClockTime;      // Current simulation Data/Time
@@ -203,13 +207,13 @@ int main(int iArgc, char * aszArgv[])
             bVerbose = true;
             break;
 
-          case 'p' :                   // Data set name
-            iArgIdx++;
+          case 'p' :                    // Data set name
+            iArgIdx++;                  
             sProgramName = aszArgv[iArgIdx];
             break;
 
-          case 's' :                   // Data start date and time
-            {
+          case 's' :                    // Data start date and time. For now only useful
+            {                           // with BlueMax data.
             iArgIdx++;
             struct tm   suStartTime;
             int iArgs = sscanf(aszArgv[iArgIdx],"%d-%d-%d-%d-%d-%d",
@@ -267,8 +271,8 @@ int main(int iArgc, char * aszArgv[])
 
           default :
             break;
-          } /* end flag switch */
-        break;
+          } // end flag switch
+        break; // end of case '-'
 
       default :
         strcpy(szOutFile, aszArgv[iArgIdx]);
@@ -317,6 +321,7 @@ int main(int iArgc, char * aszArgv[])
     // Data formatters
 //  p1553Fmt_Nav_1Hz  = new ClCh10Format_1553_Nav(RT_NAV, 1, 29, 32);
     p1553Fmt_Nav_25Hz = new ClCh10Format_1553_Nav(RT_NAV, 1, 29, 32);
+    pPCM_SynthFmt1    = new ClCh10Format_PCM_SynthFmt1(100);    // 100 Hz rate
 
     // Make Chapter 10 writers
     pCh10Writer_Time          = new ClCh10Writer_Time();
@@ -327,6 +332,7 @@ int main(int iArgc, char * aszArgv[])
 #endif
     pCh10Writer_1553          = new ClCh10Writer_1553();
     pCh10Writer_Index         = new ClCh10Writer_Index();
+    pCh10Writer_PCM           = new ClCh10Writer_PCM();
 
     // Open the output Ch 10 file and init it
     enStatus = enI106Ch10Open(&iI106Handle, szOutFile, I106_OVERWRITE);
@@ -352,18 +358,26 @@ int main(int iArgc, char * aszArgv[])
     // -----------------------------------
 
     // Setup the output channels
+    pCh10Writer_Index->Init(iI106Handle, 0);
     pCh10Writer_Time->Init(iI106Handle, 1);
 #if 0
     pCh10Writer_Video_HUD->Init(iI106Handle, 10);
     pCh10Writer_Video_Cockpit->Init(iI106Handle, 11);
     pCh10Writer_Video_Chase->Init(iI106Handle, 12);
 #endif
+    pCh10Writer_PCM->Init(iI106Handle, 20);
     pCh10Writer_1553->Init(iI106Handle, 30);
-    pCh10Writer_Index->Init(iI106Handle, 0);
+
+    // This is a bit of a hack. Moving forward all writers will need a list of
+    // formatters that will provide data, if for no other reason than to generate
+    // meaningful TMATS. For now provide the PCM writer a reference to the PCM
+    // formatter object. In the future this will be generalized for all writers
+    // and formatters.
+    pCh10Writer_PCM->pSynthPcmFmt1 = pPCM_SynthFmt1;
 
     // Get time setup
     pCh10Writer_Time->SetRelTime(ClSimTimer::lSimClockTicks, fStartSimClockTime);
-
+    
     // Write initial TMATS and first time packet
     WriteTmats(iI106Handle, sProgramName, fCurrSimClockTime);
     pCh10Writer_Time->Write(fCurrSimClockTime);
@@ -393,7 +407,6 @@ int main(int iArgc, char * aszArgv[])
 
         // Make nav message(s)
 //      suNav_1Hz.MakeMsg(&clSimState);
-        p1553Fmt_Nav_25Hz->MakeMsg(&clSimState);
 
         // Get current video data
 #if 0
@@ -411,11 +424,22 @@ int main(int iArgc, char * aszArgv[])
         if (pSource_Video_Chase->bVideoDataValid)
             pCh10Writer_Video_Chase->Write(&ClSimTimer::lSimClockTicks, pSource_Video_Chase->pachTSData, pSource_Video_Chase->iTSDataLength);
 #endif
+        // 10 msec / 100 Hz events
+        // ----------------------
+        if (clSimTimer_10ms.Expired())
+            {
+            clSimTimer_10ms.FromPrev();
+            pPCM_SynthFmt1->MakeMsg(&clSimState);
+            pPCM_SynthFmt1->SetRTC(&ClSimTimer::lSimClockTicks);
+            pCh10Writer_PCM->AppendMsg(pPCM_SynthFmt1);
+            } // end 40 msec / 25 Hz events
+
         // 40 msec / 25 Hz events
         // ----------------------
         if (clSimTimer_40ms.Expired())
             {
             clSimTimer_40ms.FromPrev();
+            p1553Fmt_Nav_25Hz->MakeMsg(&clSimState);
             p1553Fmt_Nav_25Hz->SetRTC(&ClSimTimer::lSimClockTicks);
             pCh10Writer_1553->AppendMsg(p1553Fmt_Nav_25Hz);
             } // end 40 msec / 25 Hz events
@@ -426,6 +450,7 @@ int main(int iArgc, char * aszArgv[])
             {
             clSimTimer_100ms.FromPrev();
             pCh10Writer_1553->Commit();
+            pCh10Writer_PCM->Commit();
             } // end 100 msec / 10 Hz events
 
         // 1 Hz events
@@ -535,14 +560,16 @@ void WriteTmats(int iI106Handle, std::string sProgramName, double fCurrSimClockT
     uint32_t            ulDataBuffSize;
     SuTmats_ChanSpec  * psuTmats_ChanSpec;
     int                 iRSrcNum = 1;
+    int                 iPIndex  = 1;
     int                 iBIndex  = 1;
     int                 iCIndex  = 1;
 
 #if 0
     const int           iTotalRSrcs = 5;
 #else
-    const int           iTotalRSrcs = 2;
+    const int           iTotalRSrcs = 3;
 #endif
+
     // Make current time string
     time_t        iCurrTime;
     char          szCurrTime[100];
@@ -600,6 +627,9 @@ void WriteTmats(int iI106Handle, std::string sProgramName, double fCurrSimClockT
     // 1553 R section, then linked B and C sections
     ssTMATS << pCh10Writer_1553->TMATS(1, iRSrcNum++);
     ssTMATS << p1553Fmt_Nav_25Hz->TMATS(iBIndex, iCIndex, pCh10Writer_1553->sCDLN);
+
+    // PCM R and P sections
+    ssTMATS << pCh10Writer_PCM->TMATS(1, iRSrcNum++, iPIndex);
 
     assert(iRSrcNum-1 == iTotalRSrcs);
 
