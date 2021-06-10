@@ -14,6 +14,7 @@
 
 #include "irig106ch10.h"
 
+#include "Ch10Writer.h"
 #include "Ch10Writer_Video.h"
 
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
@@ -42,7 +43,7 @@ void ClCh10Writer_VideoF0::Init(int iHandle, unsigned int uChanID)
 
     // Setup the Ch 10 header
     iHeaderInit(&suCh10Header, uChanID, I106CH10_DTYPE_VIDEO_FMT_0, I106CH10_PFLAGS_CHKSUM_NONE | I106CH10_PFLAGS_TIMEFMT_IRIG106, 0);
-    suCh10Header.ubyHdrVer = 3;
+    suCh10Header.ubyHdrVer = CH10_VER_HDR_VIDEO;
 
     // Init CSDW
     memset(&suVideoF0CSDW, 0, 4);

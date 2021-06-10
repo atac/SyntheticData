@@ -99,7 +99,8 @@ public:
 public:
     SuPcmF1_IntraPktHeader  suIPH;
     SuPcmFrame_Fmt1         suPcmFrame_Fmt1;
-    unsigned                uWordLen;       // Word length in bits
+    unsigned                uWordLen;       // PCM common word length in bits
+    unsigned                uIPHLen;        // IPH length in bytes
     unsigned                uFrameLen;      // PCM frame length in bytes
     float                   fFrameRate;     // Frame rate in Hz
 

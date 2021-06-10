@@ -65,6 +65,8 @@ increases at the defined tick rate.
 #include "SimTimer.h"
 #include "Ch10Format_1553.h"
 #include "Ch10Format_1553_Nav.h"
+
+#include "Ch10Writer.h"
 #include "Ch10Writer_1553.h"
 #include "Ch10Writer_Time.h"
 #include "Ch10Writer_Video.h"
@@ -595,7 +597,7 @@ void WriteTmats(int iI106Handle, std::string sProgramName, double fCurrSimClockT
     ssTMATS <<
         "G\\PN:" << sProgramName << ";\n";
     ssTMATS <<
-        "G\\106:07;\n"
+        "G\\106:" CH10_VER_TMATS ";\n"
         "G\\DSI\\N:1;\n"
         "G\\SC:UNCLASSIFIED;\n"
         "G\\DSI-1:DATASOURCE;\n"
@@ -610,6 +612,11 @@ void WriteTmats(int iI106Handle, std::string sProgramName, double fCurrSimClockT
     ssTMATS <<
         "R-1\\RI4:" << szCurrSimClockTime << ";\n";
     ssTMATS <<
+        "R-1\\RI6:N;\n"
+        "R-1\\CRE:Y;\n"
+        "R-1\\RSS:C;\n"
+        "R-1\\RML:I;\n"
+        "R-1\\ERBS:AUTO;\n"
         "R-1\\EV\\E:F;\n"
         "R-1\\IDX\\E:T;\n"
         "R-1\\N:" << iTotalRSrcs << ";\n";
@@ -636,7 +643,7 @@ void WriteTmats(int iI106Handle, std::string sProgramName, double fCurrSimClockT
     // Form the TMATS header
     iHeaderInit(&suI106Hdr, 0, I106CH10_DTYPE_TMATS, I106CH10_PFLAGS_CHKSUM_NONE | I106CH10_PFLAGS_TIMEFMT_IRIG106, 0);
     suI106Hdr.ulDataLen = sizeof(SuTmats_ChanSpec) + ssTMATS.str().length();
-    suI106Hdr.ubyHdrVer = 3;
+    suI106Hdr.ubyHdrVer = CH10_VER_HDR_TMATS;
     SimClockToRel(iI106Handle, fCurrSimClockTime, suI106Hdr.aubyRefTime);
 //    memset(suI106Hdr.aubyRefTime, 0, 6);
 
@@ -645,7 +652,7 @@ void WriteTmats(int iI106Handle, std::string sProgramName, double fCurrSimClockT
     pchDataBuff = (uint8_t *)malloc(ulDataBuffSize);
     memset(pchDataBuff, 0, ulDataBuffSize);
     psuTmats_ChanSpec = (SuTmats_ChanSpec *)pchDataBuff;
-    psuTmats_ChanSpec->iCh10Ver = 7;
+    psuTmats_ChanSpec->iCh10Ver = CH10_VER_RECORDER;
     memcpy(&pchDataBuff[4], ssTMATS.str().c_str(), ssTMATS.str().length());
     uAddDataFillerChecksum(&suI106Hdr, pchDataBuff);
     suI106Hdr.uChecksum = uCalcHeaderChecksum(&suI106Hdr);

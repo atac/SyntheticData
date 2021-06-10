@@ -18,6 +18,7 @@
 #include "i106_decode_1553f1.h"
 //#include "i106_decode_tmats.h"
 
+#include "Ch10Writer.h"
 #include "Ch10Writer_Time.h"
 
 
@@ -44,7 +45,7 @@ void ClCh10Writer_Time::Init(int iHandle, unsigned int uChanID)
 
     // Setup the Ch 10 header
     iHeaderInit(&(suWritePktTimeF1.suCh10Header), uChanID, I106CH10_DTYPE_IRIG_TIME, I106CH10_PFLAGS_CHKSUM_32 | I106CH10_PFLAGS_TIMEFMT_IRIG106, 0);
-    suWritePktTimeF1.suCh10Header.ubyHdrVer = 3;
+    suWritePktTimeF1.suCh10Header.ubyHdrVer = CH10_VER_HDR_TIME;
     suWritePktTimeF1.suCh10Header.ulDataLen = sizeof(SuTimeF1_ChanSpec) + sizeof(SuTime_MsgDmyFmt);
     }
 

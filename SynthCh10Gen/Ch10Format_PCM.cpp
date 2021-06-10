@@ -35,7 +35,8 @@ ClCh10Format_PCM_SynthFmt1::ClCh10Format_PCM_SynthFmt1(float fFrameRate)
     // Make sure the size of the PCM frame is still correct
     assert(sizeof(struct SuPcmFrame_Fmt1) == 160);
 
-    this->uWordLen   = 16;
+    this->uWordLen   = 16;  // bits
+    this->uIPHLen    = 10;  // bytes
     this->uFrameLen  = sizeof(SuPcmFrame_Fmt1);
     this->fFrameRate = fFrameRate;
 
@@ -47,7 +48,7 @@ ClCh10Format_PCM_SynthFmt1::ClCh10Format_PCM_SynthFmt1(float fFrameRate)
 
     // Init the PCM data frame
     memset(&suPcmFrame_Fmt1, 0, sizeof(struct SuPcmFrame_Fmt1));
-    suPcmFrame_Fmt1.uFrameSync = 0xFE6B2840;
+    suPcmFrame_Fmt1.uFrameSync = 0x2840FE6B;    // Sync word swapped
     }
 
 // ----------------------------------------------------------------------------

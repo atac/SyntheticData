@@ -9,6 +9,7 @@
 #include "i106_decode_tmats_r.h"
 #include "i106_decode_pcmf1.h"
 
+#include "Ch10Writer.h"
 #include "Ch10Writer_PCM.h"
 
 
@@ -40,7 +41,7 @@ void ClCh10Writer_PCM::Init(int iHandle, unsigned int uChanID)
 
     // Setup the Ch 10 header
     iHeaderInit(&(suWriteMsgPCM.suCh10Header), uChanID, I106CH10_DTYPE_PCM_FMT_1, I106CH10_PFLAGS_CHKSUM_32 | I106CH10_PFLAGS_TIMEFMT_IRIG106, 0);
-    suWriteMsgPCM.suCh10Header.ubyHdrVer = 3;
+    suWriteMsgPCM.suCh10Header.ubyHdrVer = CH10_VER_HDR_PCM;
     suWriteMsgPCM.suCh10Header.ulDataLen = 4;
 
     // Setup a buffer with enough memory to handle CSDW for now
@@ -52,7 +53,8 @@ void ClCh10Writer_PCM::Init(int iHandle, unsigned int uChanID)
     // Init CSDW
     memset(suWriteMsgPCM.psuPCM_CSDW, 0, 4);
     suWriteMsgPCM.psuPCM_CSDW->bIntraPktHdr   = 1;  // Frame includes Intrapacket header
-    suWriteMsgPCM.psuPCM_CSDW->bMajorFrInd    = 0;  // Start of major frame
+    suWriteMsgPCM.psuPCM_CSDW->bMajorFrInd    = 1;  // Start of major frame
+    suWriteMsgPCM.psuPCM_CSDW->bMinorFrInd    = 1;  // Also start of minor frame
     suWriteMsgPCM.psuPCM_CSDW->uMajorFrStatus = 3;  // Locked
     suWriteMsgPCM.psuPCM_CSDW->uMinorFrStatus = 3;  // Locked
     suWriteMsgPCM.psuPCM_CSDW->bAlignment     = 0;  // 16 bit alignment
@@ -79,7 +81,7 @@ std::string ClCh10Writer_PCM::TMATS(int iRSection, int iEnumN, int & iPIndex)
 
     // Calculate some parameters
     uBitsPerMinorFrame  = pSynthPcmFmt1->uFrameLen * 8;
-    uWordsPerMinorFrame = (uBitsPerMinorFrame - 32) / pSynthPcmFmt1->uWordLen;
+    uWordsPerMinorFrame = ((uBitsPerMinorFrame - 32) / pSynthPcmFmt1->uWordLen) + 1;
     ulDataRate          = unsigned long(pSynthPcmFmt1->fFrameRate * float(uBitsPerMinorFrame));
 
     ssTMATS <<
@@ -111,7 +113,7 @@ std::string ClCh10Writer_PCM::TMATS(int iRSection, int iEnumN, int & iPIndex)
         "P-" << iPIndex << "\\MF1:" << uWordsPerMinorFrame << ";\n"
         "P-" << iPIndex << "\\MF2:" << uBitsPerMinorFrame  << ";\n"
         "P-" << iPIndex << "\\MF3:FPT;\n"
-        "P-" << iPIndex << "\\P-1\\MF4:32;\n"
+        "P-" << iPIndex << "\\MF4:32;\n"
         "P-" << iPIndex << "\\MF5:11111110011010110010100001000000;\n"
         "P-" << iPIndex << "\\SYNC1:2;\n"
         "P-" << iPIndex << "\\SYNC2:0;\n"
@@ -142,7 +144,7 @@ void ClCh10Writer_PCM::AppendMsg(ClCh10Format_PCM_SynthFmt1 * psuPcmFrame)
 
     // Expand the PCM packet buffer if necessary
     if (suWriteMsgPCM.psuPCM_CSDW->bIntraPktHdr == 1)
-        suWriteMsgPCM.suCh10Header.ulDataLen += sizeof(SuPcmF1_IntraPktHeader);
+        suWriteMsgPCM.suCh10Header.ulDataLen += psuPcmFrame->uIPHLen;
     suWriteMsgPCM.suCh10Header.ulDataLen += psuPcmFrame->uFrameLen;
 
     if (suWriteMsgPCM.suCh10Header.ulDataLen > suWriteMsgPCM.uBuffLen)
@@ -157,8 +159,10 @@ void ClCh10Writer_PCM::AppendMsg(ClCh10Format_PCM_SynthFmt1 * psuPcmFrame)
     // Intrapacket header
     if (suWriteMsgPCM.psuPCM_CSDW->bIntraPktHdr == 1)
         {
-        memcpy(suWriteMsgPCM.pchDataBuff + uCurrBufferOffset, &(psuPcmFrame->suIPH), sizeof(SuPcmF1_IntraPktHeader));
-        uCurrBufferOffset += sizeof(SuPcmF1_IntraPktHeader);
+        // Adjust for 16 or 32 bit word size
+        assert((psuPcmFrame->uIPHLen==10)||(psuPcmFrame->uIPHLen==12));
+        memcpy(suWriteMsgPCM.pchDataBuff + uCurrBufferOffset, &(psuPcmFrame->suIPH), psuPcmFrame->uIPHLen);
+        uCurrBufferOffset += psuPcmFrame->uIPHLen;
         }
 
     // Data

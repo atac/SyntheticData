@@ -67,7 +67,7 @@ if __name__=='__main__':
     # These are the same as the nav data output
     write_cols = [ "LATP", "LONP", "ALT", "TAS", "TH", "MH", "PTCH", "ROLL", "AOAC", "VRTG", "GS", "IVV", "FPAC" ]
     # Add these additional data columns for PCM
-    write_cols.extend([ "EGT_1", "EGT_2", "OIT_1", "OIT_2", "FF_1", "FF_2", "N1_1", "N1_2", 
+    write_cols.extend(["PLA_1", "PLA_2", "EGT_1", "EGT_2", "OIT_1", "OIT_2", "FF_1", "FF_2", "N1_1", "N1_2", "N2_1", "N2_2", 
                        "VIB_1", "VIB_2", "OIP_1", "OIP_2", "AOA1", "AOA2", "WOW", "LGDN", "LGUP", 
                        "AIL_1", "AIL_2", "ELEV_1", "ELEV_2", "RUDD", 
                        "CWPC", "CWPF", "CCPC", "CCPF", "RUDP", "FLAP"])
