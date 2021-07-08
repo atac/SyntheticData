@@ -17,6 +17,7 @@
 #include "i106_decode_index.h"
 #include "i106_index.h"
 
+#include "Ch10Writer.h"
 #include "Ch10Writer_Index.h"
 
 // ----------------------------------------------------------------------------
@@ -101,7 +102,7 @@ void ClCh10Writer_Index::WriteNodePacket()
     // Write the node packet to the Ch 10 file
     iHeaderInit(&suCh10Header, uChanID, I106CH10_DTYPE_RECORDING_INDEX, I106CH10_PFLAGS_CHKSUM_NONE | I106CH10_PFLAGS_TIMEFMT_IRIG106, uSeqNum);
     suCh10Header.ulDataLen = sizeof(SuIndex_ChanSpec) + (asuNodeData.size() * sizeof(SuIndex_NodeMsg));
-    suCh10Header.ubyHdrVer = 6;
+    suCh10Header.ubyHdrVer = CH10_VER_HDR_INDEX;
     memcpy(suCh10Header.aubyRefTime, &(asuNodeData[0].suTime.suRtcTime), 6);
     uAddDataFillerChecksum2(&suCh10Header, &suIndexCSDW, 4, (unsigned char *)asuNodeData.data(), achTrailerBuffer, &iTrailerBufferLen);
     suCh10Header.uChecksum = uCalcHeaderChecksum(&suCh10Header);

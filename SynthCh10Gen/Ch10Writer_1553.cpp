@@ -1,3 +1,5 @@
+
+#include "Ch10Writer.h"
 #include "Ch10Writer_1553.h"
 
 
@@ -25,7 +27,7 @@ void ClCh10Writer_1553::Init(int iHandle, unsigned int uChanID)
 
     // Setup the Ch 10 header
     iHeaderInit(&(suWriteMsg1553.suCh10Header), uChanID, I106CH10_DTYPE_1553_FMT_1, I106CH10_PFLAGS_CHKSUM_32 | I106CH10_PFLAGS_TIMEFMT_IRIG106, 0);
-    suWriteMsg1553.suCh10Header.ubyHdrVer = 3;
+    suWriteMsg1553.suCh10Header.ubyHdrVer = CH10_VER_HDR_1553;
     suWriteMsg1553.suCh10Header.ulDataLen = 4;
 
     // Setup a buffer with enough memory to handle CSDW for now
@@ -59,6 +61,7 @@ std::string ClCh10Writer_1553::TMATS(int iRSection, int iEnumN)
         "R-" << iRSection << "\\TK1-"  << iEnumN << ":" << uChanID << ";\n"
         "R-" << iRSection << "\\TK4-"  << iEnumN << ":" << uChanID << ";\n"
         "R-" << iRSection << "\\CHE-"  << iEnumN << ":T;\n"
+        "R-" << iRSection << "\\BTF-"  << iEnumN << ":1;\n"
         "R-" << iRSection << "\\DSI-"  << iEnumN << ":1553InChan" << uChanID << ";\n"
         "R-" << iRSection << "\\CDT-"  << iEnumN << ":1553IN;\n"
         "R-" << iRSection << "\\CDLN-" << iEnumN << ":" << sCDLN << ";\n";

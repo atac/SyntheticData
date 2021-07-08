@@ -179,6 +179,7 @@
     <ClInclude Include="Ch10Format_1553.h" />
     <ClInclude Include="Ch10Format_1553_Nav.h" />
     <ClInclude Include="Ch10Format_PCM.h" />
+    <ClInclude Include="Ch10Writer.h" />
     <ClInclude Include="Ch10Writer_1553.h" />
     <ClInclude Include="Ch10Writer_Index.h" />
     <ClInclude Include="Ch10Writer_PCM.h" />

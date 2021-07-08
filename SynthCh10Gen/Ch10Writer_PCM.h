@@ -36,18 +36,19 @@ class ClCh10Writer_PCM
     // PCM write buffer info (why did I make this struct?)
     struct SuWriteMsgPCM
         {
-        SuI106Ch10Header        suCh10Header;
-        SuPcmF1_ChanSpec      * psuPCM_CSDW;
-        unsigned char         * pchDataBuff;    // Make this char * makes pointer math easier
-        uint32_t                uBuffLen;       // Size of the write buffer
+        SuI106Ch10Header          suCh10Header;
+        SuPcmF1_ChanSpec        * psuPCM_CSDW;
+        unsigned char           * pchDataBuff;  // Make this char * makes pointer math easier
+        uint32_t                  uBuffLen;     // Size of the write buffer
         } suWriteMsgPCM;
 #pragma pack(pop)
 
     // Data
 public:
-    int                 iHandle;
-    unsigned int        uChanID;
-    std::string         sCDLN;                  // Linking Channel Data Link Name for TMATS
+    int                           iHandle;
+    unsigned int                  uChanID;
+    std::string                   sCDLN;        // Linking Channel Data Link Name for TMATS
+    ClCh10Format_PCM_SynthFmt1  * pSynthPcmFmt1;
 
     // Methods
 public:
