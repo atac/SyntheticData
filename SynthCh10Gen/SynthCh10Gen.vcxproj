@@ -159,6 +159,7 @@
     <ClInclude Include="..\3rdParty\irig106lib\src\config.h" />
     <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_1553f1.h" />
     <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_index.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_pcmf1.h" />
     <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_time.h" />
     <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats.h" />
     <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats_b.h" />
@@ -177,8 +178,10 @@
     <ClInclude Include="..\3rdParty\SQLite\sqlite3.h" />
     <ClInclude Include="Ch10Format_1553.h" />
     <ClInclude Include="Ch10Format_1553_Nav.h" />
+    <ClInclude Include="Ch10Format_PCM.h" />
     <ClInclude Include="Ch10Writer_1553.h" />
     <ClInclude Include="Ch10Writer_Index.h" />
+    <ClInclude Include="Ch10Writer_PCM.h" />
     <ClInclude Include="Ch10Writer_Time.h" />
     <ClInclude Include="Ch10Writer_Video.h" />
     <ClInclude Include="SimState.h" />
@@ -208,7 +211,9 @@
     <ClCompile Include="..\3rdParty\irig106lib\src\irig106ch10.c" />
     <ClCompile Include="..\3rdParty\csv-parser\csv_parser.cpp" />
     <ClCompile Include="..\3rdParty\SQLite\sqlite3.c" />
+    <ClCompile Include="Ch10Format_PCM.cpp" />
     <ClCompile Include="Ch10Writer_Index.cpp" />
+    <ClCompile Include="Ch10Writer_PCM.cpp" />
     <ClCompile Include="Ch10Writer_Video.cpp" />
     <ClCompile Include="Source_BMNavDB.cpp" />
     <ClCompile Include="Source_BMNavTxt.cpp" />
