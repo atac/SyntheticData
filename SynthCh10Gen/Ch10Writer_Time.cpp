@@ -18,6 +18,7 @@
 #include "i106_decode_1553f1.h"
 //#include "i106_decode_tmats.h"
 
+#include "Common.h"
 #include "Ch10Writer.h"
 #include "Ch10Writer_Time.h"
 
@@ -54,20 +55,21 @@ void ClCh10Writer_Time::Init(int iHandle, unsigned int uChanID)
 
 // Return a string with the TMATS R section for this channel
 
-std::string ClCh10Writer_Time::TMATS(int iRSection, int iEnumN)
+std::string ClCh10Writer_Time::TMATS(ClTmatsIndexes & TmatsIndex)
     {
     std::stringstream   ssTMATS;
 
     ssTMATS <<
-        "R-" << iRSection << "\\TK1-"   << iEnumN << ":" << uChanID << ";\n"
-        "R-" << iRSection << "\\TK4-"   << iEnumN << ":" << uChanID << ";\n"
-        "R-" << iRSection << "\\CHE-"   << iEnumN << ":T;\n"
-        "R-" << iRSection << "\\DSI-"   << iEnumN << ":TimeInChan" << uChanID << ";\n"
-        "R-" << iRSection << "\\CDT-"   << iEnumN << ":TIMIN;\n"
-        "R-" << iRSection << "\\CDLN-"  << iEnumN << ":TimeInChan" << uChanID << ";\n"
-        "R-" << iRSection << "\\TTF-"   << iEnumN << ":1;\n"
-        "R-" << iRSection << "\\TFMT-"  << iEnumN << ":I;\n"
-        "R-" << iRSection << "\\TSRC-"  << iEnumN << ":I;\n";
+        "R-" << TmatsIndex.iRIndex << "\\TK1-"   << TmatsIndex.iRSrcNum << ":" << uChanID << ";\n"
+        "R-" << TmatsIndex.iRIndex << "\\TK4-"   << TmatsIndex.iRSrcNum << ":" << uChanID << ";\n"
+        "R-" << TmatsIndex.iRIndex << "\\CHE-"   << TmatsIndex.iRSrcNum << ":T;\n"
+        "R-" << TmatsIndex.iRIndex << "\\DSI-"   << TmatsIndex.iRSrcNum << ":TimeInChan" << uChanID << ";\n"
+        "R-" << TmatsIndex.iRIndex << "\\CDT-"   << TmatsIndex.iRSrcNum << ":TIMIN;\n"
+        "R-" << TmatsIndex.iRIndex << "\\CDLN-"  << TmatsIndex.iRSrcNum << ":TimeInChan" << uChanID << ";\n"
+        "R-" << TmatsIndex.iRIndex << "\\TTF-"   << TmatsIndex.iRSrcNum << ":1;\n"
+        "R-" << TmatsIndex.iRIndex << "\\TFMT-"  << TmatsIndex.iRSrcNum << ":I;\n"
+        "R-" << TmatsIndex.iRIndex << "\\TSRC-"  << TmatsIndex.iRSrcNum << ":I;\n";
+    TmatsIndex.iRSrcNum++;
 
     return ssTMATS.str();
     } // end TMATS()

@@ -1,4 +1,5 @@
 
+#include "Common.h"
 #include "Ch10Writer.h"
 #include "Ch10Writer_1553.h"
 
@@ -53,18 +54,19 @@ void ClCh10Writer_1553::Init(int iHandle, unsigned int uChanID)
 
 // Return a string with the TMATS R section for this channel
 
-std::string ClCh10Writer_1553::TMATS(int iRSection, int iEnumN)
+std::string ClCh10Writer_1553::TMATS(ClTmatsIndexes & TmatsIndex)
     {
     std::stringstream   ssTMATS;
 
     ssTMATS <<
-        "R-" << iRSection << "\\TK1-"  << iEnumN << ":" << uChanID << ";\n"
-        "R-" << iRSection << "\\TK4-"  << iEnumN << ":" << uChanID << ";\n"
-        "R-" << iRSection << "\\CHE-"  << iEnumN << ":T;\n"
-        "R-" << iRSection << "\\BTF-"  << iEnumN << ":1;\n"
-        "R-" << iRSection << "\\DSI-"  << iEnumN << ":1553InChan" << uChanID << ";\n"
-        "R-" << iRSection << "\\CDT-"  << iEnumN << ":1553IN;\n"
-        "R-" << iRSection << "\\CDLN-" << iEnumN << ":" << sCDLN << ";\n";
+        "R-" << TmatsIndex.iRIndex << "\\TK1-"  << TmatsIndex.iRSrcNum << ":" << uChanID << ";\n"
+        "R-" << TmatsIndex.iRIndex << "\\TK4-"  << TmatsIndex.iRSrcNum << ":" << uChanID << ";\n"
+        "R-" << TmatsIndex.iRIndex << "\\CHE-"  << TmatsIndex.iRSrcNum << ":T;\n"
+        "R-" << TmatsIndex.iRIndex << "\\BTF-"  << TmatsIndex.iRSrcNum << ":1;\n"
+        "R-" << TmatsIndex.iRIndex << "\\DSI-"  << TmatsIndex.iRSrcNum << ":1553InChan" << uChanID << ";\n"
+        "R-" << TmatsIndex.iRIndex << "\\CDT-"  << TmatsIndex.iRSrcNum << ":1553IN;\n"
+        "R-" << TmatsIndex.iRIndex << "\\CDLN-" << TmatsIndex.iRSrcNum << ":" << sCDLN << ";\n";
+    TmatsIndex.iRSrcNum++;
 
     return ssTMATS.str();
     } // end TMATS()

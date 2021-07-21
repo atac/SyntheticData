@@ -17,6 +17,7 @@
 #include "i106_time.h"
 #include "i106_decode_1553f1.h"
 
+#include "Common.h"
 #include "SimState.h"
 #include "Ch10Format_1553.h"
 
@@ -73,7 +74,7 @@ public:
     // Methods
 
     void MakeMsg(ClSimState * pclSimState);
-    std::string TMATS(int & iBIndex, int & iCIndex, std::string sCDLN);
+    std::string TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN);
 
     };
 

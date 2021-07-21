@@ -17,6 +17,7 @@
 #include "i106_time.h"
 #include "i106_decode_pcmf1.h"
 
+#include "Common.h"
 #include "SimState.h"
 
 using namespace Irig106;
@@ -115,7 +116,7 @@ public:
 public:
     void SetRTC(int64_t * pullRelTime);
     virtual void MakeMsg(ClSimState * pclSimState);
-    virtual std::string TMATS(int & iDIndex, int & iCIndex, std::string sCDLN);
+    virtual std::string TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN);
 
     };
 

@@ -56,6 +56,7 @@ increases at the defined tick rate.
 #include "i106_decode_tmats.h"
 #include "i106_decode_index.h"
 
+#include "Common.h"
 #include "SimState.h"
 #include "Source_Nav.h"
 #include "Source_BMNavTxt.h"
@@ -115,6 +116,8 @@ int64_t                 ClSimTimer::lSimClockTicks;
 int64_t                 ClSimTimer::lTicksPerSecond;
 int64_t                 ClSimTimer::lTicksPerStep;
 double                  ClSimTimer::fSimElapsedTime;
+
+ClTmatsIndexes          TmatsIndex;
 
 // Ch 10 data formatters
 // ClCh10Format_1553_Nav      * p1553Fmt_Nav_1Hz;
@@ -561,10 +564,6 @@ void WriteTmats(int iI106Handle, std::string sProgramName, double fCurrSimClockT
     uint8_t           * pchDataBuff;
     uint32_t            ulDataBuffSize;
     SuTmats_ChanSpec  * psuTmats_ChanSpec;
-    int                 iRSrcNum = 1;
-    int                 iPIndex  = 1;
-    int                 iBIndex  = 1;
-    int                 iCIndex  = 1;
 
 #if 0
     const int           iTotalRSrcs = 5;
@@ -622,7 +621,7 @@ void WriteTmats(int iI106Handle, std::string sProgramName, double fCurrSimClockT
         "R-1\\N:" << iTotalRSrcs << ";\n";
 
     // Time section
-    ssTMATS << pCh10Writer_Time->TMATS(1, iRSrcNum++);
+    ssTMATS << pCh10Writer_Time->TMATS(TmatsIndex);
 
     // Video section
 #if 0
@@ -632,13 +631,13 @@ void WriteTmats(int iI106Handle, std::string sProgramName, double fCurrSimClockT
 #endif
 
     // 1553 R section, then linked B and C sections
-    ssTMATS << pCh10Writer_1553->TMATS(1, iRSrcNum++);
-    ssTMATS << p1553Fmt_Nav_25Hz->TMATS(iBIndex, iCIndex, pCh10Writer_1553->sCDLN);
+    ssTMATS << pCh10Writer_1553->TMATS(TmatsIndex);
+    ssTMATS << p1553Fmt_Nav_25Hz->TMATS(TmatsIndex, pCh10Writer_1553->sCDLN);
 
     // PCM R and P sections
-    ssTMATS << pCh10Writer_PCM->TMATS(1, iRSrcNum++, iPIndex);
+    ssTMATS << pCh10Writer_PCM->TMATS(TmatsIndex);
 
-    assert(iRSrcNum-1 == iTotalRSrcs);
+    assert(TmatsIndex.iRSrcNum-1 == iTotalRSrcs);
 
     // Form the TMATS header
     iHeaderInit(&suI106Hdr, 0, I106CH10_DTYPE_TMATS, I106CH10_PFLAGS_CHKSUM_NONE | I106CH10_PFLAGS_TIMEFMT_IRIG106, 0);
