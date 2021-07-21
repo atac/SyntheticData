@@ -20,6 +20,7 @@
 #include "i106_decode_pcmf1.h"
 #include "i106_decode_tmats.h"
 
+#include "Common.h"
 #include "Ch10Format_PCM.h"
 
 using namespace Irig106;
@@ -53,7 +54,7 @@ public:
     // Methods
 public:
     void Init(int iHandle, unsigned int uChanID);
-    std::string TMATS(int iRSection, int iEnumN, int & iPIndex);
+    std::string TMATS(ClTmatsIndexes & TmatsIndex);
     void AppendMsg(ClCh10Format_PCM_SynthFmt1 * psuPcmFrame);
     void Commit();
 

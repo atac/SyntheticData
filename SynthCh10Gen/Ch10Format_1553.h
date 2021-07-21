@@ -17,6 +17,7 @@
 #include "i106_time.h"
 #include "i106_decode_1553f1.h"
 
+#include "Common.h"
 #include "SimState.h"
 
 using namespace Irig106;
@@ -46,7 +47,7 @@ public:
     void SetWordCount(unsigned uWordCnt);
 
     virtual void MakeMsg(ClSimState * pclSimState) = 0;
-    virtual std::string TMATS(int & iBIndex, int & iCIndex, std::string sCDLN) = 0;
+    virtual std::string TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN) = 0;
 
     };
 

@@ -185,6 +185,7 @@
     <ClInclude Include="Ch10Writer_PCM.h" />
     <ClInclude Include="Ch10Writer_Time.h" />
     <ClInclude Include="Ch10Writer_Video.h" />
+    <ClInclude Include="Common.h" />
     <ClInclude Include="SimState.h" />
     <ClInclude Include="SimTimer.h" />
     <ClInclude Include="Source_BMNavDB.h" />

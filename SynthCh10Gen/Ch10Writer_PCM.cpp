@@ -9,6 +9,7 @@
 #include "i106_decode_tmats_r.h"
 #include "i106_decode_pcmf1.h"
 
+#include "Common.h"
 #include "Ch10Writer.h"
 #include "Ch10Writer_PCM.h"
 
@@ -72,55 +73,23 @@ void ClCh10Writer_PCM::Init(int iHandle, unsigned int uChanID)
 
 // Return a string with the TMATS R section for this channel
 
-std::string ClCh10Writer_PCM::TMATS(int iRSection, int iEnumN, int & iPIndex)
+std::string ClCh10Writer_PCM::TMATS(ClTmatsIndexes & TmatsIndex)
     {
     std::stringstream   ssTMATS;
-    unsigned long       ulDataRate;
-    unsigned            uWordsPerMinorFrame;
-    unsigned            uBitsPerMinorFrame;
-
-    // Calculate some parameters
-    uBitsPerMinorFrame  = pSynthPcmFmt1->uFrameLen * 8;
-    uWordsPerMinorFrame = ((uBitsPerMinorFrame - 32) / pSynthPcmFmt1->uWordLen) + 1;
-    ulDataRate          = unsigned long(pSynthPcmFmt1->fFrameRate * float(uBitsPerMinorFrame));
 
     ssTMATS <<
-        "R-" << iRSection << "\\TK1-"  << iEnumN << ":" << uChanID << ";\n"
-        "R-" << iRSection << "\\TK4-"  << iEnumN << ":" << uChanID << ";\n"
-        "R-" << iRSection << "\\CHE-"  << iEnumN << ":T;\n"
-        "R-" << iRSection << "\\DSI-"  << iEnumN << ":PCMInChan" << uChanID << ";\n"
-        "R-" << iRSection << "\\CDT-"  << iEnumN << ":PCMIN;\n"
-        "R-" << iRSection << "\\PDTF-" << iEnumN << ":1;\n"
-        "R-" << iRSection << "\\PDP-"  << iEnumN << ":PFS;\n"
-        "R-" << iRSection << "\\CDLN-" << iEnumN << ":" << sCDLN << ";\n";
+        "R-" << TmatsIndex.iRIndex << "\\TK1-"  << TmatsIndex.iRSrcNum << ":" << uChanID << ";\n"
+        "R-" << TmatsIndex.iRIndex << "\\TK4-"  << TmatsIndex.iRSrcNum << ":" << uChanID << ";\n"
+        "R-" << TmatsIndex.iRIndex << "\\CHE-"  << TmatsIndex.iRSrcNum << ":T;\n"
+        "R-" << TmatsIndex.iRIndex << "\\DSI-"  << TmatsIndex.iRSrcNum << ":PCMInChan" << uChanID << ";\n"
+        "R-" << TmatsIndex.iRIndex << "\\CDT-"  << TmatsIndex.iRSrcNum << ":PCMIN;\n"
+        "R-" << TmatsIndex.iRIndex << "\\PDTF-" << TmatsIndex.iRSrcNum << ":1;\n"
+        "R-" << TmatsIndex.iRIndex << "\\PDP-"  << TmatsIndex.iRSrcNum << ":PFS;\n"
+        "R-" << TmatsIndex.iRIndex << "\\CDLN-" << TmatsIndex.iRSrcNum << ":" << sCDLN << ";\n";
+    TmatsIndex.iRSrcNum++;
 
-    // This really needs to be in the PCM formatter object
-    ssTMATS <<
-        "P-" << iPIndex << "\\DLN:" << sCDLN << ";\n"
-        "P-" << iPIndex << "\\D1:NRZ-L;\n"
-        "P-" << iPIndex << "\\D2:" << ulDataRate << ";\n"
-        "P-" << iPIndex << "\\D3:U;\n"
-        "P-" << iPIndex << "\\D4:N;\n"
-        "P-" << iPIndex << "\\D5:N;\n"
-        "P-" << iPIndex << "\\D6:N;\n"
-        "P-" << iPIndex << "\\D7:N;\n"
-        "P-" << iPIndex << "\\D8:N/A;\n"
-        "P-" << iPIndex << "\\TF:ONE;\n"
-        "P-" << iPIndex << "\\F1:" << pSynthPcmFmt1->uWordLen << ";\n"
-        "P-" << iPIndex << "\\F2:M;\n"
-        "P-" << iPIndex << "\\F3:NO;\n"
-        "P-" << iPIndex << "\\MF\\N:1;\n"
-        "P-" << iPIndex << "\\MF1:" << uWordsPerMinorFrame << ";\n"
-        "P-" << iPIndex << "\\MF2:" << uBitsPerMinorFrame  << ";\n"
-        "P-" << iPIndex << "\\MF3:FPT;\n"
-        "P-" << iPIndex << "\\MF4:32;\n"
-        "P-" << iPIndex << "\\MF5:11111110011010110010100001000000;\n"
-        "P-" << iPIndex << "\\SYNC1:2;\n"
-        "P-" << iPIndex << "\\SYNC2:0;\n"
-        "P-" << iPIndex << "\\SYNC3:2;\n"
-        "P-" << iPIndex << "\\SYNC4:0;\n"
-        "P-" << iPIndex << "\\ISF\\N:0;\n";
-    iPIndex++;
+    // Get the P section stuff specific to the format
+    ssTMATS << pSynthPcmFmt1->TMATS(TmatsIndex, sCDLN);
 
     return ssTMATS.str();
     } // end TMATS()

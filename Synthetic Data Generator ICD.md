@@ -195,58 +195,60 @@ LSB = 4 feet
 
 #### IRIG PCM Frame Data Layout 1
 
-| Start Bit | End Bit | Data Format | Units   | Description |
-| :-------: | :-----: | ----------- | ------- | ----------- |
-| 1         | 32      | uint32      |         | uFrameSync |
-| 33        | 64      | uint32      | SemiCir | LATITUDE POSITION |
-| 65        | 96      | uint32      | SemiCir | LONGITUDE POSITION |
-| 97        | 112     | uint16      | FEET    | PRESSURE ALTITUDE + 1000 FEET |
-| 113       | 144     | float       | KNOTS   | TRUE AIRSPEED |
-| 145       | 176     | float       | DEG     | TRUE HEADING (+/-180, 0 = north) |
-| 177       | 208     | float       | DEG     | MAGNETIC HEADING |
-| 209       | 240     | float       | DEG     | PITCH ANGLE |
-| 241       | 272     | float       | DEG     | ROLL ANGLE (+ = left wing high) |
-| 273       | 304     | float       | DEG     | CORRECTED ANGLE OF ATTACK |
-| 305       | 336     | float       | G       | VERTICAL ACCELERATION (+ = down, nominal = +1) |
-| 337       | 368     | float       | KNOTS   | GROUND SPEED |
-| 369       | 400     | float       | FT/MIN  | INERTIAL VERTICAL SPEED |
-| 401       | 432     | float       | G       | FLIGHT PATH ACCELERATION (X,Y component, + = forward) |
-| 433       | 464     | float       | DEG     | POWER LEVER ANGLE 1 (roughly 0 to 90) |
-| 465       | 496     | float       | DEG     | POWER LEVER ANGLE 1 (roughly 0 to 90) |
-| 497       | 528     | float       | DEG     | EXHAUST GAS TEMPERATURE 1 |
-| 529       | 560     | float       | DEG     | EXHAUST GAS TEMPERATURE 2 |
-| 561       | 592     | float       | DEG     | OIL TEMPERATURE 1 |
-| 593       | 624     | float       | DEG     | OIL TEMPERATURE 2 |
-| 625       | 656     | float       | LBS/HR  | FUEL FLOW 1 |
-| 657       | 688     | float       | LBS/HR  | FUEL FLOW 2 |
-| 689       | 720     | float       | %RPM    | FAN SPEED 1 |
-| 721       | 752     | float       | %RPM    | FAN SPEED 2 |
-| 753       | 784     | float       | %RPM    | CORE SPEED 1 |
-| 785       | 816     | float       | %RPM    | CORE SPEED 2 |
-| 817       | 848     | float       | IN/SEC  | ENGINE VIBRATION 1 |
-| 849       | 880     | float       | IN/SEC  | ENGINE VIBRATION 2 |
-| 881       | 912     | float       | PSI     | OIL PRESSURE 1 |
-| 913       | 944     | float       | PSI     | OIL PRESSURE 2 |
-| 945       | 976     | float       | DEG     | ANGLE OF ATTACK 1 |
-| 977       | 1008    | float       | DEG     | ANGLE OF ATTACK 2 |
-| 1009      | 1009    | bit         |         | WEIGHT ON WHEELS (0 = true) |
-| 1010      | 1010    | bit         |         | GEARS L&R DOWN LOCKED (0 = true) |
-| 1011      | 1011    | bit         |         | GEARS L&R UP LOCKED (0 = true) |
-| 1012      | 1024    | unused      |         | |
-| 1025      | 1056    | float       | DEG     | AILERON POSITION LH |
-| 1057      | 1088    | float       | DEG     | AILERON POSITION RH |
-| 1089      | 1120    | float       | DEG     | ELEVATOR POSITION LEFT |
-| 1121      | 1152    | float       | DEG     | ELEVATOR POSITION RIGHT |
-| 1153      | 1184    | float       | DEG     | RUDDER POSITION |
-| 1185      | 1200    | uint16      | COUNTS  | CONTROL WHEEL POSITION CAPT |
-| 1201      | 1216    | uint16      | COUNTS  | CONTROL WHEEL POSITION F/O |
-| 1217      | 1232    | uint16      | COUNTS  | CONTROL COLUMN POSITION CAPT (750 - 4000) |
-| 1233      | 1248    | uint16      | COUNTS  | CONTROL COLUMN POSITION F/O |
-| 1249      | 1264    | uint16      | COUNTS  | RUDDER PEDAL POSITION (1000 - 3000) |
-| 1265      | 1280    | uint16      | COUNTS  | T.E. FLAP POSITION |
+| PCM Word  | Data Format | Units   | Description |
+| :-------: | ----------- | ------- | ----------- |
+|  0        | uint32      |         | uFrameSync |
+|  1,2      | uint32      | SemiCir | LATITUDE POSITION |
+|  3,4      | uint32      | SemiCir | LONGITUDE POSITION |
+|  5        | uint16      | FEET    | PRESSURE ALTITUDE + 1000 FEET |
+|  6        | uint16      | KNOTS   | TRUE AIRSPEED |
+|  7        | uint16      | SemiCir | TRUE HEADING (+/-180, 0 = north) |
+|  8        | uint16      | SemiCir | MAGNETIC HEADING |
+|  9        | int16       | SemiCir | PITCH ANGLE |
+| 10        | int16       | SemiCir | ROLL ANGLE (+ = left wing high) |
+| 11        | int16       | SemiCir | CORRECTED ANGLE OF ATTACK |
+| 12        | int16       | G       | VERTICAL ACCELERATION (+ = down, nominal = +1) |
+| 13        | uint16      | KNOTS   | GROUND SPEED |
+| 14        | int16       | FT/MIN  | INERTIAL VERTICAL SPEED |
+| 15        | int16       | G       | FLIGHT PATH ACCELERATION (X,Y component, + = forward) |
+| 16        | int16       | SemiCir | POWER LEVER ANGLE 1 (roughly 0 to 90) |
+| 17        | int16       | SemiCir | POWER LEVER ANGLE 1 (roughly 0 to 90) |
+| 18        | int16       | DEG     | EXHAUST GAS TEMPERATURE 1 |
+| 19        | int16       | DEG     | EXHAUST GAS TEMPERATURE 2 |
+| 20        | int16       | DEG     | OIL TEMPERATURE 1 |
+| 21        | int16       | DEG     | OIL TEMPERATURE 2 |
+| 22        | uint16      | LBS/HR  | FUEL FLOW 1 |
+| 23        | uint16      | LBS/HR  | FUEL FLOW 2 |
+| 24        | int16       | %RPM    | FAN SPEED 1 |
+| 25        | int16       | %RPM    | FAN SPEED 2 |
+| 26        | int16       | %RPM    | CORE SPEED 1 |
+| 27        | int16       | %RPM    | CORE SPEED 2 |
+| 28        | int16       | IN/SEC  | ENGINE VIBRATION 1 |
+| 29        | int16       | IN/SEC  | ENGINE VIBRATION 2 |
+| 30        | int16       | PSI     | OIL PRESSURE 1 |
+| 31        | int16       | PSI     | OIL PRESSURE 2 |
+| 32        | int16       | SemiCir | ANGLE OF ATTACK 1 |
+| 33        | int16       | SemiCir | ANGLE OF ATTACK 2 |
+| 34        | bit         |         | WEIGHT ON WHEELS (0 = true) |
+|           | bit         |         | GEARS L&R DOWN LOCKED (0 = true) |
+|           | bit         |         | GEARS L&R UP LOCKED (0 = true) |
+|           | unused      |         | |
+| 35        | int16       | SemiCir | AILERON POSITION LH |
+| 36        | int16       | SemiCir | AILERON POSITION RH |
+| 37        | int16       | SemiCir | ELEVATOR POSITION LEFT |
+| 38        | int16       | SemiCir | ELEVATOR POSITION RIGHT |
+| 39        | int16       | SemiCir | RUDDER POSITION |
+| 40        | uint16      | COUNTS  | CONTROL WHEEL POSITION CAPT |
+| 41        | uint16      | COUNTS  | CONTROL WHEEL POSITION F/O |
+| 42        | uint16      | COUNTS  | CONTROL COLUMN POSITION CAPT (750 - 4000) |
+| 43        | uint16      | COUNTS  | CONTROL COLUMN POSITION F/O |
+| 44        | uint16      | COUNTS  | RUDDER PEDAL POSITION (1000 - 3000) |
+| 45        | uint16      | COUNTS  | T.E. FLAP POSITION |
+| 46-48     | uint16      |         | Filler
 
 | Data Format | Description |
 | ----------- | ----------- |
+| SemiCir     | MSB = 180 degress, 2nd MSB = 90 degrees, etc. |
 | uint16      | 16 bit unsigned integer |
 | uint32      | 32 bit unsigned integer |
 | float       | 32 bit IEEE-754 floating point |
