@@ -8,6 +8,8 @@
 
 /*
 DREF
+http://www.xsquawkbox.net/xpsdk/docs/DataRefs.html
+
 sim/cockpit/electrical/HUD_brightness
 sim/cockpit/electrical/instrument_brightness
 sim/cockpit/electrical/cockpit_lights
@@ -23,6 +25,9 @@ sim/cockpit/misc/compass_indicated               Magnetic Compass
 sim/flightmodel/misc/h_ind                       Alitimeter
 sim/flightmodel/position/indicated_airspeed      IAS
 sim/flightmodel/position/vh_ind_fpm              VSI
+sim/flightmodel/position/alpha                   Angle of Attack
+sim/flightmodel/position/beta                    Sideslip angle
+sim/flightmodel2/misc/AoA                        Angle of Attack in degrees
 sim/graphics/view/pilots_head_psi
 sim/graphics/view/pilots_head_the
 
