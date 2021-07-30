@@ -54,10 +54,11 @@ void ClCh10Writer_1553::Init(int iHandle, unsigned int uChanID)
 
 // Return a string with the TMATS R section for this channel
 
-std::string ClCh10Writer_1553::TMATS(ClTmatsIndexes & TmatsIndex)
+std::string ClCh10Writer_1553::TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN)
     {
     std::stringstream   ssTMATS;
 
+    // Define the data source R record
     ssTMATS <<
         "R-" << TmatsIndex.iRIndex << "\\TK1-"  << TmatsIndex.iRSrcNum << ":" << uChanID << ";\n"
         "R-" << TmatsIndex.iRIndex << "\\TK4-"  << TmatsIndex.iRSrcNum << ":" << uChanID << ";\n"
@@ -67,6 +68,14 @@ std::string ClCh10Writer_1553::TMATS(ClTmatsIndexes & TmatsIndex)
         "R-" << TmatsIndex.iRIndex << "\\CDT-"  << TmatsIndex.iRSrcNum << ":1553IN;\n"
         "R-" << TmatsIndex.iRIndex << "\\CDLN-" << TmatsIndex.iRSrcNum << ":" << sCDLN << ";\n";
     TmatsIndex.iRSrcNum++;
+
+    // Define the one and only bus B record
+    ssTMATS <<
+        "B-" << TmatsIndex.iBIndex << "\\DLN:" << sCDLN << ";\n"
+        "B-" << TmatsIndex.iBIndex << "\\NBS\\N:1;\n"
+        "B-" << TmatsIndex.iBIndex << "\\BID-1:0000;\n"
+        "B-" << TmatsIndex.iBIndex << "\\BNA-1:" << sCDLN << ";\n"
+        "B-" << TmatsIndex.iBIndex << "\\BT-1:1553;\n";
 
     return ssTMATS.str();
     } // end TMATS()
