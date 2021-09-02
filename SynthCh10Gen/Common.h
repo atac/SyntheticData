@@ -18,6 +18,7 @@
         "B-" << TmatsIndex.iBIndex << "\\MTO-1-"    << mess_index << "-" << meas_index << "-1:MSB;\n";                  \
         meas_index++;
 
+// Note: word_pos_1 is the MSW
 #define B_MEASURAND_2WORD(meas_name, mess_index, meas_index, word_pos_1, bit_mask_1, word_pos_2, bit_mask_2)            \
     ssTMATS <<                                                                                                          \
         "B-" << TmatsIndex.iBIndex << "\\MT-1-"     << mess_index << "-" << meas_index << ":D;\n"                       \

@@ -205,13 +205,13 @@ std::string ClCh10Format_PCM_SynthFmt1::TMATS(ClTmatsIndexes & TmatsIndex, std::
         //                                            ^--- Number of Words in this Fragment
         //                                          ^--- Defined Location 1 of 1
         // Measurand 1 Location 1 Word 1;
-        "D-" << TmatsIndex.iDIndex << "\\WP-1-1-1-1:1;\n"
+        "D-" << TmatsIndex.iDIndex << "\\WP-1-1-1-1:2;\n"
         //                                          ^--- Word Location
-        //                                        ^--- Word 1 of 2
+        //                                        ^--- Word 1 of 2 (MSW)
         "D-" << TmatsIndex.iDIndex << "\\WFM-1-1-1-1:FW;\n"
         "D-" << TmatsIndex.iDIndex << "\\WFP-1-1-1-1:1;\n"
         // Measurand 1 Location 1 Word 2;
-        "D-" << TmatsIndex.iDIndex << "\\WP-1-1-1-2:2;\n"
+        "D-" << TmatsIndex.iDIndex << "\\WP-1-1-1-2:1;\n"
         //                                          ^--- Word Location
         //                                        ^--- Word 2 of 1
         "D-" << TmatsIndex.iDIndex << "\\WFM-1-1-1-2:FW;\n"
@@ -225,11 +225,11 @@ std::string ClCh10Format_PCM_SynthFmt1::TMATS(ClTmatsIndexes & TmatsIndex, std::
         // Measurand 2 Location 1;
         "D-" << TmatsIndex.iDIndex << "\\MNF\\N-1-2-1:2;\n"
         // Measurand 2 Location 1 Word 1;
-        "D-" << TmatsIndex.iDIndex << "\\WP-1-2-1-1:3;\n"
+        "D-" << TmatsIndex.iDIndex << "\\WP-1-2-1-1:4;\n"
         "D-" << TmatsIndex.iDIndex << "\\WFM-1-2-1-1:FW;\n"
         "D-" << TmatsIndex.iDIndex << "\\WFP-1-2-1-1:1;\n"
         // Measurand 2 Location 1 Word 2;
-        "D-" << TmatsIndex.iDIndex << "\\WP-1-2-1-2:4;\n"
+        "D-" << TmatsIndex.iDIndex << "\\WP-1-2-1-2:3;\n"
         "D-" << TmatsIndex.iDIndex << "\\WFM-1-2-1-2:FW;\n"
         "D-" << TmatsIndex.iDIndex << "\\WFP-1-2-1-2:2;\n";
 
