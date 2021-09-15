@@ -52,7 +52,7 @@ public:
     // Methods
 public:
     void Init(int iHandle, unsigned int uChanID);
-    std::string TMATS(ClTmatsIndexes & TmatsIndex);
+    std::string TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN);
     void AppendMsg(Su1553F1_Header * psu1553IPH, int32_t iCmdWord1, int32_t iStatWord1, int32_t iCmdWord2, int32_t iStatWord2, uint16_t auData[]);
     void AppendMsg(ClCh10Format_1553 * psu1553Msg);
     void Commit();

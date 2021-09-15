@@ -631,8 +631,8 @@ void WriteTmats(int iI106Handle, std::string sProgramName, double fCurrSimClockT
 #endif
 
     // 1553 R section, then linked B and C sections
-    ssTMATS << pCh10Writer_1553->TMATS(TmatsIndex);
-    ssTMATS << p1553Fmt_Nav_25Hz->TMATS(TmatsIndex, pCh10Writer_1553->sCDLN);
+    ssTMATS << pCh10Writer_1553->TMATS(TmatsIndex, pCh10Writer_1553->sCDLN);
+    ssTMATS << p1553Fmt_Nav_25Hz->TMATS(TmatsIndex);
 
     // PCM R and P sections
     ssTMATS << pCh10Writer_PCM->TMATS(TmatsIndex);

@@ -130,34 +130,7 @@ void ClCh10Format_PCM_SynthFmt1::MakeMsg(ClSimState * pclSimState)
 
 // ----------------------------------------------------------------------------
 
-// A couple of macros to make D and C record generation easier and more succinct.
-
-#define D_MEASURAND_1WORD(meas_name, meas_index, word_pos, bit_mask)                                \
-    ssTMATS <<                                                                                      \
-        "D-" << TmatsIndex.iDIndex << "\\MN-1-" << meas_index << ":" << #meas_name << ";\n"         \
-        "D-" << TmatsIndex.iDIndex << "\\LT-1-" << meas_index << ":WDFR;\n"                         \
-        "D-" << TmatsIndex.iDIndex << "\\MML\\N-1-" << meas_index << ":1;\n"                        \
-        /* Measurand XXX Location 1; */                                                             \
-        "D-" << TmatsIndex.iDIndex << "\\MNF\\N-1-" << meas_index << "-1:1;\n"                      \
-        /* Measurand XXX Location 1 Word 1; */                                                      \
-        "D-" << TmatsIndex.iDIndex << "\\WP-1-" << meas_index << "-1-1:" << word_pos << ";\n"       \
-        "D-" << TmatsIndex.iDIndex << "\\WFM-1-" << meas_index << "-1-1:" << #bit_mask << ";\n"     \
-        "D-" << TmatsIndex.iDIndex << "\\WFP-1-" << meas_index << "-1-1:1;\n";                      \
-        meas_index++;
-
 #define PCM_FMT_1_NUM_MEASURANDS    45
-
-#define C_CONVERSION(meas_name, conv_name, units, bin_fmt, offset, scale)   \
-    ssTMATS <<                                                              \
-        "C-" << TmatsIndex.iCIndex << "\\DCN:" << #meas_name << ";\n"       \
-        "C-" << TmatsIndex.iCIndex << "\\MN1:" << #conv_name << ";\n"       \
-        "C-" << TmatsIndex.iCIndex << "\\MN3:" << #units << ";\n"           \
-        "C-" << TmatsIndex.iCIndex << "\\BFM:" << #bin_fmt << ";\n"         \
-        "C-" << TmatsIndex.iCIndex << "\\DCT:COE;\n"                        \
-        "C-" << TmatsIndex.iCIndex << "\\CO\\N:1;\n"                        \
-        "C-" << TmatsIndex.iCIndex << "\\CO:" << (offset) << ";\n"          \
-        "C-" << TmatsIndex.iCIndex << "\\CO-1:" << uppercase << setprecision(12) << (scale) << ";\n";  \
-    TmatsIndex.iCIndex++;
 
 
 std::string ClCh10Format_PCM_SynthFmt1::TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN)
@@ -232,13 +205,13 @@ std::string ClCh10Format_PCM_SynthFmt1::TMATS(ClTmatsIndexes & TmatsIndex, std::
         //                                            ^--- Number of Words in this Fragment
         //                                          ^--- Defined Location 1 of 1
         // Measurand 1 Location 1 Word 1;
-        "D-" << TmatsIndex.iDIndex << "\\WP-1-1-1-1:1;\n"
+        "D-" << TmatsIndex.iDIndex << "\\WP-1-1-1-1:2;\n"
         //                                          ^--- Word Location
-        //                                        ^--- Word 1 of 2
+        //                                        ^--- Word 1 of 2 (MSW)
         "D-" << TmatsIndex.iDIndex << "\\WFM-1-1-1-1:FW;\n"
         "D-" << TmatsIndex.iDIndex << "\\WFP-1-1-1-1:1;\n"
         // Measurand 1 Location 1 Word 2;
-        "D-" << TmatsIndex.iDIndex << "\\WP-1-1-1-2:2;\n"
+        "D-" << TmatsIndex.iDIndex << "\\WP-1-1-1-2:1;\n"
         //                                          ^--- Word Location
         //                                        ^--- Word 2 of 1
         "D-" << TmatsIndex.iDIndex << "\\WFM-1-1-1-2:FW;\n"
@@ -248,15 +221,15 @@ std::string ClCh10Format_PCM_SynthFmt1::TMATS(ClTmatsIndexes & TmatsIndex, std::
         // Measurand - Longitude;
         "D-" << TmatsIndex.iDIndex << "\\MN-1-2:PCM_Longitude;\n"
         "D-" << TmatsIndex.iDIndex << "\\LT-1-2:WDFR;\n"
-        "D-" << TmatsIndex.iDIndex << "\\D-1\\MML\\N-1-2:1;\n"
+        "D-" << TmatsIndex.iDIndex << "\\MML\\N-1-2:1;\n"
         // Measurand 2 Location 1;
-        "D-" << TmatsIndex.iDIndex << "\\D-1\\MNF\\N-1-2-1:2;\n"
+        "D-" << TmatsIndex.iDIndex << "\\MNF\\N-1-2-1:2;\n"
         // Measurand 2 Location 1 Word 1;
-        "D-" << TmatsIndex.iDIndex << "\\WP-1-2-1-1:3;\n"
+        "D-" << TmatsIndex.iDIndex << "\\WP-1-2-1-1:4;\n"
         "D-" << TmatsIndex.iDIndex << "\\WFM-1-2-1-1:FW;\n"
         "D-" << TmatsIndex.iDIndex << "\\WFP-1-2-1-1:1;\n"
         // Measurand 2 Location 1 Word 2;
-        "D-" << TmatsIndex.iDIndex << "\\WP-1-2-1-2:4;\n"
+        "D-" << TmatsIndex.iDIndex << "\\WP-1-2-1-2:3;\n"
         "D-" << TmatsIndex.iDIndex << "\\WFM-1-2-1-2:FW;\n"
         "D-" << TmatsIndex.iDIndex << "\\WFP-1-2-1-2:2;\n";
 
@@ -266,109 +239,109 @@ std::string ClCh10Format_PCM_SynthFmt1::TMATS(ClTmatsIndexes & TmatsIndex, std::
     // Measurand - Pressure Altitude;
     D_MEASURAND_1WORD(PCM_Pressure_Altitude, iMeasIdx, 5, FW);
 
-    D_MEASURAND_1WORD(PCM_True_Airspeed,     iMeasIdx, 6,  FW);
-    D_MEASURAND_1WORD(PCM_True_Heading,      iMeasIdx, 7,  FW);
-    D_MEASURAND_1WORD(PCM_Magnetic_Heading,  iMeasIdx, 8,  FW);
-    D_MEASURAND_1WORD(PCM_Pitch,             iMeasIdx, 9, FW);
-    D_MEASURAND_1WORD(PCM_Roll,              iMeasIdx, 10, FW);
-    D_MEASURAND_1WORD(PCM_AngleOfAttack,     iMeasIdx, 11, FW);
-    D_MEASURAND_1WORD(PCM_Vert_Accel,        iMeasIdx, 12, FW);
-    D_MEASURAND_1WORD(PCM_Ground_Speed,      iMeasIdx, 13, FW);
-    D_MEASURAND_1WORD(PCM_Vertical_Speed,    iMeasIdx, 14, FW);
-    D_MEASURAND_1WORD(PCM_Flt_Path_Accel,    iMeasIdx, 15, FW);
+    D_MEASURAND_1WORD(PCM_TRUE_AIRSPEED,     iMeasIdx, 6,  FW);
+    D_MEASURAND_1WORD(PCM_TRUE_HEADING,      iMeasIdx, 7,  FW);
+    D_MEASURAND_1WORD(PCM_MAGNETIC_HEADING,  iMeasIdx, 8,  FW);
+    D_MEASURAND_1WORD(PCM_PITCH,             iMeasIdx, 9, FW);
+    D_MEASURAND_1WORD(PCM_ROLL,              iMeasIdx, 10, FW);
+    D_MEASURAND_1WORD(PCM_ANGLEOFATTACK,     iMeasIdx, 11, FW);
+    D_MEASURAND_1WORD(PCM_VERT_ACCEL,        iMeasIdx, 12, FW);
+    D_MEASURAND_1WORD(PCM_GROUND_SPEED,      iMeasIdx, 13, FW);
+    D_MEASURAND_1WORD(PCM_VERTICAL_SPEED,    iMeasIdx, 14, FW);
+    D_MEASURAND_1WORD(PCM_FLT_PATH_ACCEL,    iMeasIdx, 15, FW);
 
-    D_MEASURAND_1WORD(PCM_Power_Lever_1,     iMeasIdx, 16, FW);
-    D_MEASURAND_1WORD(PCM_Power_Lever_2,     iMeasIdx, 17, FW);
+    D_MEASURAND_1WORD(PCM_POWER_LEVER_1,     iMeasIdx, 16, FW);
+    D_MEASURAND_1WORD(PCM_POWER_LEVER_2,     iMeasIdx, 17, FW);
     D_MEASURAND_1WORD(PCM_EGT_1,             iMeasIdx, 18, FW);
     D_MEASURAND_1WORD(PCM_EGT_2,             iMeasIdx, 19, FW);
-    D_MEASURAND_1WORD(PCM_Oil_Temp_1,        iMeasIdx, 20, FW);
-    D_MEASURAND_1WORD(PCM_Oil_Temp_2,        iMeasIdx, 21, FW);
-    D_MEASURAND_1WORD(PCM_Fuel_Flow_1,       iMeasIdx, 22, FW);
-    D_MEASURAND_1WORD(PCM_Fuel_Flow_2,       iMeasIdx, 23, FW);
-    D_MEASURAND_1WORD(PCM_Fan_Speed_1,       iMeasIdx, 24, FW);
-    D_MEASURAND_1WORD(PCM_Fan_Speed_2,       iMeasIdx, 25, FW);
-    D_MEASURAND_1WORD(PCM_Core_Speed_1,      iMeasIdx, 26, FW);
-    D_MEASURAND_1WORD(PCM_Core_Speed_2,      iMeasIdx, 27, FW);
-    D_MEASURAND_1WORD(PCM_Engine_Vib_1,      iMeasIdx, 28, FW);
-    D_MEASURAND_1WORD(PCM_Engine_Vib_2,      iMeasIdx, 29, FW);
-    D_MEASURAND_1WORD(PCM_Oil_Pressure_1,    iMeasIdx, 30, FW);
-    D_MEASURAND_1WORD(PCM_Oil_Pressure_2,    iMeasIdx, 31, FW);
-    D_MEASURAND_1WORD(PCM_AngleOfAttack_1,   iMeasIdx, 32, FW);
-    D_MEASURAND_1WORD(PCM_AngleOfAttack_2,   iMeasIdx, 33, FW);
+    D_MEASURAND_1WORD(PCM_OIL_TEMP_1,        iMeasIdx, 20, FW);
+    D_MEASURAND_1WORD(PCM_OIL_TEMP_2,        iMeasIdx, 21, FW);
+    D_MEASURAND_1WORD(PCM_FUEL_FLOW_1,       iMeasIdx, 22, FW);
+    D_MEASURAND_1WORD(PCM_FUEL_FLOW_2,       iMeasIdx, 23, FW);
+    D_MEASURAND_1WORD(PCM_FAN_SPEED_1,       iMeasIdx, 24, FW);
+    D_MEASURAND_1WORD(PCM_FAN_SPEED_2,       iMeasIdx, 25, FW);
+    D_MEASURAND_1WORD(PCM_CORE_SPEED_1,      iMeasIdx, 26, FW);
+    D_MEASURAND_1WORD(PCM_CORE_SPEED_2,      iMeasIdx, 27, FW);
+    D_MEASURAND_1WORD(PCM_ENGINE_VIB_1,      iMeasIdx, 28, FW);
+    D_MEASURAND_1WORD(PCM_ENGINE_VIB_2,      iMeasIdx, 29, FW);
+    D_MEASURAND_1WORD(PCM_OIL_PRESSURE_1,    iMeasIdx, 30, FW);
+    D_MEASURAND_1WORD(PCM_OIL_PRESSURE_2,    iMeasIdx, 31, FW);
+    D_MEASURAND_1WORD(PCM_ANGLEOFATTACK_1,   iMeasIdx, 32, FW);
+    D_MEASURAND_1WORD(PCM_ANGLEOFATTACK_2,   iMeasIdx, 33, FW);
 
-    D_MEASURAND_1WORD(PCM_Weigh_On_Wheels,    iMeasIdx, 34, 0000000000000001);
-    D_MEASURAND_1WORD(PCM_Gear_Down_Locked,   iMeasIdx, 34, 0000000000000010);
-    D_MEASURAND_1WORD(PCM_Gear_Up_Locked,     iMeasIdx, 34, 0000000000000100);
+    D_MEASURAND_1WORD(PCM_WEIGHT_ON_WHEELS,  iMeasIdx, 34, 0000000000000001);
+    D_MEASURAND_1WORD(PCM_GEAR_DOWN_LOCKED,  iMeasIdx, 34, 0000000000000010);
+    D_MEASURAND_1WORD(PCM_GEAR_UP_LOCKED,    iMeasIdx, 34, 0000000000000100);
 
-    D_MEASURAND_1WORD(PCM_Aileron_Pos_1,     iMeasIdx, 35, FW);
-    D_MEASURAND_1WORD(PCM_Aileron_Pos_2,     iMeasIdx, 36, FW);
-    D_MEASURAND_1WORD(PCM_Elevator_Pos_1,    iMeasIdx, 37, FW);
-    D_MEASURAND_1WORD(PCM_Elevator_Pos_2,    iMeasIdx, 38, FW);
-    D_MEASURAND_1WORD(PCM_Rudder_Pos,        iMeasIdx, 39, FW);
+    D_MEASURAND_1WORD(PCM_AILERON_POS_1,     iMeasIdx, 35, FW);
+    D_MEASURAND_1WORD(PCM_AILERON_POS_2,     iMeasIdx, 36, FW);
+    D_MEASURAND_1WORD(PCM_ELEVATOR_POS_1,    iMeasIdx, 37, FW);
+    D_MEASURAND_1WORD(PCM_ELEVATOR_POS_2,    iMeasIdx, 38, FW);
+    D_MEASURAND_1WORD(PCM_RUDDER_POS,        iMeasIdx, 39, FW);
 
-    D_MEASURAND_1WORD(PCM_Control_Wheel_Pos_Capt, iMeasIdx, 40, FW);
-    D_MEASURAND_1WORD(PCM_Contorl_Wheel_Pos_FO,   iMeasIdx, 41, FW);
-    D_MEASURAND_1WORD(PCM_Control_Col_Pos_Capt,   iMeasIdx, 42, FW);
-    D_MEASURAND_1WORD(PCM_Control_Col_Pos_FO,     iMeasIdx, 43, FW);
-    D_MEASURAND_1WORD(PCM_Rudder_Pedal_Pos,       iMeasIdx, 44, FW);
-    D_MEASURAND_1WORD(PCM_Flap_Pos,               iMeasIdx, 45, FW);
+    D_MEASURAND_1WORD(PCM_CONTROL_WHEEL_POS_CAPT, iMeasIdx, 40, FW);
+    D_MEASURAND_1WORD(PCM_CONTROL_WHEEL_POS_FO,   iMeasIdx, 41, FW);
+    D_MEASURAND_1WORD(PCM_CONTROL_COL_POS_CAPT,   iMeasIdx, 42, FW);
+    D_MEASURAND_1WORD(PCM_CONTROL_COL_POS_FO,     iMeasIdx, 43, FW);
+    D_MEASURAND_1WORD(PCM_RUDDER_PEDAL_POS,       iMeasIdx, 44, FW);
+    D_MEASURAND_1WORD(PCM_FLAP_POS,               iMeasIdx, 45, FW);
 
     assert(iMeasIdx == PCM_FMT_1_NUM_MEASURANDS + 1);
 
     // PCM Measurement Data Conversion (C)
     // -----------------------------------
 
-    C_CONVERSION(PCM_Latitude,          TSPI_LAT,      Deg,     TWO, 0.0, 1.0/FLOAT2SEMICIR32(1.0))
-    C_CONVERSION(PCM_Longitude,         TSPI_LON,      Deg,     TWO, 0.0, 1.0/FLOAT2SEMICIR32(1.0))
-    C_CONVERSION(PCM_Pressure_Altitude, TSPI_ALT,      ft,      UNS, -1000.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_LATITUDE,          TSPI_LAT,        Deg,    TWO, 0.0, 1.0/FLOAT2SEMICIR32(1.0))
+    C_CONVERSION_OFFSET_SCALE(PCM_LONGITUDE,         TSPI_LON,        Deg,    TWO, 0.0, 1.0/FLOAT2SEMICIR32(1.0))
+    C_CONVERSION_OFFSET_SCALE(PCM_PRESSURE_ALTITUDE, TSPI_ALT,        ft,     UNS, -1000.0, 1.0)
     
-    C_CONVERSION(PCM_True_Airspeed,     TSPI_AIRSPEED, kts,     ONE, 0.0, 1.0)
-    C_CONVERSION(PCM_True_Heading,      TSPI_HEADING,  Deg,     UNS, 0.0, 1.0/FLOAT2SEMICIR16(1.0))
-    C_CONVERSION(PCM_Magnetic_Heading,  MAGNETIC_HEADING, Deg,  UNS, 0.0, 1.0/FLOAT2SEMICIR16(1.0))
-    C_CONVERSION(PCM_Pitch,             TSPI_ROLL,     Deg,     TWO, 0.0, 1.0/FLOAT2SEMICIR16(1.0))
-    C_CONVERSION(PCM_Roll,              TSPI_PITCH,    Deg,     TWO, 0.0, 1.0/FLOAT2SEMICIR16(1.0))
+    C_CONVERSION_OFFSET_SCALE(PCM_TRUE_AIRSPEED,     TSPI_AIRSPEED,   kts,    ONE, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_TRUE_HEADING,      TSPI_HEADING,    Deg,    UNS, 0.0, 1.0/FLOAT2SEMICIR16(1.0))
+    C_CONVERSION_OFFSET_SCALE(PCM_MAGNETIC_HEADING,  Magnetic Heading, Deg,   UNS, 0.0, 1.0/FLOAT2SEMICIR16(1.0))
+    C_CONVERSION_OFFSET_SCALE(PCM_PITCH,             TSPI_ROLL,       Deg,    TWO, 0.0, 1.0/FLOAT2SEMICIR16(1.0))
+    C_CONVERSION_OFFSET_SCALE(PCM_ROLL,              TSPI_PITCH,      Deg,    TWO, 0.0, 1.0/FLOAT2SEMICIR16(1.0))
 
-    C_CONVERSION(PCM_AngleOfAttack,   ANGLE_OF_ATTACK, Deg,     TWO, 0.0, 1.0)
-    C_CONVERSION(PCM_Vert_Accel,      VERTICAL_ACCEL,  Gs,      TWO, 0.0, 1.0)
-    C_CONVERSION(PCM_Ground_Speed,    GROUND_SPEED,    kts,     UNS, 0.0, 1.0)
-    C_CONVERSION(PCM_Vertical_Speed,  VERTICAL_SPEED,  kts,     TWO, 0.0, 1.0)
-    C_CONVERSION(PCM_Flt_Path_Accel,  FLT_PATH_ACCEL,  Gs,      TWO, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_ANGLEOFATTACK,     Angle of Attack, Deg,    TWO, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_VERT_ACCEL,        Vertical Accel,  Gs,     TWO, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_GROUND_SPEED,      Ground Speed,    kts,    UNS, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_VERTICAL_SPEED,    Vertical Speed,  kts,    TWO, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_FLT_PATH_ACCEL,    Flt Path Accel,  Gs,     TWO, 0.0, 1.0)
 
-    C_CONVERSION(PCM_Power_Lever_1,   POWER_LEVER_1,   Deg,     UNS, 0.0, 1.0/FLOAT2SEMICIR16(1.0))
-    C_CONVERSION(PCM_Power_Lever_2,   POWER_LEVER_2,   Deg,     UNS, 0.0, 1.0/FLOAT2SEMICIR16(1.0))
-    C_CONVERSION(PCM_EGT_1,           EGT_1,           DegF,    TWO, 0.0, 1.0)
-    C_CONVERSION(PCM_EGT_2,           EGT_2,           DegF,    TWO, 0.0, 1.0)
-    C_CONVERSION(PCM_Oil_Temp_1,      OIL_TEMP_1,      DegF,    TWO, 0.0, 1.0)
-    C_CONVERSION(PCM_Oil_Temp_2,      OIL_TEMP_2,      DegF,    TWO, 0.0, 1.0)
-    C_CONVERSION(PCM_Fuel_Flow_1,     FUEL_FLOW_1,     Lbs/Hr,  UNS, 0.0, 1.0)
-    C_CONVERSION(PCM_Fuel_Flow_2,     FUEL_FLOW_2,     Lbs/Hr,  UNS, 0.0, 1.0)
-    C_CONVERSION(PCM_Fan_Speed_1,     FAN_SPEED_1,     PCT_RPM, TWO, 0.0, 1.0)
-    C_CONVERSION(PCM_Fan_Speed_2,     FAN_SPEED_2,     PCT_RPM, TWO, 0.0, 1.0)
-    C_CONVERSION(PCM_Core_Speed_1,    CORE_SPEED_1,    PCT_RPM, TWO, 0.0, 1.0)
-    C_CONVERSION(PCM_Core_Speed_2,    CORE_SPEED_2,    PCT_RPM, TWO, 0.0, 1.0)
-    C_CONVERSION(PCM_Engine_Vib_1,    ENGINE_VIB_1,    IN/SEC,  TWO, 0.0, 1.0)
-    C_CONVERSION(PCM_Engine_Vib_2,    ENGINE_VIB_2,    IN/SEC,  TWO, 0.0, 1.0)
-    C_CONVERSION(PCM_Oil_Pressure_1,  OIL_PRESSURE_1,  PSI,     TWO, 0.0, 1.0)
-    C_CONVERSION(PCM_Oil_Pressure_2,  OIL_PRESSURE_2,  PSI,     TWO, 0.0, 1.0)
-    C_CONVERSION(PCM_AngleOfAttack_1, AOA_SENSOR_1,    Deg,     TWO, 0.0, 1.0/FLOAT2SEMICIR16(1.0))
-    C_CONVERSION(PCM_AngleOfAttack_2, AOA_SENSOR_2,    Deg,     TWO, 0.0, 1.0/FLOAT2SEMICIR16(1.0))
+    C_CONVERSION_OFFSET_SCALE(PCM_POWER_LEVER_1,     Power Lever 1,    Deg,   UNS, 0.0, 1.0/FLOAT2SEMICIR16(1.0))
+    C_CONVERSION_OFFSET_SCALE(PCM_POWER_LEVER_2,     Power Lever 2,    Deg,   UNS, 0.0, 1.0/FLOAT2SEMICIR16(1.0))
+    C_CONVERSION_OFFSET_SCALE(PCM_EGT_1,             EGT 1,            DegF,  TWO, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_EGT_2,             EGT 2,            DegF,  TWO, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_OIL_TEMP_1,        Oil Temp 1,       DegF,  TWO, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_OIL_TEMP_2,        Oil Temp 2,       DegF,  TWO, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_FUEL_FLOW_1,       Fuel Flow 1,    Lbs/Hr,  UNS, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_FUEL_FLOW_2,       Fuel Flow 2,    Lbs/Hr,  UNS, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_FAN_SPEED_1,       Fan Speed 1,   PCT_RPM,  TWO, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_FAN_SPEED_2,       Fan Speed 2,   PCT_RPM,  TWO, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_CORE_SPEED_1,      Core Speed 1,  PCT_RPM,  TWO, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_CORE_SPEED_2,      Core Speed 2,  PCT_RPM,  TWO, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_ENGINE_VIB_1,      Engine Vib 1,   IN/SEC,  TWO, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_ENGINE_VIB_2,      Engine Vib 2,   IN/SEC,  TWO, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_OIL_PRESSURE_1,    Oil Pressure 1,    PSI,  TWO, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_OIL_PRESSURE_2,    Oil Pressure 2,    PSI,  TWO, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_ANGLEOFATTACK_1,   AOA Sensor 1,      Deg,  TWO, 0.0, 1.0/FLOAT2SEMICIR16(1.0))
+    C_CONVERSION_OFFSET_SCALE(PCM_ANGLEOFATTACK_2,   AOA Sensor 2,      Deg,  TWO, 0.0, 1.0/FLOAT2SEMICIR16(1.0))
 
-    C_CONVERSION(PCM_Weigh_On_Wheels,  WEIGHT_ON_WHEELS, BOOL,  UNS, 0.0, 1.0)
-    C_CONVERSION(PCM_Gear_Down_Locked, GEAR_DOWN_LOCKED, BOOL,  UNS, 0.0, 1.0)
-    C_CONVERSION(PCM_Gear_Up_Locked,   GEAR_UP_LOCKED,   BOOL,  UNS, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_WEIGHT_ON_WHEELS,  Weight On Wheels, BOOL,  UNS, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_GEAR_DOWN_LOCKED,  Gear Down Locked, BOOL,  UNS, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_GEAR_UP_LOCKED,    Gear Up Locked,   BOOL,  UNS, 0.0, 1.0)
 
-    C_CONVERSION(PCM_Aileron_Pos_1,  AILERON_POS_1,    Deg,     TWO, 0.0, 1.0/FLOAT2SEMICIR16(1.0))
-    C_CONVERSION(PCM_Aileron_Pos_2,  AILERON_POS_2,    Deg,     TWO, 0.0, 1.0/FLOAT2SEMICIR16(1.0))
-    C_CONVERSION(PCM_Elevator_Pos_1, ELEVATOR_POS_1,   Deg,     TWO, 0.0, 1.0/FLOAT2SEMICIR16(1.0))
-    C_CONVERSION(PCM_Elevator_Pos_2, ELEVATOR_POS_2,   Deg,     TWO, 0.0, 1.0/FLOAT2SEMICIR16(1.0))
-    C_CONVERSION(PCM_Rudder_Pos,     RUDDER_POS,       Deg,     TWO, 0.0, 1.0/FLOAT2SEMICIR16(1.0))
+    C_CONVERSION_OFFSET_SCALE(PCM_AILERON_POS_1,     Aileron Pos 1,    Deg,   TWO, 0.0, 1.0/FLOAT2SEMICIR16(1.0))
+    C_CONVERSION_OFFSET_SCALE(PCM_AILERON_POS_2,     Aileron Pos 2,    Deg,   TWO, 0.0, 1.0/FLOAT2SEMICIR16(1.0))
+    C_CONVERSION_OFFSET_SCALE(PCM_ELEVATOR_POS_1,    Elevator Pos 1,   Deg,   TWO, 0.0, 1.0/FLOAT2SEMICIR16(1.0))
+    C_CONVERSION_OFFSET_SCALE(PCM_ELEVATOR_POS_2,    Elevator Pos 2,   Deg,   TWO, 0.0, 1.0/FLOAT2SEMICIR16(1.0))
+    C_CONVERSION_OFFSET_SCALE(PCM_RUDDER_POS,        Rudder Pos,       Deg,   TWO, 0.0, 1.0/FLOAT2SEMICIR16(1.0))
 
-    C_CONVERSION(PCM_Control_Wheel_Pos_Capt, CONTROL_WHEEL_POS_CAPT, COUNTS, UNS, 0.0, 1.0)
-    C_CONVERSION(PCM_Contorl_Wheel_Pos_FO,   CONTROL_WHEEL_POS_FO,   COUNTS, UNS, 0.0, 1.0)
-    C_CONVERSION(PCM_Control_Col_Pos_Capt,   CONTROL_COL_POS_CAPT,   COUNTS, UNS, 0.0, 1.0)
-    C_CONVERSION(PCM_Control_Col_Pos_FO,     CONTROL_COL_POS_FO,     COUNTS, UNS, 0.0, 1.0)
-    C_CONVERSION(PCM_Rudder_Pedal_Pos,       RUDDER_PEDAL_POS,       COUNTS, UNS, 0.0, 1.0)
-    C_CONVERSION(PCM_Flap_Pos,               FLAP_POS,               COUNTS, UNS, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_CONTROL_WHEEL_POS_CAPT, Control Wheel Pos Capt, COUNTS, UNS, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_CONTROL_WHEEL_POS_FO,   Control Wheel Pos FO,   COUNTS, UNS, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_CONTROL_COL_POS_CAPT,   Control Col Pos Capt,   COUNTS, UNS, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_CONTROL_COL_POS_FO,     Control Col Pos FO,     COUNTS, UNS, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_RUDDER_PEDAL_POS,       Rudder Pedal Pos,       COUNTS, UNS, 0.0, 1.0)
+    C_CONVERSION_OFFSET_SCALE(PCM_FLAP_POS,               Flap Pos,               COUNTS, UNS, 0.0, 1.0)
 
     return ssTMATS.str();
     }
