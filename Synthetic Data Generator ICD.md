@@ -37,16 +37,20 @@ defined data channel types.
 | Ch ID | IRIG Type | Description |
 | :---: | --------- | ----------- |
 |   0   | "Computer Generated Data Packet Format 1 TMATS (0x01)” | |
-|   1   | “Time Data Format 1 (0x11)” | |
-|  10   | “Video Data Format 2 (0x42)” | This channel is a video channel of the unobstructed view out the front of the aircraft with a HUD display superimposed. |
-|  11   | “Video Data Format 2 (0x42)” | This channel is a video channel of the view of the interior of the cockpit as the pilot would see it. |
-|  12   | “Video Data Format 2 (0x42)” | This channel is a video channel of the view of the aircraft as it would be seen by a chase plane. |
-|  20   | “PCM Format 1 (0x09)”        | This channel contains PCM data. The PCM data conforms to the Synthetic PCM Source Type 1 format described in Section 4.3. Complete PCM frames occur at a 25 Hz rate. |
-|  30   | “MIL-STD-1553 Format 1 (0x19)” | See section "File Layout 1 Channel ID 30 Message Layout" below for details |
+|   1   | “Time Data Format 1 (0x11)”    | |
+|  10   | “Video Data Format 2 (0x42)”   | This channel is a video channel of the unobstructed view out the front of the aircraft with a HUD display superimposed. |
+|  11   | “Video Data Format 2 (0x42)”   | This channel is a video channel of the view of the interior of the cockpit as the pilot would see it. |
+|  12   | “Video Data Format 2 (0x42)”   | This channel is a video channel of the view of the aircraft as it would be seen by a chase plane. |
+|  20   | “PCM Format 1 (0x09)”          | See section **File Layout 1 Channel ID 20 Message Layout** below for details. |
+|  30   | “MIL-STD-1553 Format 1 (0x19)” | See section **File Layout 1 Channel ID 30 Message Layout** below for details |
+|  40   | “ARINC-429 Format 0 (0x38)”    | Left engine parameters. See section **File Layout 1 Channel ID 40 Message Layout** below for details |
+|  41   | “ARINC-429 Format 0 (0x38)”    | Right engine parameters. See section **File Layout 1 Channel ID 41 Message Layout** below for details |
+
 
 #### File Layout 1 Channel ID 20 Message Layout
 
-File Layout 1 Channel ID 20 is a PCM data channel. (More to come)
+File Layout 1 Channel ID 20 is a PCM data channel. The PCM frame data layout is described in **IRIG PCM Frame Data Layout P100** later in this document. 
+ Complete PCM frames occur at a 25 Hz rate.
 
 #### File Layout 1 Channel ID 30 Message Layout
 
@@ -64,10 +68,21 @@ Note: The 1553 Command Word is depicted as "RT Num - T/R Bit - Subaddress - Word
 | :-----------: | :---------: | ----------- |
 | 6-T-29-32     | 25 Hz       | 1553 Message Layout B100 - Synthetic GPS/INS Navigation Position |
 
+#### File Layout 1 Channel ID 40 Message Layout
+
+File Layout 1 Channel ID 40 data represent engine performance parameters for the left aircraft engine
+in ARINC-429 messages. This Ch 10 channel will have engine data from multiple ARINC-429 buses as described
+in **ARINC-429 Engine Data Layout AR100** later in this document. All messages occur at a 4 Hz rate.
+
+#### File Layout 1 Channel ID 41 Message Layout
+
+File Layout 1 Channel ID 41 data represent engine performance parameters for the right aircraft engine
+in ARINC-429 messages. This Ch 10 channel will have engine data from multiple ARINC-429 buses as described
+in **ARINC-429 Message Data Layout AR100** later in this document. All messages occur at a 4 Hz rate.
+
 ---
 
 ## Individual IRIG Data Channel Layouts
-
 
 
 ### IRIG 1553 Subaddress Data Layouts
@@ -193,7 +208,7 @@ LSB = 4 feet
 
 ### IRIG PCM Frame Data Layouts
 
-#### IRIG PCM Frame Data Layout 1
+#### IRIG PCM Frame Data Layout P100
 
 | PCM Word  | Data Format | Units   | Description |
 | :-------: | ----------- | ------- | ----------- |
@@ -255,3 +270,226 @@ LSB = 4 feet
 | bit         | Single bit value |
 |             | Note: All multibyte data is stored in little endian byte order |
 
+---
+
+### ARINC-429 Message Data Layouts
+
+#### ARINC-429 Message Data Layout AR100
+
+This set of ARINC-429 messages primarily represent engine performance paramaters. Different engine
+parameters are stored in different ARINC-429 buses within one Ch 10 channel. There is only one message
+type and format per ARINC-429 bus.
+
+| ARINC-429 Bus | Message Label | Description |
+| :-----------: | :-----------: | ----------- |
+|  0            |  Label 41     | Engine Fan RPM (N1 Actual)    |
+|  1            |  Label 42     | Engine Fan RPM (N1 Demand)    |
+|  2            |  Label 43     | Engine Oil Pressure           |
+|  3            |  Label 44     | Engine Turbine RPM (N2)       |
+|  4            |  Label 45     | Exhaust Gas Temperature (EGT) |
+|  5            |  Label 46     | Engine Oil Temperature        |
+|  6            |  Label 47     | Fuel Flow                     |
+
+For all **ARINC-429 Message Data Layout AR100** messages defined below **SDI** and **SSM** fields have the
+following definition.
+
+| SDI Code          | 10  | 9   |
+| ----------------  | :-: | :-: |
+| (0) Channel A     |  0  | 0   |
+| (1) Channel B     |  0  | 1   |
+| (2) Channel C     |  1  | 0   |
+| (3) Not Used      |  1  | 1   |
+
+| SSM Code [BNR]    | 31  | 30  |
+| ----------------  | :-: | :-: |
+| Failure Warning   |  0  |  0  |
+| No Computed Data  |  0  |  1  |
+| Functional Test   |  1  |  0  |
+| Normal Operation  |  1  |  1  |
+
+##### ARINC-429 Message Data Layout AR100 Bus 0
+
+_Engine Fan RPM (N1 Actual)_
+
+| Bit | Description |
+| --- | ----------- |
+| 1-8 | Octal Label = 41 |
+| 9   | SDI Code LSB |
+| 10  | SDI Code MSB |
+| 11  | RESERVED |
+| 12  | RESERVED |
+| 13  | RESERVED |
+| 14  | RESERVED |
+| 15  | RESERVED |
+| 16  | RESERVED |
+| 17  | RESERVED |
+| 18  | N1 RPM LSB= MSB/2^10 RPM |
+| ... ||
+| 28  | N1 RPM MSB = 64% RPM |
+| 29  | RESERVED |
+| 30  | SSM Code |
+| 31  | SSM Code |
+| 32  | Parity (Odd) |
+
+Range
+- Max Value: 110
+- Min Value: 0
+
+##### ARINC-429 Message Data Layout AR100 Bus 1
+
+_Engine Fan RPM (N1 Demand)_
+
+| Bit | Description |
+| --- | ----------- |
+| 1-8 |  Octal Label = 42 |
+| 9   |  SDI Code LSB |
+| 10  |  SDI Code MSB |
+| 11  |  RESERVED |
+| 12  |  RESERVED |
+| 13  |  RESERVED |
+| 14  |  RESERVED |
+| 15  |  RESERVED |
+| 16  |  RESERVED |
+| 17  |  RESERVED |
+| 18  |  PMC Demand (LSB= MSB/2^10 RPM) |
+| ... ||
+| 28  |  PMC Demand (MSB) (64% RPM) |
+| 29  |  0 Reserved |
+| 30  |  SSM Code |
+| 31  |  SSM Code |
+| 32  |  Parity (Odd) |
+
+Range
+- Max Value: 110 
+- Min Value: 0
+
+##### ARINC-429 Message Data Layout AR100 Bus 2
+
+_Engine Oil Pressure_
+
+| Bit | Description |
+| --- | ----------- |
+| 1-8 |  Octal Label = 43 |
+| 9   |  SDI Code LSB |
+| 10  |  SDI Code MSB |
+| 11  |  Sensor Data Status: (0= Raw Sensor Data, 1= Calibrated Data)
+| 12  |  Engine Oil Pressure LSB= MSB/ 2^16
+| ...||
+| 28  |  Engine Oil Pressure MSB = 64 psi
+| 29  |  Signed
+| 30  |  SSM Code |
+| 31  |  SSM Code |
+| 32  |  Parity (Odd) |
+
+##### ARINC-429 Message Data Layout AR100 Bus 3
+
+_Engine Turbine RPM (N2)_
+
+| Bit | Description |
+| --- | ----------- |
+| 1-8 |  Octal Label = 44 |
+| 9   |  SDI Code LSB |
+| 10  |  SDI Code MSB |
+| 11  |  RESERVED |
+| 12  |  RESERVED |
+| 13  |  RESERVED |
+| 14  |  RESERVED |
+| 15  |  RESERVED |
+| 16  |  RESERVED |
+| 17  |  RESERVED |
+| 18  |  N2 RPM LSB= MSB/2^10 RPM
+| ... ||
+| 28  |  N2 RPM MSB = 64% RPM
+| 29  |  RESERVED
+| 30  |  SSM Code |
+| 31  |  SSM Code |
+| 32  |  Parity (Odd) |
+
+Range
+- Max Value: 110
+- Min Value: 0
+
+##### ARINC-429 Message Data Layout AR100 Bus 4
+
+_Exhaust Gas Temperature (EGT)_
+
+| Bit | Description |
+| --- | ----------- |
+| 1-8 |  Octal Label = 45 |
+| 9   |  SDI Code LSB |
+| 10  |  SDI Code MSB |
+| 11  |  RESERVED |
+| 12  |  RESERVED |
+| 13  |  RESERVED |
+| 14  |  RESERVED |
+| 15  |  RESERVED |
+| 16  |  RESERVED |
+| 17  |  RESERVED |
+| 18  |  EGT Value LSB = MSB/2^10 |
+| ... ||
+| 28  |  EGT Value MSB = 1024 °C |
+| 29  |  0 |
+| 30  |  SSM Code |
+| 31  |  SSM Code |
+| 32  |  Parity (Odd) |
+
+Range
+- Max Value: 1100
+- Min Value: 0
+
+##### ARINC-429 Message Data Layout AR100 Bus 5
+
+_Engine Oil Temperature_
+
+| Bit | Description |
+| --- | ----------- |
+| 1-8 |  Octal Label = 46 |
+| 9   |  SDI Code LSB |
+| 10  |  SDI Code MSB |
+| 11  |  RESERVED |
+| 12  |  RESERVED |
+| 13  |  RESERVED |
+| 14  |  RESERVED |
+| 15  |  RESERVED |
+| 16  |  RESERVED |
+| 17  |  RESERVED |
+| 18  |  RESERVED |
+| 19  |  RESERVED |
+| 20  |  Engine Oil Temperature LSB = MSB/2^8 |
+| ... ||
+| 28  |  Engine Oil Temperature MSB = 128 °C |
+| 29  |  Sign Bit 0=Positive, 1=Negative |
+| 30  |  SSM Code |
+| 31  |  SSM Code |
+| 32  |  Parity (Odd) |
+
+Range
+- Max Value: 200
+- Min Value: -50
+
+##### ARINC-429 Message Data Layout AR100 Bus 6
+
+_Fuel Flow_
+
+| Bit | Description |
+| --- | ----------- |
+| 1-8 |  Octal Label = 47 |
+| 9   |  SDI Code LSB |
+| 10  |  SDI Code MSB |
+| 11  |  RESERVED |
+| 12  |  RESERVED |
+| 13  |  RESERVED |
+| 14  |  RESERVED |
+| 15  |  Fuel Flow LSB = MSB/2^13 |
+| ... ||
+| 28  |  Fuel Flow MSB = 8192 PPH |
+| 29  |  RESERVED |
+| 30  |  SSM Code |
+| 31  |  SSM Code |
+| 32  |  Parity (Odd) |
+
+Range
+- Max Value: 15000
+- Min Value: 0
+
+---
