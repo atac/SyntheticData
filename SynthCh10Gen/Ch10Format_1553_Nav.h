@@ -74,7 +74,7 @@ public:
     // Methods
 
     void MakeMsg(ClSimState * pclSimState);
-    std::string TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN);
+    std::string TMATS(ClTmatsIndexes & TmatsIndex);
 
     };
 
