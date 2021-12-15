@@ -306,12 +306,12 @@ type and format per ARINC-429 bus.
 | ARINC-429 Bus | Octal Label | Hex Value | Description |
 | :-----------: | :---------: | :-------: | ----------- |
 |  0            |  Label 41   | 0x84      | Engine Fan RPM (N1 Actual)    |
-|  1            |  Label 42   | 0x44      | Engine Fan RPM (N1 Demand)    |
-|  2            |  Label 43   | 0xC4      | Engine Oil Pressure           |
-|  3            |  Label 44   | 0x24      | Engine Turbine RPM (N2)       |
-|  4            |  Label 45   | 0xA4      | Exhaust Gas Temperature (EGT) |
-|  5            |  Label 46   | 0x64      | Engine Oil Temperature        |
-|  6            |  Label 47   | 0xE4      | Fuel Flow                     |
+|  0            |  Label 42   | 0x44      | Engine Fan RPM (N1 Demand)    |
+|  0            |  Label 43   | 0xC4      | Engine Oil Pressure           |
+|  0            |  Label 44   | 0x24      | Engine Turbine RPM (N2)       |
+|  0            |  Label 45   | 0xA4      | Exhaust Gas Temperature (EGT) |
+|  0            |  Label 46   | 0x64      | Engine Oil Temperature        |
+|  0            |  Label 47   | 0xE4      | Fuel Flow                     |
 
 Bit positions marked RESERVED shall contain a '0'.
 
