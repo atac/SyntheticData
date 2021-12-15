@@ -132,7 +132,6 @@ std::string ClCh10Format_1553_Nav::TMATS(ClTmatsIndexes & TmatsIndex)
     B_MEASURAND_1WORD(BUS_ACCEL_X,      iMessageIdx, iMeasIdx, 14, FW);
     B_MEASURAND_1WORD(BUS_ACCEL_Y,      iMessageIdx, iMeasIdx, 15, FW);
     B_MEASURAND_1WORD(BUS_ACCEL_Z,      iMessageIdx, iMeasIdx, 16, FW);
-    TmatsIndex.iBIndex++;
 
     assert(iMeasIdx == MIL1553_FMT_1_NUM_MEASURANDS + 1);
 

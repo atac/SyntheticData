@@ -3,6 +3,12 @@
 */
 #pragma once
 
+#include <string>       // std::string
+#include <iostream>     // std::cout
+#include <sstream>      // std::stringstream
+
+#define F_TO_C(TempF)   ((TempF-32) / 1.8) 
+
 // TMATS Generating Macros
 // -----------------------
 
@@ -71,6 +77,17 @@
     TmatsIndex.iCIndex++;
 
 
+#define CENTER_COMMENT(stream, length, comment)                             \
+    {                                                                       \
+    int         iFillLen = (length-strlen(comment))/2;                      \
+                                                stream << "COMMENT:";       \
+    for (int iIdx = 0; iIdx < iFillLen; iIdx++) stream << " ";              \
+                                                stream << comment;          \
+    for (int iIdx = 0; iIdx < iFillLen; iIdx++) stream << " ";              \
+    if (((length-strlen(comment)) %2) != 0)     stream << " ";              \
+                                                stream << ";\n";            \
+    }
+
 
 // ============================================================================
 // Class ClTmatsIndexes
@@ -89,3 +106,31 @@ public:
     int                 iDIndex  = 1;
 
     };
+
+
+// ============================================================================
+// Utilities
+// ============================================================================
+
+#if 0
+std::string sCenter(std::string sInput, int iWidth) 
+//void sCenter(std::string sInput, int iWidth) 
+    { 
+    std::stringstream ss, ssSpaces;
+    int iPadSize;
+
+    // Make padding
+    iPadSize = iWidth - sInput.size();
+    for (int i=0; i < iPadSize/2; ++i)
+        ssSpaces << " ";
+
+    // Make centered string
+    ss << ssSpaces.str() << sInput << ssSpaces.str();
+
+    // if pad odd #, add 1 more space
+    if(iPadSize>0 && iPadSize%2!=0)                               
+        ss << " ";
+
+    return ss.str();
+    }
+#endif

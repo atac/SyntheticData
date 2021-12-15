@@ -73,20 +73,25 @@ void ClCh10Writer_PCM::Init(int iHandle, unsigned int uChanID)
 
 // Return a string with the TMATS R section for this channel
 
-std::string ClCh10Writer_PCM::TMATS(ClTmatsIndexes & TmatsIndex)
+std::string ClCh10Writer_PCM::TMATS(ClTmatsIndexes & TmatsIndex, std::string sDescription)
     {
     std::stringstream   ssTMATS;
+    std::stringstream   ssDSI;
+
+    if (sDescription != "")
+        ssDSI << sDescription;
+    else
+        ssDSI << "PCMInChan" << uChanID;
 
     ssTMATS <<
+        "R-" << TmatsIndex.iRIndex << "\\DSI-"  << TmatsIndex.iRSrcNum << ":" << ssDSI.str() << ";\n"
         "R-" << TmatsIndex.iRIndex << "\\TK1-"  << TmatsIndex.iRSrcNum << ":" << uChanID << ";\n"
         "R-" << TmatsIndex.iRIndex << "\\TK4-"  << TmatsIndex.iRSrcNum << ":" << uChanID << ";\n"
         "R-" << TmatsIndex.iRIndex << "\\CHE-"  << TmatsIndex.iRSrcNum << ":T;\n"
-        "R-" << TmatsIndex.iRIndex << "\\DSI-"  << TmatsIndex.iRSrcNum << ":PCMInChan" << uChanID << ";\n"
         "R-" << TmatsIndex.iRIndex << "\\CDT-"  << TmatsIndex.iRSrcNum << ":PCMIN;\n"
         "R-" << TmatsIndex.iRIndex << "\\PDTF-" << TmatsIndex.iRSrcNum << ":1;\n"
         "R-" << TmatsIndex.iRIndex << "\\PDP-"  << TmatsIndex.iRSrcNum << ":PFS;\n"
         "R-" << TmatsIndex.iRIndex << "\\CDLN-" << TmatsIndex.iRSrcNum << ":" << sCDLN << ";\n";
-    TmatsIndex.iRSrcNum++;
 
     // Get the P section stuff specific to the format
     ssTMATS << pSynthPcmFmt1->TMATS(TmatsIndex, sCDLN);

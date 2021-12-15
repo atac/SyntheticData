@@ -58,21 +58,37 @@ increases at the defined tick rate.
 
 #include "Common.h"
 #include "SimState.h"
+
+// Sim data sources
 #include "Source_Nav.h"
+
+#ifdef COMPILE_BLUEMAX6
 #include "Source_BMNavTxt.h"
 #include "Source_BMNavDB.h"
 #include "Source_VideoDB.h"
+#endif
+#ifdef COMPILE_NASA
 #include "Source_NasaNavTxt.h"
+#endif
+
 #include "SimTimer.h"
+
+// Sim data Ch 10 message formatters
 #include "Ch10Format_1553.h"
 #include "Ch10Format_1553_Nav.h"
+#include "Ch10Format_A429.h"
+#include "Ch10Format_A429_AR100.h"
 
+// Sim data Ch 10 packet writers
 #include "Ch10Writer.h"
 #include "Ch10Writer_1553.h"
 #include "Ch10Writer_Time.h"
+#ifdef COMPILE_BLUEMAX6
 #include "Ch10Writer_Video.h"
+#endif
 #include "Ch10Writer_Index.h"
 #include "Ch10Writer_PCM.h"
+#include "Ch10Writer_A429.h"
 
 using namespace Irig106;
 
@@ -123,15 +139,21 @@ ClTmatsIndexes          TmatsIndex;
 // ClCh10Format_1553_Nav      * p1553Fmt_Nav_1Hz;
 ClCh10Format_1553_Nav       * p1553Fmt_Nav_25Hz;
 ClCh10Format_PCM_SynthFmt1  * pPCM_SynthFmt1;
+ClCh10Format_ARINC429_AR100 * pA429_AR100_1;
+ClCh10Format_ARINC429_AR100 * pA429_AR100_2;
 
 // Chapter 10 writers
 ClCh10Writer_Time           * pCh10Writer_Time;
 ClCh10Writer_1553           * pCh10Writer_1553;
+#ifdef COMPILE_BLUEMAX6
 ClCh10Writer_VideoF0        * pCh10Writer_Video_HUD;
 ClCh10Writer_VideoF0        * pCh10Writer_Video_Cockpit;
 ClCh10Writer_VideoF0        * pCh10Writer_Video_Chase;
+#endif
 ClCh10Writer_Index          * pCh10Writer_Index;
 ClCh10Writer_PCM            * pCh10Writer_PCM;
+ClCh10Writer_A429           * pCh10Writer_A429_1;
+ClCh10Writer_A429           * pCh10Writer_A429_2;
 
 /*
  * Function prototypes
@@ -150,23 +172,25 @@ int main(int iArgc, char * aszArgv[])
     char                    szOutFile[256];    // Output file name
     bool                    bStatus;
     bool                    bVerbose;
-    std::string             sProgramName = "Synth Data";
 
     // Data Sources
-    ClSource_Nav          * pSource_Nav;
-    ClSource_BMNavTxt     * pSource_BMNavTxt;
-    ClSource_BMNavDB      * pSource_BMNavDB;
-    ClSource_NasaNavTxt   * pSource_NasaNavTxt;
-#if 0
-    ClSource_VideoDB      * pSource_Video_HUD;
-    ClSource_VideoDB      * pSource_Video_Cockpit;
-    ClSource_VideoDB      * pSource_Video_Chase;
+    ClSource_Nav          * pSource_Nav = nullptr;
+#ifdef COMPILE_BLUEMAX6
+    std::string             sProgramName = "Synth Data BlueMax";
+    ClSource_BMNavTxt     * pSource_BMNavTxt = nullptr;
+    ClSource_BMNavDB      * pSource_BMNavDB  = nullptr;
+    ClSource_VideoDB      * pSource_Video_HUD = nullptr;
+    ClSource_VideoDB      * pSource_Video_Cockpit = nullptr;
+    ClSource_VideoDB      * pSource_Video_Chase = nullptr;
 #endif
-    int                     iI106Handle;
+#ifdef COMPILE_NASA
+    std::string             sProgramName = "Synth Data NASA";
+    ClSource_NasaNavTxt   * pSource_NasaNavTxt = nullptr;
+#endif
 
+    int                     iI106Handle;
     unsigned long           ulBuffSize = 0L;
     unsigned char         * pvBuff  = NULL;
-
     EnI106Status            enStatus;
 
     // Various simulation clocks and time
@@ -182,7 +206,7 @@ int main(int iArgc, char * aszArgv[])
     ClSimTimer      clSimTimer_60S(600000000);  // 60 sec (for root index packets)
 
     ClSimState      clSimState;                 // This holds all the simulation state data
-    double          fNavSrcTime;            // Nav sourc data time (seconds)
+    double          fNavSrcTime;            // Nav source data time (seconds)
     double          fStartSimClockTime;     // Starting simulation Date/Time
     double          fCurrSimClockTime;      // Current simulation Data/Time
     double          fNextPrintTime;         
@@ -238,6 +262,7 @@ int main(int iArgc, char * aszArgv[])
             }
             break;
 
+#ifdef COMPILE_BLUEMAX6
           case 'b' :                   // Input BlueMax database file
             if (pSource_Nav != NULL)
                 {
@@ -249,7 +274,9 @@ int main(int iArgc, char * aszArgv[])
             pSource_BMNavDB = new ClSource_BMNavDB (&clSimState, ""); 
             pSource_Nav = dynamic_cast<ClSource_Nav *>(pSource_BMNavDB);
             break;
+#endif
 
+#ifdef COMPILE_BLUEMAX6
           case 'B' :                   // Input BlueMax text file
             if (pSource_Nav != NULL)
                 {
@@ -261,7 +288,9 @@ int main(int iArgc, char * aszArgv[])
             pSource_BMNavTxt = new ClSource_BMNavTxt(&clSimState, ""); 
             pSource_Nav = dynamic_cast<ClSource_Nav *>(pSource_BMNavTxt);
             break;
+#endif
 
+#ifdef COMPILE_NASA
           case 'N' :                   // Input NASA text file
             if (pSource_Nav != NULL)
                 {
@@ -273,6 +302,7 @@ int main(int iArgc, char * aszArgv[])
             pSource_NasaNavTxt = new ClSource_NasaNavTxt(&clSimState, ""); 
             pSource_Nav = dynamic_cast<ClSource_Nav *>(pSource_NasaNavTxt);
             break;
+#endif
 
           default :
             break;
@@ -296,7 +326,7 @@ int main(int iArgc, char * aszArgv[])
     // --------------------------
 
     // Setup video for various source types
-#if 0
+#ifdef COMPILE_BLUEMAX6
         pSource_Video_HUD     = new ClSource_VideoDB();
         pSource_Video_Cockpit = new ClSource_VideoDB();
         pSource_Video_Chase   = new ClSource_VideoDB();
@@ -310,14 +340,19 @@ int main(int iArgc, char * aszArgv[])
     // of the first line of NASA data.
     if (fStartSimClockTime < 0.0)
         {
+#ifdef COMPILE_NASA
         if (pSource_Nav->enInputType == ClSource_Nav::InputNasaCsv)
             fStartSimClockTime = dynamic_cast<ClSource_NasaNavTxt *>(pSource_Nav)->fStartTime;
         else
             fStartSimClockTime  = double(time(NULL));
+#endif
+#ifdef COMPILE_BLUEMAX6
+        fStartSimClockTime  = double(time(NULL));
+#endif
         } // end if start time needs to be set to something
 
     // Open video sources
-#if 0
+#ifdef COMPILE_BLUEMAX6
     pSource_Video_HUD->Open(szInFile, "Video_HUD");
     pSource_Video_Cockpit->Open(szInFile, "Video_F4_Cockpit");
     pSource_Video_Chase->Open(szInFile, "Video_F4_Chase");
@@ -327,10 +362,12 @@ int main(int iArgc, char * aszArgv[])
 //  p1553Fmt_Nav_1Hz  = new ClCh10Format_1553_Nav(RT_NAV, 1, 29, 32);
     p1553Fmt_Nav_25Hz = new ClCh10Format_1553_Nav(RT_NAV, 1, 29, 32);
     pPCM_SynthFmt1    = new ClCh10Format_PCM_SynthFmt1(100);    // 100 Hz rate
+    pA429_AR100_1     = new ClCh10Format_ARINC429_AR100(0, ARINC429_BUS_SPEED_LOW, 1);
+    pA429_AR100_2     = new ClCh10Format_ARINC429_AR100(0, ARINC429_BUS_SPEED_LOW, 2);
 
     // Make Chapter 10 writers
     pCh10Writer_Time          = new ClCh10Writer_Time();
-#if 0
+#ifdef COMPILE_BLUEMAX6
     pCh10Writer_Video_HUD     = new ClCh10Writer_VideoF0();
     pCh10Writer_Video_Cockpit = new ClCh10Writer_VideoF0();
     pCh10Writer_Video_Chase   = new ClCh10Writer_VideoF0();
@@ -338,6 +375,8 @@ int main(int iArgc, char * aszArgv[])
     pCh10Writer_1553          = new ClCh10Writer_1553();
     pCh10Writer_Index         = new ClCh10Writer_Index();
     pCh10Writer_PCM           = new ClCh10Writer_PCM();
+    pCh10Writer_A429_1        = new ClCh10Writer_A429();
+    pCh10Writer_A429_2        = new ClCh10Writer_A429();
 
     // Open the output Ch 10 file and init it
     enStatus = enI106Ch10Open(&iI106Handle, szOutFile, I106_OVERWRITE);
@@ -365,13 +404,15 @@ int main(int iArgc, char * aszArgv[])
     // Setup the output channels
     pCh10Writer_Index->Init(iI106Handle, 0);
     pCh10Writer_Time->Init(iI106Handle, 1);
-#if 0
+#ifdef COMPILE_BLUEMAX6
     pCh10Writer_Video_HUD->Init(iI106Handle, 10);
     pCh10Writer_Video_Cockpit->Init(iI106Handle, 11);
     pCh10Writer_Video_Chase->Init(iI106Handle, 12);
 #endif
     pCh10Writer_PCM->Init(iI106Handle, 20);
     pCh10Writer_1553->Init(iI106Handle, 30);
+    pCh10Writer_A429_1->Init(iI106Handle, 40);
+    pCh10Writer_A429_2->Init(iI106Handle, 41);
 
     // This is a bit of a hack. Moving forward all writers will need a list of
     // formatters that will provide data, if for no other reason than to generate
@@ -414,7 +455,7 @@ int main(int iArgc, char * aszArgv[])
 //      suNav_1Hz.MakeMsg(&clSimState);
 
         // Get current video data
-#if 0
+#ifdef COMPILE_BLUEMAX6
         // Since video data and BlueMax data pace each other, when new BlueMax data
         // available then new video would also normally be available.
         pSource_Video_HUD->Read(clSimState.lState["RowNum"]);
@@ -434,9 +475,21 @@ int main(int iArgc, char * aszArgv[])
         if (clSimTimer_10ms.Expired())
             {
             clSimTimer_10ms.FromPrev();
+
+            // PCM
             pPCM_SynthFmt1->MakeMsg(&clSimState);
             pPCM_SynthFmt1->SetRTC(&ClSimTimer::lSimClockTicks);
             pCh10Writer_PCM->AppendMsg(pPCM_SynthFmt1);
+
+            // ARINC 429
+            pA429_AR100_1->MakeMsg(&clSimState);
+            pA429_AR100_1->SetRTC(&ClSimTimer::lSimClockTicks);
+            pCh10Writer_A429_1->AppendMsg(pA429_AR100_1);
+
+            pA429_AR100_2->MakeMsg(&clSimState);
+            pA429_AR100_2->SetRTC(&ClSimTimer::lSimClockTicks);
+            pCh10Writer_A429_2->AppendMsg(pA429_AR100_2);
+
             } // end 40 msec / 25 Hz events
 
         // 40 msec / 25 Hz events
@@ -456,7 +509,9 @@ int main(int iArgc, char * aszArgv[])
             clSimTimer_100ms.FromPrev();
             pCh10Writer_1553->Commit();
             pCh10Writer_PCM->Commit();
-            } // end 100 msec / 10 Hz events
+            pCh10Writer_A429_1->Commit();
+            pCh10Writer_A429_2->Commit();
+        } // end 100 msec / 10 Hz events
 
         // 1 Hz events
         // -----------
@@ -511,14 +566,18 @@ int main(int iArgc, char * aszArgv[])
     // --------------
 
     // Close input sources
-#if 0
-    switch (enInputType)
+#ifdef COMPILE_BLUEMAX6
+    switch (pSource_Nav->enInputType)
         {
-        case InputBMSqlite : 
-            pSource_BMNavDB->Close();
+        case ClSource_Nav::InputBMSqlite : 
+            // Make the compiler happy
+            if (pSource_BMNavDB != nullptr)
+                pSource_BMNavDB->Close();
             break;
-        case InputBMText   : 
-            pSource_BMNavTxt->Close();
+        case ClSource_Nav::InputBMText   : 
+            // Make the compiler happy
+            if (pSource_BMNavTxt != nullptr)
+                pSource_BMNavTxt->Close();
             break;
         } // end switch on input type
 #else
@@ -565,17 +624,23 @@ void WriteTmats(int iI106Handle, std::string sProgramName, double fCurrSimClockT
     uint32_t            ulDataBuffSize;
     SuTmats_ChanSpec  * psuTmats_ChanSpec;
 
-#if 0
+    // HMMMM.... NEED TO AUTOMATE THIS VALUE
+    // The way to do this is to make a list of registered data sources. The 
+    // number here would be the number of sources in the list. Later, step
+    // through the sources in the list to initialize them.
+#if defined(COMPILE_BLUEMAX6)
+    const int           iTotalRSrcs = 5;
+#elif defined(COMPILE_NASA)
     const int           iTotalRSrcs = 5;
 #else
-    const int           iTotalRSrcs = 3;
+    const int           iTotalRSrcs = 0;
 #endif
 
     // Make current time string
     time_t        iCurrTime;
     char          szCurrTime[100];
     struct tm   * psuCurrTime;
-    iCurrTime = time(NULL);
+    iCurrTime   = time(NULL);
     psuCurrTime = gmtime(&iCurrTime);
     strftime(szCurrTime, sizeof(szCurrTime), "%m-%d-%Y-%H-%M-%S", psuCurrTime);
 
@@ -583,7 +648,7 @@ void WriteTmats(int iI106Handle, std::string sProgramName, double fCurrSimClockT
     time_t        iCurrSimClockTime;
     char          szCurrSimClockTime[100];
     struct tm   * psuCurrSimClockTime;
-    iCurrSimClockTime = (time_t)fCurrSimClockTime;
+    iCurrSimClockTime    = (time_t)fCurrSimClockTime;
     psuCurrSimClockTime = gmtime(&iCurrSimClockTime);
     strftime(szCurrSimClockTime, sizeof(szCurrSimClockTime), "%m-%d-%Y-%H-%M-%S", psuCurrSimClockTime);
 
@@ -592,6 +657,8 @@ void WriteTmats(int iI106Handle, std::string sProgramName, double fCurrSimClockT
         "COMMENT:**********************************************************************;\n"
         "COMMENT: Synthetic data file created with SynthCh10Gen on " << szCurrTime << ";\n"
         "COMMENT: See https://github.com/atac/SyntheticData for details;\n"
+        "COMMENT:**********************************************************************;\n"
+        "COMMENT:                           G Group                                    ;\n"
         "COMMENT:**********************************************************************;\n";
     ssTMATS <<
         "G\\PN:" << sProgramName << ";\n";
@@ -601,11 +668,16 @@ void WriteTmats(int iI106Handle, std::string sProgramName, double fCurrSimClockT
         "G\\SC:UNCLASSIFIED;\n"
         "G\\DSI-1:DATASOURCE;\n"
         "G\\DST-1:STO;\n"
-        "G\\DSC-1:UNCLASSIFIED;\n"
+        "G\\DSC-1:UNCLASSIFIED;\n";
+
+    ssTMATS <<
+        "COMMENT:**********************************************************************;\n"
+        "COMMENT:                           R Group                                    ;\n"
+        "COMMENT:**********************************************************************;\n"
         "R-1\\ID:DATASOURCE;\n"
         "R-1\\RID:SynthCh10Gen;\n"
         "R-1\\NSB:0;\n"
-        "R-1\\RI1:irig106.org;\n"
+        "R-1\\RI1:Avionics Test and Analysis Corp (www.avtest.com);\n"
         "R-1\\RI2:SynthCh10Gen;\n"
         "R-1\\RI3:Y;\n";
     ssTMATS <<
@@ -622,31 +694,49 @@ void WriteTmats(int iI106Handle, std::string sProgramName, double fCurrSimClockT
 
     // Time section
     ssTMATS << pCh10Writer_Time->TMATS(TmatsIndex);
+    TmatsIndex.iRSrcNum++;
 
     // Video section
-#if 0
-    ssTMATS << pCh10Writer_Video_HUD->TMATS(1, iRSrcNum++, "VIDEO_HUD");
-    ssTMATS << pCh10Writer_Video_Cockpit->TMATS(1, iRSrcNum++, "VIDEO_COCKPIT");
-    ssTMATS << pCh10Writer_Video_Chase->TMATS(1, iRSrcNum++, "VIDEO_CHASE");
+#ifdef COMPILE_BLUEMAX6
+    ssTMATS << pCh10Writer_Video_HUD->TMATS(TmatsIndex, "VIDEO_HUD");
+    TmatsIndex.iRSrcNum++;
+    ssTMATS << pCh10Writer_Video_Cockpit->TMATS(TmatsIndex, "VIDEO_COCKPIT");
+    TmatsIndex.iRSrcNum++;
+    ssTMATS << pCh10Writer_Video_Chase->TMATS(TmatsIndex, "VIDEO_CHASE");
+    TmatsIndex.iRSrcNum++;
 #endif
 
     // 1553 R section, then linked B and C sections
-    ssTMATS << pCh10Writer_1553->TMATS(TmatsIndex, pCh10Writer_1553->sCDLN);
+    ssTMATS << pCh10Writer_1553->TMATS(TmatsIndex, pCh10Writer_1553->sCDLN, "1553-Nav");
     ssTMATS << p1553Fmt_Nav_25Hz->TMATS(TmatsIndex);
+    TmatsIndex.iBIndex++;
+    TmatsIndex.iRSrcNum++;
 
     // PCM R and P sections
     ssTMATS << pCh10Writer_PCM->TMATS(TmatsIndex);
+    TmatsIndex.iRSrcNum++;
+
+    // ARINC 429 R section
+    ssTMATS << pCh10Writer_A429_1->TMATS(TmatsIndex, "A429InChan1", 1, "A429-Engine1");
+    ssTMATS << pA429_AR100_1->TMATS(TmatsIndex, "A429InChan1");
+    TmatsIndex.iBIndex++;
+    TmatsIndex.iRSrcNum++;
+
+    ssTMATS << pCh10Writer_A429_2->TMATS(TmatsIndex, "A429InChan2", 1, "A429-Engine2");
+    ssTMATS << pA429_AR100_1->TMATS(TmatsIndex, "A429InChan2");
+    TmatsIndex.iBIndex++;
+    TmatsIndex.iRSrcNum++;
 
     assert(TmatsIndex.iRSrcNum-1 == iTotalRSrcs);
 
-    // Form the TMATS header
+    // Form the TMATS packet header
     iHeaderInit(&suI106Hdr, 0, I106CH10_DTYPE_TMATS, I106CH10_PFLAGS_CHKSUM_NONE | I106CH10_PFLAGS_TIMEFMT_IRIG106, 0);
     suI106Hdr.ulDataLen = sizeof(SuTmats_ChanSpec) + ssTMATS.str().length();
     suI106Hdr.ubyHdrVer = CH10_VER_HDR_TMATS;
     SimClockToRel(iI106Handle, fCurrSimClockTime, suI106Hdr.aubyRefTime);
 //    memset(suI106Hdr.aubyRefTime, 0, 6);
 
-    // Setup the TMATS data portion
+    // Setup the TMATS packet data portion
     ulDataBuffSize = uCalcDataBuffReqSize(suI106Hdr.ulDataLen, I106CH10_PFLAGS_CHKSUM_NONE);
     pchDataBuff = (uint8_t *)malloc(ulDataBuffSize);
     memset(pchDataBuff, 0, ulDataBuffSize);
@@ -681,13 +771,23 @@ bool check_key(map<int, int> m, int key)
 void vUsage(void)
     {
     printf("\nSynthCh10Gen  " __DATE__ " " __TIME__ "\n");
-    printf("Convert a Bluemax simulation file to a Ch 10 1553 nav message file\n");
-    printf("Usage: SynthCh10Gen  [flags] <output file>            \n");
-    printf("   -v              Verbose                            \n");
-    printf("   -p              Data set name                      \n");
-    printf("   -s m-d-y-h-m-s  Data start time                    \n");
-    printf("   -b filename     Input BlueMax database file name   \n");
-    printf("   -B filename     Input BlueMax text data file name  \n");
-    printf("   -N filename     Input NASA CSV data file name      \n");
-    printf("   <output file>   Output Ch 10 file name             \n");
+#if     defined(COMPILE_BLUEMAX6)
+    printf("Convert a Bluemax simulation file to a Ch 10 data file\n");
+#elif defined(COMPILE_NASA)
+    printf("Convert a NASA simulation file to a Ch 10 data file\n");
+#endif
+    printf("Usage: SynthCh10Gen  [flags] <output file>              \n");
+    printf("   -v              Verbose                              \n");
+    printf("   -p              Data set name (Program Name in TMATS)\n");
+    printf("   -s m-d-y-h-m-s  Set or override data start time      \n");
+
+#if defined(COMPILE_BLUEMAX6)
+    printf("   -b filename     Input BlueMax database file name     \n");
+    printf("   -B filename     Input BlueMax text data file name    \n");
+#endif
+
+#if defined(COMPILE_NASA)
+    printf("   -N filename     Input NASA CSV data file name        \n");
+#endif
+    printf("   <output file>   Output Ch 10 file name               \n");
     }

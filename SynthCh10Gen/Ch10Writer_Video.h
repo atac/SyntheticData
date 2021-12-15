@@ -36,7 +36,7 @@ public:
 
     // Methods
     void        Init(int iHandle, unsigned int uChanID);
-    std::string TMATS(int iRSection, int iEnumN, std::string sDescription="");
+    std::string TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN, std::string sDescription="");
     void        Write(int64_t * pullRelTime, uint8_t * pBuffer, int iBufferLen);
 
     };

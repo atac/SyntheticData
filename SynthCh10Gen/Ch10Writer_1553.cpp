@@ -54,24 +54,29 @@ void ClCh10Writer_1553::Init(int iHandle, unsigned int uChanID)
 
 // Return a string with the TMATS R section for this channel
 
-std::string ClCh10Writer_1553::TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN)
+std::string ClCh10Writer_1553::TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN, std::string sDescription)
     {
     std::stringstream   ssTMATS;
+    std::stringstream   ssDSI;
+
+    if (sDescription != "")
+        ssDSI << sDescription;
+    else
+        ssDSI << "1553InChan" << uChanID;
 
     // Define the data source R record
     ssTMATS <<
+        "R-" << TmatsIndex.iRIndex << "\\DSI-"  << TmatsIndex.iRSrcNum << ":" << ssDSI.str() << ";\n"
         "R-" << TmatsIndex.iRIndex << "\\TK1-"  << TmatsIndex.iRSrcNum << ":" << uChanID << ";\n"
         "R-" << TmatsIndex.iRIndex << "\\TK4-"  << TmatsIndex.iRSrcNum << ":" << uChanID << ";\n"
         "R-" << TmatsIndex.iRIndex << "\\CHE-"  << TmatsIndex.iRSrcNum << ":T;\n"
         "R-" << TmatsIndex.iRIndex << "\\BTF-"  << TmatsIndex.iRSrcNum << ":1;\n"
-        "R-" << TmatsIndex.iRIndex << "\\DSI-"  << TmatsIndex.iRSrcNum << ":1553InChan" << uChanID << ";\n"
         "R-" << TmatsIndex.iRIndex << "\\CDT-"  << TmatsIndex.iRSrcNum << ":1553IN;\n"
         "R-" << TmatsIndex.iRIndex << "\\CDLN-" << TmatsIndex.iRSrcNum << ":" << sCDLN << ";\n";
-    TmatsIndex.iRSrcNum++;
 
     // Define the one and only bus B record
     ssTMATS <<
-        "B-" << TmatsIndex.iBIndex << "\\DLN:" << sCDLN << ";\n"
+        "B-" << TmatsIndex.iBIndex << "\\DLN:" << sCDLN << ";\n"    // Link from R-x\CDLN-n above
         "B-" << TmatsIndex.iBIndex << "\\NBS\\N:1;\n"
         "B-" << TmatsIndex.iBIndex << "\\BID-1:0000;\n"
         "B-" << TmatsIndex.iBIndex << "\\BNA-1:" << sCDLN << ";\n"
@@ -308,8 +313,12 @@ void ClCh10Writer_1553::Commit()
     uAddDataFillerChecksum(&(suWriteMsg1553.suCh10Header), suWriteMsg1553.pchDataBuff);
 
     // Update the packet length and data length fields
-    suWriteMsg1553.suCh10Header.ulPacketLen = iGetHeaderLen(&(suWriteMsg1553.suCh10Header)) + uDataBuffLen;
-//    suWriteMsg1553.suCh10Header.ulDataLen = suWriteMsg1553.uDataLen;
+    // HMMMMMM.....????
+    // I AM PRETTY SURE uAddDataFillerChecksum() ALREADY DOES THIS
+//  suWriteMsg1553.suCh10Header.ulPacketLen = iGetHeaderLen(&(suWriteMsg1553.suCh10Header)) + uDataBuffLen;
+//  suWriteMsg1553.suCh10Header.ulDataLen = suWriteMsg1553.uDataLen;
+
+    // Make the header checksum
     suWriteMsg1553.suCh10Header.uChecksum = uCalcHeaderChecksum(&(suWriteMsg1553.suCh10Header));
 
     // Write it
