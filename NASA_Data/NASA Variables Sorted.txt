@@ -80,10 +80,10 @@ OIP.2       PSI         1           OIL PRESSURE 2
 OIP.3       PSI         1           OIL PRESSURE 3
 OIP.4       PSI         1           OIL PRESSURE 4
 OIPL                    1           LOW OIL PRESSURE ALL ENGINES
-OIT.1       DEG F       1           OIL TEMPERATURE 1
-OIT.2       DEG F       1           OIL TEMPERATURE 2
-OIT.3       DEG F       1           OIL TEMPERATURE 3
-OIT.4       DEG F       1           OIL TEMPERATURE 4
+OIT.1       DEG C       1           OIL TEMPERATURE 1
+OIT.2       DEG C       1           OIL TEMPERATURE 2
+OIT.3       DEG C       1           OIL TEMPERATURE 3
+OIT.4       DEG C       1           OIL TEMPERATURE 4
 PACK                    1           PACK AIR CONDITIONING ALL
 PH                      1           FLIGHT PHASE FROM ACMS
 POVT                    1           PYLON OVERHEAT ALL ENGINES
@@ -140,10 +140,10 @@ BAL2        FEET        4           BARO CORRECT ALTITUDE LSP
 CAS         KNOTS       4           COMPUTED AIRSPEED LSP
 CASM        KNOTS       4           MAX ALLOWABLE AIRSPEED
 DA          DEG         4           DRIFT ANGLE
-EGT.1       DEG F       4           EXHAUST GAS TEMPERATURE 1
-EGT.2       DEG F       4           EXHAUST GAS TEMPERATURE 2
-EGT.3       DEG F       4           EXHAUST GAS TEMPERATURE 3
-EGT.4       DEG F       4           EXHAUST GAS TEMPERATURE 4
+EGT.1       DEG C       4           EXHAUST GAS TEMPERATURE 1
+EGT.2       DEG C       4           EXHAUST GAS TEMPERATURE 2
+EGT.3       DEG C       4           EXHAUST GAS TEMPERATURE 3
+EGT.4       DEG C       4           EXHAUST GAS TEMPERATURE 4
 FF.1        LBS/HR      4           FUEL FLOW 1
 FF.2        LBS/HR      4           FUEL FLOW 2
 FF.3        LBS/HR      4           FUEL FLOW 3
