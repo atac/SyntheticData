@@ -72,32 +72,32 @@ ClCh10Format_ARINC429_AR100::ClCh10Format_ARINC429_AR100(int iBusNum, int iBusSp
     aArinc429Msgs.resize(7, suDefault);
 
     // This makes it easier to debug
-    psuLabel_41 = (SuLabel_41 *)(&aArinc429Msgs[0].suData);
-    psuLabel_42 = (SuLabel_42 *)(&aArinc429Msgs[1].suData);
-    psuLabel_43 = (SuLabel_43 *)(&aArinc429Msgs[2].suData);
-    psuLabel_44 = (SuLabel_44 *)(&aArinc429Msgs[3].suData);
-    psuLabel_45 = (SuLabel_45 *)(&aArinc429Msgs[4].suData);
-    psuLabel_46 = (SuLabel_46 *)(&aArinc429Msgs[5].suData);
-    psuLabel_47 = (SuLabel_47 *)(&aArinc429Msgs[6].suData);
+    psuEngineRpmN1Actual = (SuEngineRpmN1Actual *)(&aArinc429Msgs[0].suData);
+    psuEngineRpmN1Demand = (SuEngineRpmN1Demand *)(&aArinc429Msgs[1].suData);
+    psuEngineOilPres     = (SuEngineOilPres     *)(&aArinc429Msgs[2].suData);
+    psuEngineRpmN2       = (SuEngineRpmN2       *)(&aArinc429Msgs[3].suData);
+    psuEngineEGT         = (SuEngineEGT         *)(&aArinc429Msgs[4].suData);
+    psuEngineOilTemp     = (SuEngineOilTemp     *)(&aArinc429Msgs[5].suData);
+    psuFuelFlow          = (SuFuelFlow          *)(&aArinc429Msgs[6].suData);
 
-    // Set the per item data fields    
-    aArinc429Msgs[0].suData.uLabel = 0x84;  // 41 octal reversed
-    aArinc429Msgs[1].suData.uLabel = 0x44;  // 42 octal reversed
-    aArinc429Msgs[2].suData.uLabel = 0xC4;  // 43 octal reversed
-    aArinc429Msgs[3].suData.uLabel = 0x24;  // 44 octal reversed
-    aArinc429Msgs[4].suData.uLabel = 0xA4;  // 45 octal reversed
-    aArinc429Msgs[5].suData.uLabel = 0x64;  // 46 octal reversed
-    aArinc429Msgs[6].suData.uLabel = 0xE4;  // 47 octal reversed
+    // Set the per item data fields
+    aArinc429Msgs[0].suData.uLabel = ReverseLabel(0041);  // Engine RPM Actual
+    aArinc429Msgs[1].suData.uLabel = ReverseLabel(0042);  // 42 octal reversed
+    aArinc429Msgs[2].suData.uLabel = ReverseLabel(0043);  // 43 octal reversed
+    aArinc429Msgs[3].suData.uLabel = ReverseLabel(0044);  // 44 octal reversed
+    aArinc429Msgs[4].suData.uLabel = ReverseLabel(0045);  // 45 octal reversed
+    aArinc429Msgs[5].suData.uLabel = ReverseLabel(0046);  // 46 octal reversed
+    aArinc429Msgs[6].suData.uLabel = ReverseLabel(0047);  // 47 octal reversed
 
     // Default hash labels to use
 #ifdef COMPILE_NASA
-    std::snprintf(szSimStateHash_Lbl41, 50, "N1_%d",  iEngineNum);
-    std::snprintf(szSimStateHash_Lbl42, 50, "N1C");
-    std::snprintf(szSimStateHash_Lbl43, 50, "OIP_%d", iEngineNum);
-    std::snprintf(szSimStateHash_Lbl44, 50, "N2_%d",  iEngineNum);
-    std::snprintf(szSimStateHash_Lbl45, 50, "EGT_%d", iEngineNum);
-    std::snprintf(szSimStateHash_Lbl46, 50, "OIT_%d", iEngineNum);
-    std::snprintf(szSimStateHash_Lbl47, 50, "FF_%d",  iEngineNum);
+    std::snprintf(szSimStateHash_EngineRpmN1Actual, 50, "N1_%d",  iEngineNum);
+    std::snprintf(szSimStateHash_EngineRpmN1Demand, 50, "N1C");
+    std::snprintf(szSimStateHash_EngineOilPres,     50, "OIP_%d", iEngineNum);
+    std::snprintf(szSimStateHash_EngineRpmN2,       50, "N2_%d",  iEngineNum);
+    std::snprintf(szSimStateHash_EngineEGT,         50, "EGT_%d", iEngineNum);
+    std::snprintf(szSimStateHash_EngineOilTemp,     50, "OIT_%d", iEngineNum);
+    std::snprintf(szSimStateHash_FuelFlow,          50, "FF_%d",  iEngineNum);
 #endif
     }
 
@@ -107,41 +107,41 @@ void ClCh10Format_ARINC429_AR100::MakeMsg(ClSimState * pclSimState)
     {
     // 0.1 msec message spacing
 
-    // Label 41 - Engine Fan RPM (N1 Actual)
-    aArinc429Msgs[0].suIPH.uGapTime                         = 0;
-    ((SuLabel_41 *)(&aArinc429Msgs[0].suData))->uRpmN1Act   = (uint32_t)(pclSimState->fState[szSimStateHash_Lbl41] / (64.0 * (1.0/1024.0)));
-    aArinc429Msgs[0].suData.uParity                         = CalcParity(&aArinc429Msgs[0].suData);
+    // Engine Fan RPM (N1 Actual)
+    aArinc429Msgs[0].suIPH.uGapTime                                 = 0;
+    ((SuEngineRpmN1Actual *)(&aArinc429Msgs[0].suData))->uRpmN1Act  = (uint32_t)(pclSimState->fState[szSimStateHash_EngineRpmN1Actual] / (64.0 * (1.0/1024.0)));
+    aArinc429Msgs[0].suData.uParity                                 = CalcParity(&aArinc429Msgs[0].suData);
 
-    // Label 42 - Engine Fan RPM (N1 Demand)
-    aArinc429Msgs[1].suIPH.uGapTime                         = 1000;
-    ((SuLabel_42 *)(&aArinc429Msgs[1].suData))->uRpmN1Dem   = (uint32_t)(pclSimState->fState[szSimStateHash_Lbl42] / (64.0 * (1.0/1024.0)));
-    aArinc429Msgs[1].suData.uParity                         = CalcParity(&aArinc429Msgs[1].suData);
+    // Engine Fan RPM (N1 Demand)
+    aArinc429Msgs[1].suIPH.uGapTime                                 = 1000;
+    ((SuEngineRpmN1Demand *)(&aArinc429Msgs[1].suData))->uRpmN1Dem  = (uint32_t)(pclSimState->fState[szSimStateHash_EngineRpmN1Demand] / (64.0 * (1.0/1024.0)));
+    aArinc429Msgs[1].suData.uParity                                 = CalcParity(&aArinc429Msgs[1].suData);
 
-    // Label 43 - Engine Oil Pressure
-    aArinc429Msgs[2].suIPH.uGapTime                         = 1000;
-    ((SuLabel_43 *)(&aArinc429Msgs[2].suData))->uSenStatus  = 1;
-    ((SuLabel_43 *)(&aArinc429Msgs[2].suData))->iEngOilPres = (uint32_t)(pclSimState->fState[szSimStateHash_Lbl43] / (64.0 * (1.0/65536.0)));
-    aArinc429Msgs[2].suData.uParity                         = CalcParity(&aArinc429Msgs[2].suData);
+    // Engine Oil Pressure
+    aArinc429Msgs[2].suIPH.uGapTime                                 = 1000;
+    ((SuEngineOilPres *)(&aArinc429Msgs[2].suData))->uSenStatus     = 1;
+    ((SuEngineOilPres *)(&aArinc429Msgs[2].suData))->iEngOilPres    = (uint32_t)(pclSimState->fState[szSimStateHash_EngineOilPres] / (64.0 * (1.0/65536.0)));
+    aArinc429Msgs[2].suData.uParity                                 = CalcParity(&aArinc429Msgs[2].suData);
 
-    // Label 44 - Engine Turbine RPM (N2)
-    aArinc429Msgs[3].suIPH.uGapTime                         = 1000;
-    ((SuLabel_44 *)(&aArinc429Msgs[3].suData))->uRpmN2Act   = (uint32_t)(pclSimState->fState[szSimStateHash_Lbl44] / (64.0 * (1.0/1024.0)));
-    aArinc429Msgs[3].suData.uParity                         = CalcParity(&aArinc429Msgs[3].suData);
+    // Engine Turbine RPM (N2)
+    aArinc429Msgs[3].suIPH.uGapTime                                 = 1000;
+    ((SuEngineRpmN2 *)(&aArinc429Msgs[3].suData))->uRpmN2Act        = (uint32_t)(pclSimState->fState[szSimStateHash_EngineRpmN2] / (64.0 * (1.0/1024.0)));
+    aArinc429Msgs[3].suData.uParity                                 = CalcParity(&aArinc429Msgs[3].suData);
 
-    // Label 45 - Exhaust Gas Temperature (EGT)
-    aArinc429Msgs[4].suIPH.uGapTime                         = 1000;
-    ((SuLabel_45 *)(&aArinc429Msgs[4].suData))->uEGT        = (uint32_t)(F_TO_C(pclSimState->fState[szSimStateHash_Lbl45]));
-    aArinc429Msgs[4].suData.uParity                         = CalcParity(&aArinc429Msgs[4].suData);
+    // Exhaust Gas Temperature (EGT)
+    aArinc429Msgs[4].suIPH.uGapTime                                 = 1000;
+    ((SuEngineEGT *)(&aArinc429Msgs[4].suData))->uEGT               = (uint32_t)(pclSimState->fState[szSimStateHash_EngineEGT]);
+    aArinc429Msgs[4].suData.uParity                                 = CalcParity(&aArinc429Msgs[4].suData);
 
-    // Label 46 - Engine Oil Temperature
-    aArinc429Msgs[5].suIPH.uGapTime                         = 1000;
-    ((SuLabel_46 *)(&aArinc429Msgs[5].suData))->iEngOilTemp = (uint32_t)(F_TO_C(pclSimState->fState[szSimStateHash_Lbl46]) / (128.0 * (1.0/256.0)));
-    aArinc429Msgs[5].suData.uParity                         = CalcParity(&aArinc429Msgs[5].suData);
+    // Engine Oil Temperature
+    aArinc429Msgs[5].suIPH.uGapTime                                 = 1000;
+    ((SuEngineOilTemp *)(&aArinc429Msgs[5].suData))->iEngOilTemp    = (uint32_t)(pclSimState->fState[szSimStateHash_EngineOilTemp] / (128.0 * (1.0/256.0)));
+    aArinc429Msgs[5].suData.uParity                                 = CalcParity(&aArinc429Msgs[5].suData);
 
-    // Label 47 - Fuel Flow
-    aArinc429Msgs[6].suIPH.uGapTime                         = 1000;
-    ((SuLabel_47 *)(&aArinc429Msgs[6].suData))->uFuelFlow   = (uint32_t)(pclSimState->fState[szSimStateHash_Lbl47]);
-    aArinc429Msgs[6].suData.uParity                         = CalcParity(&aArinc429Msgs[6].suData);
+    // Fuel Flow
+    aArinc429Msgs[6].suIPH.uGapTime                                 = 1000;
+    ((SuFuelFlow *)(&aArinc429Msgs[6].suData))->uFuelFlow           = (uint32_t)(pclSimState->fState[szSimStateHash_FuelFlow]);
+    aArinc429Msgs[6].suData.uParity                                 = CalcParity(&aArinc429Msgs[6].suData);
 
     }
 

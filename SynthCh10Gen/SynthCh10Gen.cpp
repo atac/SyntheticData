@@ -648,7 +648,7 @@ void WriteTmats(int iI106Handle, std::string sProgramName, double fCurrSimClockT
     time_t        iCurrSimClockTime;
     char          szCurrSimClockTime[100];
     struct tm   * psuCurrSimClockTime;
-    iCurrSimClockTime    = (time_t)fCurrSimClockTime;
+    iCurrSimClockTime   = (time_t)fCurrSimClockTime;
     psuCurrSimClockTime = gmtime(&iCurrSimClockTime);
     strftime(szCurrSimClockTime, sizeof(szCurrSimClockTime), "%m-%d-%Y-%H-%M-%S", psuCurrSimClockTime);
 
