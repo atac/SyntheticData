@@ -72,13 +72,13 @@ Note: The 1553 Command Word is depicted as "RT Num - T/R Bit - Subaddress - Word
 
 File Layout 1 Channel ID 40 data represent engine performance parameters for the left aircraft engine
 in ARINC-429 messages. This Ch 10 channel will have engine data from multiple ARINC-429 buses as described
-in **ARINC-429 Engine Data Layout AR100** later in this document. All messages occur at a 4 Hz rate.
+in **ARINC-429 Engine Data Layout AR100** later in this document. All messages occur at a 100 Hz rate.
 
 #### File Layout 1 Channel ID 41 Message Layout
 
 File Layout 1 Channel ID 41 data represent engine performance parameters for the right aircraft engine
 in ARINC-429 messages. This Ch 10 channel will have engine data from multiple ARINC-429 buses as described
-in **ARINC-429 Message Data Layout AR100** later in this document. All messages occur at a 4 Hz rate.
+in **ARINC-429 Message Data Layout AR100** later in this document. All messages occur at a 100 Hz rate.
 
 ---
 
@@ -126,7 +126,7 @@ in MIL-STD-1553. Also note that Word 1 is the first 1553 word. There is no Word 
 |   8  | 15 - 0       | Z Velocity LSW |
 
 32 bit two’s-complement signed integer representing aircraft inertial velocity in the 
-local X (North) direction in feet per second.  
+local X (North), Y (East), and Z (down) direction in feet per second.  
 LSB = 1 / 262,144 (3.814697E-6) feet per second
 
 ##### Word 9 - Azimuth
@@ -274,23 +274,13 @@ LSB = 4 feet
 
 ### ARINC-429 Message Data Layouts
 
-#### ARINC-429 Message Data Layout AR100
+The ARINC-429 data word format contains an 8 bit **Label** field. The Label field bit order is
+reversed, with the most significant bit being right-most in the 32 bit 429 data word. Besides
+being reversed, the value of the label field is often displayed in 3-bit octal notation. So
+for example, an ARINC-429 Octal Label = 41 is 00 100 001 in binary. Reversing the bits this
+label value is stored in the lable field as 1000 0100 in binary (or 0x84 in hex).
 
-This set of ARINC-429 messages primarily represent engine performance paramaters. Different engine
-parameters are stored in different ARINC-429 buses within one Ch 10 channel. There is only one message
-type and format per ARINC-429 bus.
-
-| ARINC-429 Bus | Message Label | Description |
-| :-----------: | :-----------: | ----------- |
-|  0            |  Label 41     | Engine Fan RPM (N1 Actual)    |
-|  1            |  Label 42     | Engine Fan RPM (N1 Demand)    |
-|  2            |  Label 43     | Engine Oil Pressure           |
-|  3            |  Label 44     | Engine Turbine RPM (N2)       |
-|  4            |  Label 45     | Exhaust Gas Temperature (EGT) |
-|  5            |  Label 46     | Engine Oil Temperature        |
-|  6            |  Label 47     | Fuel Flow                     |
-
-For all **ARINC-429 Message Data Layout AR100** messages defined below **SDI** and **SSM** fields have the
+For all ARINC-429 Message Data Layout messages defined below **SDI** and **SSM** fields have the
 following definition.
 
 | SDI Code          | 10  | 9   |
@@ -307,29 +297,45 @@ following definition.
 | Functional Test   |  1  |  0  |
 | Normal Operation  |  1  |  1  |
 
+#### ARINC-429 Message Data Layout AR100
+
+This set of ARINC-429 messages primarily represent engine performance paramaters. Different engine
+parameters are stored in different ARINC-429 buses within one Ch 10 channel. There is only one message
+type and format per ARINC-429 bus.
+
+| ARINC-429 Bus | Octal Label | Hex Value | Description |
+| :-----------: | :---------: | :-------: | ----------- |
+|  0            |  Label 41   | 0x84      | Engine Fan RPM (N1 Actual)    |
+|  0            |  Label 42   | 0x44      | Engine Fan RPM (N1 Demand)    |
+|  0            |  Label 43   | 0xC4      | Engine Oil Pressure           |
+|  0            |  Label 44   | 0x24      | Engine Turbine RPM (N2)       |
+|  0            |  Label 45   | 0xA4      | Exhaust Gas Temperature (EGT) |
+|  0            |  Label 46   | 0x64      | Engine Oil Temperature        |
+|  0            |  Label 47   | 0xE4      | Fuel Flow                     |
+
+Bit positions marked RESERVED shall contain a '0'.
+
 ##### ARINC-429 Message Data Layout AR100 Bus 0
 
 _Engine Fan RPM (N1 Actual)_
 
 | Bit | Description |
 | --- | ----------- |
-| 1-8 | Octal Label = 41 |
+| 1-8 | Octal Label = 41 (0x84) |
 | 9   | SDI Code LSB |
 | 10  | SDI Code MSB |
 | 11  | RESERVED |
-| 12  | RESERVED |
-| 13  | RESERVED |
-| 14  | RESERVED |
-| 15  | RESERVED |
-| 16  | RESERVED |
+| ... ||
 | 17  | RESERVED |
-| 18  | N1 RPM LSB= MSB/2^10 RPM |
+| 18  | N1 RPM LSB = MSB/2^10 RPM |
 | ... ||
 | 28  | N1 RPM MSB = 64% RPM |
 | 29  | RESERVED |
 | 30  | SSM Code |
 | 31  | SSM Code |
 | 32  | Parity (Odd) |
+
+Engine RPM N1 Actual value is in unsigned integer format.
 
 Range
 - Max Value: 110
@@ -341,23 +347,21 @@ _Engine Fan RPM (N1 Demand)_
 
 | Bit | Description |
 | --- | ----------- |
-| 1-8 |  Octal Label = 42 |
+| 1-8 |  Octal Label = 42 (0x44) |
 | 9   |  SDI Code LSB |
 | 10  |  SDI Code MSB |
 | 11  |  RESERVED |
-| 12  |  RESERVED |
-| 13  |  RESERVED |
-| 14  |  RESERVED |
-| 15  |  RESERVED |
-| 16  |  RESERVED |
+| ... ||
 | 17  |  RESERVED |
-| 18  |  PMC Demand (LSB= MSB/2^10 RPM) |
+| 18  |  PMC Demand (LSB = MSB/2^10 RPM) |
 | ... ||
 | 28  |  PMC Demand (MSB) (64% RPM) |
-| 29  |  0 Reserved |
+| 29  |  RESERVED |
 | 30  |  SSM Code |
 | 31  |  SSM Code |
 | 32  |  Parity (Odd) |
+
+Engine RPM N1 Demand value is in unsigned integer format.
 
 Range
 - Max Value: 110 
@@ -369,17 +373,19 @@ _Engine Oil Pressure_
 
 | Bit | Description |
 | --- | ----------- |
-| 1-8 |  Octal Label = 43 |
+| 1-8 |  Octal Label = 43 (0xC4) |
 | 9   |  SDI Code LSB |
 | 10  |  SDI Code MSB |
-| 11  |  Sensor Data Status: (0= Raw Sensor Data, 1= Calibrated Data)
-| 12  |  Engine Oil Pressure LSB= MSB/ 2^16
-| ...||
+| 11  |  Sensor Data Status: (0 = Raw Sensor Data, 1 = Calibrated Data)
+| 12  |  Engine Oil Pressure LSB = MSB/ 2^16
+| ... ||
 | 28  |  Engine Oil Pressure MSB = 64 psi
-| 29  |  Signed
+| 29  |  Sign     |
 | 30  |  SSM Code |
 | 31  |  SSM Code |
 | 32  |  Parity (Odd) |
+
+Engine Oil Pressure value is in two's complement format.
 
 ##### ARINC-429 Message Data Layout AR100 Bus 3
 
@@ -387,23 +393,21 @@ _Engine Turbine RPM (N2)_
 
 | Bit | Description |
 | --- | ----------- |
-| 1-8 |  Octal Label = 44 |
+| 1-8 |  Octal Label = 44 (0x24) |
 | 9   |  SDI Code LSB |
 | 10  |  SDI Code MSB |
 | 11  |  RESERVED |
-| 12  |  RESERVED |
-| 13  |  RESERVED |
-| 14  |  RESERVED |
-| 15  |  RESERVED |
-| 16  |  RESERVED |
+| ... ||
 | 17  |  RESERVED |
 | 18  |  N2 RPM LSB= MSB/2^10 RPM
 | ... ||
 | 28  |  N2 RPM MSB = 64% RPM
-| 29  |  RESERVED
+| 29  |  RESERVED |
 | 30  |  SSM Code |
 | 31  |  SSM Code |
 | 32  |  Parity (Odd) |
+
+Engine Turbine RPM N2 value is in unsigned integer format.
 
 Range
 - Max Value: 110
@@ -415,23 +419,21 @@ _Exhaust Gas Temperature (EGT)_
 
 | Bit | Description |
 | --- | ----------- |
-| 1-8 |  Octal Label = 45 |
+| 1-8 |  Octal Label = 45 (0xA4) |
 | 9   |  SDI Code LSB |
 | 10  |  SDI Code MSB |
 | 11  |  RESERVED |
-| 12  |  RESERVED |
-| 13  |  RESERVED |
-| 14  |  RESERVED |
-| 15  |  RESERVED |
-| 16  |  RESERVED |
+| ... ||
 | 17  |  RESERVED |
 | 18  |  EGT Value LSB = MSB/2^10 |
 | ... ||
 | 28  |  EGT Value MSB = 1024 °C |
-| 29  |  0 |
+| 29  |  RESERVED |
 | 30  |  SSM Code |
 | 31  |  SSM Code |
 | 32  |  Parity (Odd) |
+
+Exhaust Gas Temperature value is in unsigned integer format.
 
 Range
 - Max Value: 1100
@@ -443,25 +445,21 @@ _Engine Oil Temperature_
 
 | Bit | Description |
 | --- | ----------- |
-| 1-8 |  Octal Label = 46 |
+| 1-8 |  Octal Label = 46 (0x64) |
 | 9   |  SDI Code LSB |
 | 10  |  SDI Code MSB |
 | 11  |  RESERVED |
-| 12  |  RESERVED |
-| 13  |  RESERVED |
-| 14  |  RESERVED |
-| 15  |  RESERVED |
-| 16  |  RESERVED |
-| 17  |  RESERVED |
-| 18  |  RESERVED |
+| ... ||
 | 19  |  RESERVED |
 | 20  |  Engine Oil Temperature LSB = MSB/2^8 |
 | ... ||
 | 28  |  Engine Oil Temperature MSB = 128 °C |
-| 29  |  Sign Bit 0=Positive, 1=Negative |
+| 29  |  Sign     |
 | 30  |  SSM Code |
 | 31  |  SSM Code |
 | 32  |  Parity (Odd) |
+
+Engine Oil Temperature value is in two's complement format.
 
 Range
 - Max Value: 200
@@ -473,12 +471,11 @@ _Fuel Flow_
 
 | Bit | Description |
 | --- | ----------- |
-| 1-8 |  Octal Label = 47 |
+| 1-8 |  Octal Label = 47 (0xE4) |
 | 9   |  SDI Code LSB |
 | 10  |  SDI Code MSB |
 | 11  |  RESERVED |
-| 12  |  RESERVED |
-| 13  |  RESERVED |
+| ... ||
 | 14  |  RESERVED |
 | 15  |  Fuel Flow LSB = MSB/2^13 |
 | ... ||
@@ -487,6 +484,8 @@ _Fuel Flow_
 | 30  |  SSM Code |
 | 31  |  SSM Code |
 | 32  |  Parity (Odd) |
+
+Fuel Flow value is in unsigned integer format.
 
 Range
 - Max Value: 15000
