@@ -14,6 +14,7 @@
 
 #include "irig106ch10.h"
 
+#include "Common.h"
 #include "Ch10Writer.h"
 #include "Ch10Writer_Video.h"
 
@@ -60,26 +61,28 @@ void ClCh10Writer_VideoF0::Init(int iHandle, unsigned int uChanID)
 
 // Return a string with the TMATS R section for this channel
 
-std::string ClCh10Writer_VideoF0::TMATS(int iRSection, int iEnumN, std::string sDescription)
+//std::string ClCh10Writer_VideoF0::TMATS(int iRSection, int iEnumN, std::string sDescription)
+std::string ClCh10Writer_VideoF0::TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN, std::string sDescription)
+
     {
     std::stringstream   ssTMATS;
-    std::string         sDSI;
+    std::stringstream   ssDSI;
 
     if (sDescription != "")
-        sDSI = sDescription;
+        ssDSI << sDescription;
     else
-        sDSI = "VideoInChan" + uChanID;
+        ssDSI << "VideoInChan" << uChanID;
 
     ssTMATS <<
-        "R-" << iRSection << "\\TK1-"  << iEnumN << ":" << uChanID << ";\n"
-        "R-" << iRSection << "\\TK4-"  << iEnumN << ":" << uChanID << ";\n"
-        "R-" << iRSection << "\\CHE-"  << iEnumN << ":T;\n"
-        "R-" << iRSection << "\\DSI-"  << iEnumN << ":" << sDSI << ";\n"
-        "R-" << iRSection << "\\CDT-"  << iEnumN << ":VIDIN;\n"
-        "R-" << iRSection << "\\CDLN-" << iEnumN << ":VideoInChan" << uChanID << ";\n"
-        "R-" << iRSection << "\\VTF-"  << iEnumN << ":0;\n"      // MPEG-2/H.264
-        "R-" << iRSection << "\\VST-"  << iEnumN << ":5;\n"      // RGB
-        "R-" << iRSection << "\\VED-"  << iEnumN << ":300;\n";   // Video encoding delay
+        "R-" << TmatsIndex.iRIndex << "\\DSI-"  << TmatsIndex.iRSrcNum << ":" << ssDSI.str() << ";\n"
+        "R-" << TmatsIndex.iRIndex << "\\TK1-"  << TmatsIndex.iRSrcNum << ":" << uChanID << ";\n"
+        "R-" << TmatsIndex.iRIndex << "\\TK4-"  << TmatsIndex.iRSrcNum << ":" << uChanID << ";\n"
+        "R-" << TmatsIndex.iRIndex << "\\CHE-"  << TmatsIndex.iRSrcNum << ":T;\n"
+        "R-" << TmatsIndex.iRIndex << "\\CDT-"  << TmatsIndex.iRSrcNum << ":VIDIN;\n"
+        "R-" << TmatsIndex.iRIndex << "\\CDLN-" << TmatsIndex.iRSrcNum << ":VideoInChan" << uChanID << ";\n"
+        "R-" << TmatsIndex.iRIndex << "\\VTF-"  << TmatsIndex.iRSrcNum << ":0;\n"      // MPEG-2/H.264
+        "R-" << TmatsIndex.iRIndex << "\\VST-"  << TmatsIndex.iRSrcNum << ":5;\n"      // RGB
+        "R-" << TmatsIndex.iRIndex << "\\VED-"  << TmatsIndex.iRSrcNum << ":300;\n";   // Video encoding delay
 
 #if 0
         "M-1\\ID:VideoInChan1;\n"

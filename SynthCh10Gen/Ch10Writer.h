@@ -13,3 +13,4 @@ just need a place to put Ch 10 TMATS and data headers versions.
 #define CH10_VER_HDR_1553       0x06
 #define CH10_VER_HDR_PCM        0x06
 #define CH10_VER_HDR_VIDEO      0x06
+#define CH10_VER_HDR_A429       0x06

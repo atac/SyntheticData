@@ -105,6 +105,7 @@ public:
 
     // Class variables
 public:
+    unsigned int            uChanID;
     SuPcmF1_IntraPktHeader  suIPH;
     SuPcmFrame_Fmt1         suPcmFrame_Fmt1;
     unsigned                uWordLen;       // PCM common word length in bits

@@ -55,21 +55,26 @@ void ClCh10Writer_Time::Init(int iHandle, unsigned int uChanID)
 
 // Return a string with the TMATS R section for this channel
 
-std::string ClCh10Writer_Time::TMATS(ClTmatsIndexes & TmatsIndex)
+std::string ClCh10Writer_Time::TMATS(ClTmatsIndexes & TmatsIndex, std::string sDescription)
     {
     std::stringstream   ssTMATS;
+    std::stringstream   ssDSI;
+
+    if (sDescription != "")
+        ssDSI << sDescription;
+    else
+        ssDSI << "TimeInChan" << uChanID;
 
     ssTMATS <<
+        "R-" << TmatsIndex.iRIndex << "\\DSI-"   << TmatsIndex.iRSrcNum << ":" << ssDSI.str() << ";\n"
         "R-" << TmatsIndex.iRIndex << "\\TK1-"   << TmatsIndex.iRSrcNum << ":" << uChanID << ";\n"
         "R-" << TmatsIndex.iRIndex << "\\TK4-"   << TmatsIndex.iRSrcNum << ":" << uChanID << ";\n"
         "R-" << TmatsIndex.iRIndex << "\\CHE-"   << TmatsIndex.iRSrcNum << ":T;\n"
-        "R-" << TmatsIndex.iRIndex << "\\DSI-"   << TmatsIndex.iRSrcNum << ":TimeInChan" << uChanID << ";\n"
         "R-" << TmatsIndex.iRIndex << "\\CDT-"   << TmatsIndex.iRSrcNum << ":TIMIN;\n"
         "R-" << TmatsIndex.iRIndex << "\\CDLN-"  << TmatsIndex.iRSrcNum << ":TimeInChan" << uChanID << ";\n"
         "R-" << TmatsIndex.iRIndex << "\\TTF-"   << TmatsIndex.iRSrcNum << ":1;\n"
         "R-" << TmatsIndex.iRIndex << "\\TFMT-"  << TmatsIndex.iRSrcNum << ":I;\n"
         "R-" << TmatsIndex.iRIndex << "\\TSRC-"  << TmatsIndex.iRSrcNum << ":I;\n";
-    TmatsIndex.iRSrcNum++;
 
     return ssTMATS.str();
     } // end TMATS()

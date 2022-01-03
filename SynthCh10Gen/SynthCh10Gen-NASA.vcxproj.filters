@@ -69,20 +69,8 @@
     <ClInclude Include="..\3rdParty\irig106lib\src\irig106ch10.h">
       <Filter>irig106lib</Filter>
     </ClInclude>
-    <ClInclude Include="Source_BMNavTxt.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source_BMNavDB.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source_VideoDB.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_video.h">
       <Filter>irig106lib</Filter>
-    </ClInclude>
-    <ClInclude Include="Ch10Writer_Video.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\3rdParty\irig106lib\src\config.h">
       <Filter>irig106lib</Filter>
@@ -138,6 +126,18 @@
     <ClInclude Include="Common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Ch10Format_A429.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_arinc429.h">
+      <Filter>irig106lib</Filter>
+    </ClInclude>
+    <ClInclude Include="Ch10Format_A429_AR100.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Ch10Writer_A429.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Ch10Writer_1553.cpp">
@@ -178,15 +178,6 @@
     </ClCompile>
     <ClCompile Include="..\3rdParty\irig106lib\src\irig106ch10.c">
       <Filter>irig106lib</Filter>
-    </ClCompile>
-    <ClCompile Include="Source_BMNavTxt.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source_BMNavDB.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source_VideoDB.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_video.c">
       <Filter>irig106lib</Filter>
@@ -231,6 +222,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Ch10Writer_PCM.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Ch10Format_A429.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Ch10Format_A429_AR100.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Ch10Writer_A429.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

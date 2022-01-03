@@ -49,7 +49,7 @@ public:
 
     // Methods
     void        Init(int iHandle, unsigned int uChanID);
-    std::string TMATS(ClTmatsIndexes & TmatsIndex);
+    std::string TMATS(ClTmatsIndexes & TmatsIndex, std::string sDescription="");
     void        SetRelTime(int64_t lSimClockTicks, double fSimClockTime);
     void        Write(double fCurrSimClockTime);
 

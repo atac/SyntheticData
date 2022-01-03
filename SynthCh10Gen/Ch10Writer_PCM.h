@@ -54,7 +54,7 @@ public:
     // Methods
 public:
     void Init(int iHandle, unsigned int uChanID);
-    std::string TMATS(ClTmatsIndexes & TmatsIndex);
+    std::string TMATS(ClTmatsIndexes & TmatsIndex, std::string sDescription="");
     void AppendMsg(ClCh10Format_PCM_SynthFmt1 * psuPcmFrame);
     void Commit();
 

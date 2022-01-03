@@ -20,23 +20,23 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{5AE2C8AF-53CD-491E-8FFD-4ACB9F827BA2}</ProjectGuid>
+    <ProjectGuid>{348BFBB5-7E21-404F-A48F-4DE4768A1383}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>SynthCh10Gen</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
-    <ProjectName>SynthCh10Gen</ProjectName>
+    <RootNamespace>SynthCh10Gen-NASA</RootNamespace>
+    <ProjectName>SynthCh10Gen-NASA</ProjectName>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -74,6 +74,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>..\3rdParty\SQLite\sqlite-amalgamation-3320300;$(IncludePath)</IncludePath>
+    <IntDir>NASA\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -81,6 +83,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>..\3rdParty\SQLite\sqlite-amalgamation-3320300;$(IncludePath)</IncludePath>
+    <IntDir>NASA\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -91,10 +95,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_USE_32BIT_TIME_T;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>COMPILE_NASA;_USE_32BIT_TIME_T;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>..\XPlaneControl;..\3rdParty\irig106lib\src;..\3rdParty\boost_1_75_0;..\3rdParty\SQLite;..\3rdParty\csv-parser;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -124,10 +129,11 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_USE_32BIT_TIME_T;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>COMPILE_NASA;_USE_32BIT_TIME_T;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>..\XPlaneControl;..\3rdParty\irig106lib\src;..\3rdParty\boost_1_75_0;..\3rdParty\SQLite;..\3rdParty\csv-parser;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -158,6 +164,7 @@
   <ItemGroup>
     <ClInclude Include="..\3rdParty\irig106lib\src\config.h" />
     <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_1553f1.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_arinc429.h" />
     <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_index.h" />
     <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_pcmf1.h" />
     <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_time.h" />
@@ -178,22 +185,21 @@
     <ClInclude Include="..\3rdParty\SQLite\sqlite3.h" />
     <ClInclude Include="Ch10Format_1553.h" />
     <ClInclude Include="Ch10Format_1553_Nav.h" />
+    <ClInclude Include="Ch10Format_A429.h" />
+    <ClInclude Include="Ch10Format_A429_AR100.h" />
     <ClInclude Include="Ch10Format_PCM.h" />
     <ClInclude Include="Ch10Writer.h" />
     <ClInclude Include="Ch10Writer_1553.h" />
+    <ClInclude Include="Ch10Writer_A429.h" />
     <ClInclude Include="Ch10Writer_Index.h" />
     <ClInclude Include="Ch10Writer_PCM.h" />
     <ClInclude Include="Ch10Writer_Time.h" />
-    <ClInclude Include="Ch10Writer_Video.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="SimState.h" />
     <ClInclude Include="SimTimer.h" />
-    <ClInclude Include="Source_BMNavDB.h" />
-    <ClInclude Include="Source_BMNavTxt.h" />
     <ClInclude Include="Source_CsvTxt.h" />
     <ClInclude Include="Source_NasaNavTxt.h" />
     <ClInclude Include="Source_Nav.h" />
-    <ClInclude Include="Source_VideoDB.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_1553f1.c" />
@@ -213,15 +219,15 @@
     <ClCompile Include="..\3rdParty\irig106lib\src\irig106ch10.c" />
     <ClCompile Include="..\3rdParty\csv-parser\csv_parser.cpp" />
     <ClCompile Include="..\3rdParty\SQLite\sqlite3.c" />
+    <ClCompile Include="Ch10Format_A429.cpp" />
+    <ClCompile Include="Ch10Format_A429_AR100.cpp" />
     <ClCompile Include="Ch10Format_PCM.cpp" />
+    <ClCompile Include="Ch10Writer_A429.cpp" />
     <ClCompile Include="Ch10Writer_Index.cpp" />
     <ClCompile Include="Ch10Writer_PCM.cpp" />
     <ClCompile Include="Ch10Writer_Video.cpp" />
-    <ClCompile Include="Source_BMNavDB.cpp" />
-    <ClCompile Include="Source_BMNavTxt.cpp" />
     <ClCompile Include="Source_CsvTxt.cpp" />
     <ClCompile Include="Source_NasaNavTxt.cpp" />
-    <ClCompile Include="Source_VideoDB.cpp" />
     <ClCompile Include="SynthCh10Gen.cpp" />
     <ClCompile Include="Ch10Format_1553.cpp" />
     <ClCompile Include="Ch10Format_1553_Nav.cpp" />
