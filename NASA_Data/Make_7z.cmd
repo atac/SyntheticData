@@ -11,8 +11,8 @@ REM is also run from "To_CSV.cmd" to make data for multiple directories.
 
 echo %1
 
-REM This python script makes a CSV file with enough data to make 1553 Nav data.
-python make_nasa_ac_nav.py %1
+REM This python script makes a CSV file with enough data to make 1553 Nav and PCM data.
+python make_nasa_pcm_data.py %1
 
 REM This python script makes a much larger CSV file which includes enough data 
 REM to make both 1553 Nav data and PCM frames.
