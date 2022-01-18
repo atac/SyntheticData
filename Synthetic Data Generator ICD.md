@@ -72,13 +72,13 @@ Note: The 1553 Command Word is depicted as "RT Num - T/R Bit - Subaddress - Word
 
 File Layout 1 Channel ID 40 data represent engine performance parameters for the left aircraft engine
 in ARINC-429 messages. This Ch 10 channel will have engine data from multiple ARINC-429 buses as described
-in **ARINC-429 Engine Data Layout AR100** later in this document. All messages occur at a 100 Hz rate.
+in **ARINC-429 Engine Data Layout AR100** later in this document. All messages occur at a 20 Hz rate.
 
 #### File Layout 1 Channel ID 41 Message Layout
 
 File Layout 1 Channel ID 41 data represent engine performance parameters for the right aircraft engine
 in ARINC-429 messages. This Ch 10 channel will have engine data from multiple ARINC-429 buses as described
-in **ARINC-429 Message Data Layout AR100** later in this document. All messages occur at a 100 Hz rate.
+in **ARINC-429 Message Data Layout AR100** later in this document. All messages occur at a 20 Hz rate.
 
 ---
 

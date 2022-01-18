@@ -200,6 +200,7 @@ int main(int iArgc, char * aszArgv[])
     ClSimTimer::fSimElapsedTime =      0.0;
     ClSimTimer      clSimTimer_10ms(100000);    // 10 msec / 100 Hz
     ClSimTimer      clSimTimer_40ms(400000);    // 40 msec / 25 Hz
+    ClSimTimer      clSimTimer_50ms(500000);    // 50 msec / 20 Hz
     ClSimTimer      clSimTimer_100ms(1000000);  // 100 msec / 10 Hz
     ClSimTimer      clSimTimer_1S(10000000);    // 1 sec
     ClSimTimer      clSimTimer_6S(60000000);    // 6 sec (for node index packets)
@@ -393,6 +394,7 @@ int main(int iArgc, char * aszArgv[])
     fNextPrintTime      =  0.0;
     clSimTimer_10ms.FromNow();
     clSimTimer_40ms.FromNow();
+    clSimTimer_50ms.FromNow();
     clSimTimer_100ms.FromNow();
     clSimTimer_1S.FromNow();
     clSimTimer_6S.FromNow();
@@ -481,15 +483,6 @@ int main(int iArgc, char * aszArgv[])
             pPCM_SynthFmt1->SetRTC(&ClSimTimer::lSimClockTicks);
             pCh10Writer_PCM->AppendMsg(pPCM_SynthFmt1);
 
-            // ARINC 429
-            pA429_AR100_1->MakeMsg(&clSimState);
-            pA429_AR100_1->SetRTC(&ClSimTimer::lSimClockTicks);
-            pCh10Writer_A429_1->AppendMsg(pA429_AR100_1);
-
-            pA429_AR100_2->MakeMsg(&clSimState);
-            pA429_AR100_2->SetRTC(&ClSimTimer::lSimClockTicks);
-            pCh10Writer_A429_2->AppendMsg(pA429_AR100_2);
-
             } // end 40 msec / 25 Hz events
 
         // 40 msec / 25 Hz events
@@ -500,6 +493,24 @@ int main(int iArgc, char * aszArgv[])
             p1553Fmt_Nav_25Hz->MakeMsg(&clSimState);
             p1553Fmt_Nav_25Hz->SetRTC(&ClSimTimer::lSimClockTicks);
             pCh10Writer_1553->AppendMsg(p1553Fmt_Nav_25Hz);
+            } // end 40 msec / 25 Hz events
+
+
+        // 50 msec / 20 Hz events
+        // ----------------------
+        if (clSimTimer_50ms.Expired())
+            {
+            clSimTimer_50ms.FromPrev();
+
+            // ARINC 429
+            pA429_AR100_1->MakeMsg(&clSimState);
+            pA429_AR100_1->SetRTC(&ClSimTimer::lSimClockTicks);
+            pCh10Writer_A429_1->AppendMsg(pA429_AR100_1);
+
+            pA429_AR100_2->MakeMsg(&clSimState);
+            pA429_AR100_2->SetRTC(&ClSimTimer::lSimClockTicks);
+            pCh10Writer_A429_2->AppendMsg(pA429_AR100_2);
+
             } // end 40 msec / 25 Hz events
 
         // 100 msec events
