@@ -13,7 +13,7 @@ REM Convert NASA Matlab file into CSV data file
 python make_nasa_pcm_data.py %1 %2.mat
 
 REM Convert CSV file into Ch 10 file
-..\Release\SynthCh10Gen -v -N CSV\%1\%2_pcm.csv Ch10\%1\%2.ch10
+..\Release\SynthCh10Gen-NASA -v -N CSV\%1\%2_pcm.csv Ch10\%1\%2.ch10
 
 
 
