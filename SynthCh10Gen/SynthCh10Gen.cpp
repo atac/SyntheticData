@@ -723,7 +723,7 @@ void WriteTmats(int iI106Handle, std::string sProgramName, double fCurrSimClockT
     TmatsIndex.iRSrcNum++;
 
     ssTMATS << pCh10Writer_A429_2->TMATS(TmatsIndex, "A429InChan2", 1, "A429-Engine2");
-    ssTMATS << pA429_AR100_1->TMATS(TmatsIndex, "A429InChan2");
+    ssTMATS << pA429_AR100_2->TMATS(TmatsIndex, "A429InChan2");
     TmatsIndex.iBIndex++;
     TmatsIndex.iRSrcNum++;
 
