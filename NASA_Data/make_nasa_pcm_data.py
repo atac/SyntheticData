@@ -58,7 +58,7 @@ if __name__=='__main__':
     # Set the output filename extension. Necessary to check if output file
     # has already been generated so we can skip in that case. Don't forget to
     # choose the appropriate output routine further down.
-#   output_filename_ext = ".csv"
+    output_filename_ext = ".csv"
 #   output_filename_ext = ".parquet"
 #   output_filename_ext = ".h5"
 
