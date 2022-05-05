@@ -1,0 +1,12 @@
+4
+Name,,ICD Name,Record Identifier,Mask,Units,Start Word,Start Bit,Length,Start Word 2,Start Bit 2,Length 2,Type,9th Order Poly,8th Order Poly,7th Order Poly,6th Order Poly,5th Order Poly,4th Order Poly,3rd Order Poly,2nd Order Poly,1st Order Poly,Offset,Swap,Comments,1553 Message Format,Dependencies...,Lookups...
+"Engine Fan RPM Actual",0,"",041,377,"None","0","17","11","0","0","0","Unsigned","0","0","0","0","0","0","0","0","0.0625","0","0","","",0,0
+"Engine Fan RPM Demand",0,"",042,377,"None","0","17","11","0","0","0","Unsigned","0","0","0","0","0","0","0","0","0.0625","0","0","","",0,0
+"Engine Oil Pressure",0,"",043,377,"None","0","11","18","0","0","0","Unsigned","0","0","0","0","0","0","0","0","0.0009765625","0","0","","",0,0
+"Engine Oil Pressure Status",0,"",043,377,"None","0","10","1","0","0","0","Unsigned","0","0","0","0","0","0","0","0","1","0","0","","",0,0
+"Engine Turbine RPM",0,"",044,377,"None","0","17","11","0","0","0","Unsigned","0","0","0","0","0","0","0","0","0.0625","0","0","","",0,0
+"Engine_Oil_Temperature",0,"",046,377,"None","0","19","10","0","0","0","Two's Complement","0","0","0","0","0","0","0","0","0.5","0","0","","",0,0
+"Exhaust_Gas_Temperature",0,"",045,377,"None","0","17","11","0","0","0","Unsigned","0","0","0","0","0","0","0","0","1","0","0","","",0,0
+"Fuel_Flow",0,"",047,377,"None","0","14","14","0","0","0","Unsigned","0","0","0","0","0","0","0","0","1","0","0","","",0,0
+
+Index,Name,Operation,Value

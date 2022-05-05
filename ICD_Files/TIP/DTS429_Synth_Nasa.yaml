@@ -1,0 +1,258 @@
+---
+translatable_word_definitions:
+  Engine_Fan_RPM_N1_ACTUAL_40:
+    wrd_data:
+      label: 41
+      bus: 'A429-Engine1-SubChan1'
+      sdi: -1
+      rate: 0.0
+      desc: 'Engine Fan RPM (N1 Actual)'
+      lru_name: ''
+    elem:
+      N1_RPM_ACTUAL:
+        schema: 'UNSIGNEDBITS'
+        msbval: 64.0
+        lsb: 18
+        bitcnt: 11
+        desc: ''
+        uom: '%'
+        class: 0
+  Engine_Fan_RPM_N1_DEMAND_40:
+    wrd_data:
+      label: 42
+      bus: 'A429-Engine1-SubChan1'
+      sdi: -1
+      rate: 0.0
+      desc: 'Engine Fan RPM (N1 Demand)'
+      lru_name: ''
+    elem:
+      N1_RPM_DEMAND:
+        schema: 'UNSIGNEDBITS'
+        msbval: 64.0
+        lsb: 18
+        bitcnt: 11
+        desc: ''
+        uom: '%'
+        class: 0
+  ENGINE_OIL_PRESSURE_40:
+    wrd_data:
+      label: 43
+      bus: 'A429-Engine1-SubChan1'
+      sdi: -1
+      rate: 0.0
+      desc: 'Engine Oil Pressure'
+      lru_name: ''
+    elem:
+      Eng_Oil_Status:
+        schema: 'UNSIGNEDBITS'
+        msbval: 1
+        lsb: 11
+        bitcnt: 1
+        desc: 'Status bit: 0 = raw data. 1 = Calibrated data'
+        uom: ''
+        class: 0
+      Engine_Oil_Pressure:
+        schema: 'SIGNEDBITS'
+        msbval: 64.0
+        lsb: 12
+        bitcnt: 18
+        desc: ''
+        uom: 'psi'
+        class: 0
+  Engine_Turbine_RPM_40:
+    wrd_data:
+      label: 44
+      bus: 'A429-Engine1-SubChan1'
+      sdi: -1
+      rate: 0.0
+      desc: 'Engine Turbine RPM (N2)'
+      lru_name: ''
+    elem:
+      N2_RPM:
+        schema: 'UNSIGNEDBITS'
+        msbval: 64.0
+        lsb: 18
+        bitcnt: 11
+        desc: ''
+        uom: '%'
+        class: 0
+  Exhaust_Gas_Temperature_40:
+    wrd_data:
+      label: 45
+      bus: 'A429-Engine1-SubChan1'
+      sdi: -1
+      rate: 0.0
+      desc: 'Exhaust Gas Temperature (EGT)'
+      lru_name: ''
+    elem:
+      Exhaust_Gas_Temperature:
+        schema: 'UNSIGNEDBITS'
+        msbval: 1024.0
+        lsb: 18
+        bitcnt: 11
+        desc: ''
+        uom: 'C'
+        class: 0
+  Engine_Oil_Temperature_40:
+    wrd_data:
+      label: 46
+      bus: 'A429-Engine1-SubChan1'
+      sdi: -1
+      rate: 0.0
+      desc: 'Engine Oil Temperature'
+      lru_name: ''
+    elem:
+      Eng_Oil_Temp:
+        schema: 'SIGNEDBITS'
+        msbval: 128.0
+        lsb: 20
+        bitcnt: 10
+        desc: ''
+        uom: 'C'
+        class: 0
+  Fuel_Flow_40:
+    wrd_data:
+      label: 47
+      bus: 'A429-Engine1-SubChan1'
+      sdi: -1
+      rate: 0.0
+      desc: 'Fuel Flow'
+      lru_name: ''
+    elem:
+      Fuel_Flow:
+        schema: 'UNSIGNEDBITS'
+        msbval: 8192.0
+        lsb: 15
+        bitcnt: 14
+        desc: ''
+        uom: 'PPH'
+        class: 0
+
+  Engine_Fan_RPM_N1_ACTUAL_41:
+    wrd_data:
+      label: 41
+      bus: 'A429-Engine2-SubChan1'
+      sdi: -1
+      rate: 0.0
+      desc: 'Engine Fan RPM (N1 Actual)'
+      lru_name: ''
+    elem:
+      N1_RPM_ACTUAL:
+        schema: 'UNSIGNEDBITS'
+        msbval: 64.0
+        lsb: 18
+        bitcnt: 11
+        desc: ''
+        uom: '%'
+        class: 0
+  Engine_Fan_RPM_N1_DEMAND_41:
+    wrd_data:
+      label: 42
+      bus: 'A429-Engine2-SubChan1'
+      sdi: -1
+      rate: 0.0
+      desc: 'Engine Fan RPM (N1 Demand)'
+      lru_name: ''
+    elem:
+      N1_RPM_DEMAND:
+        schema: 'UNSIGNEDBITS'
+        msbval: 64.0
+        lsb: 18
+        bitcnt: 11
+        desc: ''
+        uom: '%'
+        class: 0
+  ENGINE_OIL_PRESSURE_41:
+    wrd_data:
+      label: 43
+      bus: 'A429-Engine2-SubChan1'
+      sdi: -1
+      rate: 0.0
+      desc: 'Engine Oil Pressure'
+      lru_name: ''
+    elem:
+      Eng_Oil_Status:
+        schema: 'UNSIGNEDBITS'
+        msbval: 1
+        lsb: 11
+        bitcnt: 1
+        desc: 'Status bit: 0 = raw data. 1 = Calibrated data'
+        uom: ''
+        class: 0
+      Engine_Oil_Pressure:
+        schema: 'SIGNEDBITS'
+        msbval: 64.0
+        lsb: 12
+        bitcnt: 18
+        desc: ''
+        uom: 'psi'
+        class: 0
+  Engine_Turbine_RPM_41:
+    wrd_data:
+      label: 44
+      bus: 'A429-Engine2-SubChan1'
+      sdi: -1
+      rate: 0.0
+      desc: 'Engine Turbine RPM (N2)'
+      lru_name: ''
+    elem:
+      N2_RPM:
+        schema: 'UNSIGNEDBITS'
+        msbval: 64.0
+        lsb: 18
+        bitcnt: 11
+        desc: ''
+        uom: '%'
+        class: 0
+  Exhaust_Gas_Temperature_41:
+    wrd_data:
+      label: 45
+      bus: 'A429-Engine2-SubChan1'
+      sdi: -1
+      rate: 0.0
+      desc: 'Exhaust Gas Temperature (EGT)'
+      lru_name: ''
+    elem:
+      Exhaust_Gas_Temperature:
+        schema: 'UNSIGNEDBITS'
+        msbval: 1024.0
+        lsb: 18
+        bitcnt: 11
+        desc: ''
+        uom: 'C'
+        class: 0
+  Engine_Oil_Temperature_41:
+    wrd_data:
+      label: 46
+      bus: 'A429-Engine2-SubChan1'
+      sdi: -1
+      rate: 0.0
+      desc: 'Engine Oil Temperature'
+      lru_name: ''
+    elem:
+      Eng_Oil_Temp:
+        schema: 'SIGNEDBITS'
+        msbval: 128.0
+        lsb: 20
+        bitcnt: 10
+        desc: ''
+        uom: 'C'
+        class: 0
+  Fuel_Flow_41:
+    wrd_data:
+      label: 47
+      bus: 'A429-Engine2-SubChan1'
+      sdi: -1
+      rate: 0.0
+      desc: 'Fuel Flow'
+      lru_name: ''
+    elem:
+      Fuel_Flow:
+        schema: 'UNSIGNEDBITS'
+        msbval: 8192.0
+        lsb: 15
+        bitcnt: 14
+        desc: ''
+        uom: 'PPH'
+        class: 0
+supplemental_bus_map_labels: {}
