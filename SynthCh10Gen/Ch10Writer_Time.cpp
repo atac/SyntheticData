@@ -70,7 +70,7 @@ std::string ClCh10Writer_Time::TMATS(ClTmatsIndexes & TmatsIndex, std::string sD
         "R-" << TmatsIndex.iRIndex << "\\TK1-"   << TmatsIndex.iRSrcNum << ":" << uChanID << ";\n"
         "R-" << TmatsIndex.iRIndex << "\\TK4-"   << TmatsIndex.iRSrcNum << ":" << uChanID << ";\n"
         "R-" << TmatsIndex.iRIndex << "\\CHE-"   << TmatsIndex.iRSrcNum << ":T;\n"
-        "R-" << TmatsIndex.iRIndex << "\\CDT-"   << TmatsIndex.iRSrcNum << ":TIMIN;\n"
+        "R-" << TmatsIndex.iRIndex << "\\CDT-"   << TmatsIndex.iRSrcNum << ":TIMEIN;\n"
         "R-" << TmatsIndex.iRIndex << "\\CDLN-"  << TmatsIndex.iRSrcNum << ":TimeInChan" << uChanID << ";\n"
         "R-" << TmatsIndex.iRIndex << "\\TTF-"   << TmatsIndex.iRSrcNum << ":1;\n"
         "R-" << TmatsIndex.iRIndex << "\\TFMT-"  << TmatsIndex.iRSrcNum << ":I;\n"
