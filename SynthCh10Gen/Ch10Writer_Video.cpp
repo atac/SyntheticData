@@ -120,10 +120,10 @@ void ClCh10Writer_VideoF0::Write(int64_t * pullRelTime, uint8_t * pDataBuff, int
         suCh10Header.ulDataLen   = sizeof(suVideoF0CSDW) + iBytesToWrite;
         vLLInt2TimeArray(pullRelTime, suCh10Header.aubyRefTime);
         iFillerLen = 8;
-        uAddDataFillerChecksum2(&suCh10Header, &suVideoF0CSDW, sizeof(suVideoF0CSDW), pDataBuff, achFiller, &iFillerLen);
+        uAddDataFillerChecksum2(&suCh10Header, &suVideoF0CSDW, sizeof(suVideoF0CSDW), pDataBuff, iBytesToWrite, achFiller, &iFillerLen);
         suCh10Header.uChecksum = uCalcHeaderChecksum(&suCh10Header);
 
-        enStatus = enI106Ch10WriteMsg2(iHandle, &suCh10Header, &suVideoF0CSDW, sizeof(suVideoF0CSDW), pDataBuff, achFiller, iFillerLen);
+        enStatus = enI106Ch10WriteMsg2(iHandle, &suCh10Header, &suVideoF0CSDW, sizeof(suVideoF0CSDW), pDataBuff, iBytesToWrite, achFiller, iFillerLen);
 
         suCh10Header.ubySeqNum++;
         iBytesLeftToWrite -= iBytesToWrite;
