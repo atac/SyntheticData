@@ -81,6 +81,7 @@ void ClCh10Writer_Index::WriteNodePacket()
     __int64             uOffset;
     SuIndex_ChanSpec    suIndexCSDW;
 //    SuIndex_Time        suIndexTime;
+    int                 iDataArrayLen;
     unsigned char       achTrailerBuffer[10];
     int                 iTrailerBufferLen = 10;
 
@@ -101,13 +102,15 @@ void ClCh10Writer_Index::WriteNodePacket()
 
     // Write the node packet to the Ch 10 file
     iHeaderInit(&suCh10Header, uChanID, I106CH10_DTYPE_RECORDING_INDEX, I106CH10_PFLAGS_CHKSUM_NONE | I106CH10_PFLAGS_TIMEFMT_IRIG106, uSeqNum);
-    suCh10Header.ulDataLen = sizeof(SuIndex_ChanSpec) + (asuNodeData.size() * sizeof(SuIndex_NodeMsg));
+    iDataArrayLen = asuNodeData.size() * sizeof(SuIndex_NodeMsg);
+    suCh10Header.ulDataLen = sizeof(SuIndex_ChanSpec) + iDataArrayLen;
     suCh10Header.ubyHdrVer = CH10_VER_HDR_INDEX;
     memcpy(suCh10Header.aubyRefTime, &(asuNodeData[0].suTime.suRtcTime), 6);
-    uAddDataFillerChecksum2(&suCh10Header, &suIndexCSDW, 4, (unsigned char *)asuNodeData.data(), achTrailerBuffer, &iTrailerBufferLen);
+    uAddDataFillerChecksum2(&suCh10Header, &suIndexCSDW, 4, (unsigned char *)asuNodeData.data(), iDataArrayLen, achTrailerBuffer, &iTrailerBufferLen);
+
     suCh10Header.uChecksum = uCalcHeaderChecksum(&suCh10Header);
 
-    enI106Ch10WriteMsg2(iHandle, &suCh10Header, &suIndexCSDW, 4, (unsigned char *)asuNodeData.data(), achTrailerBuffer, iTrailerBufferLen);
+    enI106Ch10WriteMsg2(iHandle, &suCh10Header, &suIndexCSDW, 4, (unsigned char *)asuNodeData.data(), iDataArrayLen, achTrailerBuffer, iTrailerBufferLen);
 
     // Get ready for the next node packet
     asuNodeData.clear();
@@ -137,6 +140,7 @@ void ClCh10Writer_Index::WriteRootPacket()
     SuI106Ch10Header    suCh10Header;
     SuIndex_ChanSpec    suIndexCSDW;
 //    SuIndex_Time        suIndexTime;
+    int                 iDataArrayLen;
     unsigned char       achTrailerBuffer[10];
     int                 iTrailerBufferLen = 10;
 
@@ -163,13 +167,14 @@ void ClCh10Writer_Index::WriteRootPacket()
 
     // Write the root packet to the Ch 10 file
     iHeaderInit(&suCh10Header, uChanID, I106CH10_DTYPE_RECORDING_INDEX, I106CH10_PFLAGS_CHKSUM_NONE | I106CH10_PFLAGS_TIMEFMT_IRIG106, uSeqNum);
-    suCh10Header.ulDataLen = sizeof(SuIndex_ChanSpec) + (asuRootData.size() * sizeof(SuIndex_RootMsg));
+    iDataArrayLen = asuRootData.size() * sizeof(SuIndex_RootMsg);
+    suCh10Header.ulDataLen = sizeof(SuIndex_ChanSpec) + iDataArrayLen;
     suCh10Header.ubyHdrVer = 6;
     memcpy(suCh10Header.aubyRefTime, &(asuRootData[0].suTime.suRtcTime), 6);
-    uAddDataFillerChecksum2(&suCh10Header, &suIndexCSDW, 4, (unsigned char *)asuRootData.data(), achTrailerBuffer, &iTrailerBufferLen);
+    uAddDataFillerChecksum2(&suCh10Header, &suIndexCSDW, 4, (unsigned char *)asuRootData.data(), iDataArrayLen, achTrailerBuffer, &iTrailerBufferLen);
     suCh10Header.uChecksum = uCalcHeaderChecksum(&suCh10Header);
 
-    enI106Ch10WriteMsg2(iHandle, &suCh10Header, &suIndexCSDW, 4, (unsigned char *)asuRootData.data(), achTrailerBuffer, iTrailerBufferLen);
+    enI106Ch10WriteMsg2(iHandle, &suCh10Header, &suIndexCSDW, 4, (unsigned char *)asuRootData.data(), iDataArrayLen, achTrailerBuffer, iTrailerBufferLen);
 
     // Get ready for the next root packet
     suPrevRootPacket.lOffset = uOffset;
