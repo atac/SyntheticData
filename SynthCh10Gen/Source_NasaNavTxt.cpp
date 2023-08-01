@@ -1,3 +1,7 @@
+/* Source_NasaCsvTxt - Open a NASA Nav CSV file and load that data into the simulation state 
+   line by line. 
+*/
+
 
 #include <cassert>
 #include <cmath>

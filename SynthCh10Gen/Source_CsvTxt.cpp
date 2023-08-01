@@ -1,3 +1,6 @@
+/* Source_CsvTxt - Open a CSV file and load that data into the simulation state line by line.
+*/
+
 
 #include <cassert>
 #include <cmath>
