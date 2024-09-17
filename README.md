@@ -97,9 +97,9 @@ Usage: SynthCh10Gen  [flags] <output file>
 The Visual Studio solution is configured to expect software components in the following directory structure.
 
 ```
-\3rdParty\ffmpeg-<version>-win32-dev
+\3rdParty\ffmpeg
 \3rdParty\csv-parser
-\3rdParty\SQLite
+\3rdParty\sqlite
 \3rdParty\irig106lib
 \BM6toDB
 \BM6toXPlaneVideo

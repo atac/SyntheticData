@@ -73,7 +73,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>..\3rdParty\SQLite\sqlite-amalgamation-3320300;$(IncludePath)</IncludePath>
+    <IncludePath>..\3rdParty\SQLite;$(IncludePath)</IncludePath>
     <IntDir>NASA\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
@@ -82,7 +82,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\3rdParty\SQLite\sqlite-amalgamation-3320300;$(IncludePath)</IncludePath>
+    <IncludePath>..\3rdParty\SQLite;$(IncludePath)</IncludePath>
     <IntDir>NASA\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>

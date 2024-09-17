@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.572
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.34301.259
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SynthCh10Gen-BM6", "SynthCh10Gen\SynthCh10Gen-BM6.vcxproj", "{5AE2C8AF-53CD-491E-8FFD-4ACB9F827BA2}"
 EndProject
@@ -40,7 +40,6 @@ Global
 		{12F00F79-0246-44B2-934E-74DDCF08847C}.Debug|x86.ActiveCfg = Debug|Win32
 		{12F00F79-0246-44B2-934E-74DDCF08847C}.Debug|x86.Build.0 = Debug|Win32
 		{12F00F79-0246-44B2-934E-74DDCF08847C}.Release|x86.ActiveCfg = Release|Win32
-		{12F00F79-0246-44B2-934E-74DDCF08847C}.Release|x86.Build.0 = Release|Win32
 		{796FFC6D-C949-4A41-956D-98D1767A3E67}.Debug|x86.ActiveCfg = Debug|Win32
 		{796FFC6D-C949-4A41-956D-98D1767A3E67}.Debug|x86.Build.0 = Debug|Win32
 		{796FFC6D-C949-4A41-956D-98D1767A3E67}.Release|x86.ActiveCfg = Release|Win32
