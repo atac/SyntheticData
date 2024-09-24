@@ -259,3 +259,7 @@ bool ClSource_CsvTxt::ConvertTime(std::string sTime, double *fDecodedTime)
 
     return true;
     }
+
+CSV_FIELDS ClSource_CsvTxt::GetCsvFields() {
+  return this->CsvDataLabels;
+}

@@ -94,7 +94,12 @@ std::string ClCh10Writer_PCM::TMATS(ClTmatsIndexes & TmatsIndex, std::string sDe
         "R-" << TmatsIndex.iRIndex << "\\CDLN-" << TmatsIndex.iRSrcNum << ":" << sCDLN << ";\n";
 
     // Get the P section stuff specific to the format
+#ifdef COMPILE_NASA
     ssTMATS << pSynthPcmFmt1->TMATS(TmatsIndex, sCDLN);
+#endif
+#ifdef COMPILE_CSV
+    ssTMATS << pSynthPcmFmtCsv->TMATS(TmatsIndex, sCDLN);
+#endif
 
     return ssTMATS.str();
     } // end TMATS()
@@ -103,47 +108,89 @@ std::string ClCh10Writer_PCM::TMATS(ClTmatsIndexes & TmatsIndex, std::string sDe
 
 // Append a PCM frame/subframe to the end of a PCM packet.
 
-void ClCh10Writer_PCM::AppendMsg(ClCh10Format_PCM_SynthFmt1 * psuPcmFrame)
-    {
-    unsigned        uCurrBufferOffset;
+void ClCh10Writer_PCM::AppendMsg(ClCh10Format_PCM_SynthFmt1* psuPcmFrame)
+{
+  unsigned        uCurrBufferOffset;
 
-    // If there is no data yet then the packet RTC is the first message RTC
-    if (suWriteMsgPCM.suCh10Header.ulDataLen <= 4)
-        {
-        // This assumes intra-packet time is in RTC format
-        memcpy(suWriteMsgPCM.suCh10Header.aubyRefTime, psuPcmFrame->suIPH.aubyIntPktTime, 6);
-        }
+  // If there is no data yet then the packet RTC is the first message RTC
+  if (suWriteMsgPCM.suCh10Header.ulDataLen <= 4)
+  {
+    // This assumes intra-packet time is in RTC format
+    memcpy(suWriteMsgPCM.suCh10Header.aubyRefTime, psuPcmFrame->suIPH.aubyIntPktTime, 6);
+  }
 
-    uCurrBufferOffset = suWriteMsgPCM.suCh10Header.ulDataLen;
+  uCurrBufferOffset = suWriteMsgPCM.suCh10Header.ulDataLen;
 
-    // Expand the PCM packet buffer if necessary
-    if (suWriteMsgPCM.psuPCM_CSDW->bIntraPktHdr == 1)
-        suWriteMsgPCM.suCh10Header.ulDataLen += psuPcmFrame->uIPHLen;
-    suWriteMsgPCM.suCh10Header.ulDataLen += psuPcmFrame->uFrameLen;
+  // Expand the PCM packet buffer if necessary
+  if (suWriteMsgPCM.psuPCM_CSDW->bIntraPktHdr == 1)
+    suWriteMsgPCM.suCh10Header.ulDataLen += psuPcmFrame->uIPHLen;
+  suWriteMsgPCM.suCh10Header.ulDataLen += psuPcmFrame->uFrameLen;
 
-    if (suWriteMsgPCM.suCh10Header.ulDataLen > suWriteMsgPCM.uBuffLen)
-        {
-        suWriteMsgPCM.uBuffLen = suWriteMsgPCM.suCh10Header.ulDataLen + 1000;
-        suWriteMsgPCM.pchDataBuff = (unsigned char *)realloc(suWriteMsgPCM.pchDataBuff, suWriteMsgPCM.uBuffLen);
-        suWriteMsgPCM.psuPCM_CSDW = (SuPcmF1_ChanSpec *)suWriteMsgPCM.pchDataBuff;
-        }
-    
-    // Build one of the various packet layouts
+  if (suWriteMsgPCM.suCh10Header.ulDataLen > suWriteMsgPCM.uBuffLen)
+  {
+    suWriteMsgPCM.uBuffLen = suWriteMsgPCM.suCh10Header.ulDataLen + 1000;
+    suWriteMsgPCM.pchDataBuff = (unsigned char*)realloc(suWriteMsgPCM.pchDataBuff, suWriteMsgPCM.uBuffLen);
+    suWriteMsgPCM.psuPCM_CSDW = (SuPcmF1_ChanSpec*)suWriteMsgPCM.pchDataBuff;
+  }
 
-    // Intrapacket header
-    if (suWriteMsgPCM.psuPCM_CSDW->bIntraPktHdr == 1)
-        {
-        // Adjust for 16 or 32 bit word size
-        assert((psuPcmFrame->uIPHLen==10)||(psuPcmFrame->uIPHLen==12));
-        memcpy(suWriteMsgPCM.pchDataBuff + uCurrBufferOffset, &(psuPcmFrame->suIPH), psuPcmFrame->uIPHLen);
-        uCurrBufferOffset += psuPcmFrame->uIPHLen;
-        }
+  // Build one of the various packet layouts
 
-    // Data
-    memcpy(suWriteMsgPCM.pchDataBuff + uCurrBufferOffset, &(psuPcmFrame->suPcmFrame_Fmt1), psuPcmFrame->uFrameLen);
-    uCurrBufferOffset += psuPcmFrame->uFrameLen;
+  // Intrapacket header
+  if (suWriteMsgPCM.psuPCM_CSDW->bIntraPktHdr == 1)
+  {
+    // Adjust for 16 or 32 bit word size
+    assert((psuPcmFrame->uIPHLen == 10) || (psuPcmFrame->uIPHLen == 12));
+    memcpy(suWriteMsgPCM.pchDataBuff + uCurrBufferOffset, &(psuPcmFrame->suIPH), psuPcmFrame->uIPHLen);
+    uCurrBufferOffset += psuPcmFrame->uIPHLen;
+  }
 
-    } // end AppendMsg()
+  // Data
+  memcpy(suWriteMsgPCM.pchDataBuff + uCurrBufferOffset, &(psuPcmFrame->suPcmFrame_Fmt1), psuPcmFrame->uFrameLen);
+  uCurrBufferOffset += psuPcmFrame->uFrameLen;
+
+} // end AppendMsg()
+
+void ClCh10Writer_PCM::AppendMsg(ClCh10Format_PCM_SynthFmtCsv* psuPcmFrame)
+{
+  unsigned        uCurrBufferOffset;
+
+  // If there is no data yet then the packet RTC is the first message RTC
+  if (suWriteMsgPCM.suCh10Header.ulDataLen <= 4)
+  {
+    // This assumes intra-packet time is in RTC format
+    memcpy(suWriteMsgPCM.suCh10Header.aubyRefTime, psuPcmFrame->suIPH.aubyIntPktTime, 6);
+  }
+
+  uCurrBufferOffset = suWriteMsgPCM.suCh10Header.ulDataLen;
+
+  // Expand the PCM packet buffer if necessary
+  if (suWriteMsgPCM.psuPCM_CSDW->bIntraPktHdr == 1)
+    suWriteMsgPCM.suCh10Header.ulDataLen += psuPcmFrame->uIPHLen;
+  suWriteMsgPCM.suCh10Header.ulDataLen += psuPcmFrame->uFrameLen;
+
+  if (suWriteMsgPCM.suCh10Header.ulDataLen > suWriteMsgPCM.uBuffLen)
+  {
+    suWriteMsgPCM.uBuffLen = suWriteMsgPCM.suCh10Header.ulDataLen + 1000;
+    suWriteMsgPCM.pchDataBuff = (unsigned char*)realloc(suWriteMsgPCM.pchDataBuff, suWriteMsgPCM.uBuffLen);
+    suWriteMsgPCM.psuPCM_CSDW = (SuPcmF1_ChanSpec*)suWriteMsgPCM.pchDataBuff;
+  }
+
+  // Build one of the various packet layouts
+
+  // Intrapacket header
+  if (suWriteMsgPCM.psuPCM_CSDW->bIntraPktHdr == 1)
+  {
+    // Adjust for 16 or 32 bit word size
+    assert((psuPcmFrame->uIPHLen == 10) || (psuPcmFrame->uIPHLen == 12));
+    memcpy(suWriteMsgPCM.pchDataBuff + uCurrBufferOffset, &(psuPcmFrame->suIPH), psuPcmFrame->uIPHLen);
+    uCurrBufferOffset += psuPcmFrame->uIPHLen;
+  }
+
+  // Data
+  memcpy(suWriteMsgPCM.pchDataBuff + uCurrBufferOffset, &psuPcmFrame->pcmFrame[0], psuPcmFrame->uFrameLen);
+  uCurrBufferOffset += psuPcmFrame->uFrameLen;
+
+} // end AppendMsg()
 
 
 // ----------------------------------------------------------------------------

@@ -55,6 +55,19 @@
         "D-" << TmatsIndex.iDIndex << "\\WFP-1-" << meas_index << "-1-1:1;\n";                      \
         meas_index++;
 
+#define D_MEASURAND_1WORD_GENERIC(meas_name, meas_index, word_pos, bit_mask)                                \
+    ssTMATS <<                                                                                      \
+        "D-" << TmatsIndex.iDIndex << "\\MN-1-" << meas_index << ":" << meas_name << ";\n"         \
+        "D-" << TmatsIndex.iDIndex << "\\LT-1-" << meas_index << ":WDFR;\n"                         \
+        "D-" << TmatsIndex.iDIndex << "\\MML\\N-1-" << meas_index << ":1;\n"                        \
+        /* Measurand XXX Location 1; */                                                             \
+        "D-" << TmatsIndex.iDIndex << "\\MNF\\N-1-" << meas_index << "-1:1;\n"                      \
+        /* Measurand XXX Location 1 Word 1; */                                                      \
+        "D-" << TmatsIndex.iDIndex << "\\WP-1-" << meas_index << "-1-1:" << word_pos << ";\n"       \
+        "D-" << TmatsIndex.iDIndex << "\\WFM-1-" << meas_index << "-1-1:" << bit_mask << ";\n"     \
+        "D-" << TmatsIndex.iDIndex << "\\WFP-1-" << meas_index << "-1-1:1;\n";                      \
+        meas_index++;
+
 #define C_CONVERSION_NONE(meas_name, conv_name, units, bin_fmt)   \
     ssTMATS <<                                                              \
         "C-" << TmatsIndex.iCIndex << "\\DCN:" << #meas_name << ";\n"       \
@@ -70,6 +83,18 @@
         "C-" << TmatsIndex.iCIndex << "\\MN1:" << #conv_name << ";\n"       \
         "C-" << TmatsIndex.iCIndex << "\\MN3:" << #units << ";\n"           \
         "C-" << TmatsIndex.iCIndex << "\\BFM:" << #bin_fmt << ";\n"         \
+        "C-" << TmatsIndex.iCIndex << "\\DCT:COE;\n"                        \
+        "C-" << TmatsIndex.iCIndex << "\\CO\\N:1;\n"                        \
+        "C-" << TmatsIndex.iCIndex << "\\CO:" << (offset) << ";\n"          \
+        "C-" << TmatsIndex.iCIndex << "\\CO-1:" << uppercase << setprecision(12) << (scale) << ";\n";  \
+    TmatsIndex.iCIndex++;
+
+#define C_CONVERSION_OFFSET_SCALE_GENERIC(meas_name, conv_name, units, bin_fmt, offset, scale)   \
+    ssTMATS <<                                                              \
+        "C-" << TmatsIndex.iCIndex << "\\DCN:" << meas_name << ";\n"       \
+        "C-" << TmatsIndex.iCIndex << "\\MN1:" << conv_name << ";\n"       \
+        "C-" << TmatsIndex.iCIndex << "\\MN3:" << units << ";\n"           \
+        "C-" << TmatsIndex.iCIndex << "\\BFM:" << bin_fmt << ";\n"         \
         "C-" << TmatsIndex.iCIndex << "\\DCT:COE;\n"                        \
         "C-" << TmatsIndex.iCIndex << "\\CO\\N:1;\n"                        \
         "C-" << TmatsIndex.iCIndex << "\\CO:" << (offset) << ";\n"          \

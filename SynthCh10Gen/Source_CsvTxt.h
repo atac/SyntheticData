@@ -23,29 +23,31 @@ can be used as-is but some important assumptions are made when using this class.
 #include "Source_Nav.h"
 #include "SimState.h"
 
-class ClSource_CsvTxt  : public ClSource_Nav
-    {
-    public:
-        ClSource_CsvTxt(ClSimState * pclSimState, std::string sPrefix);
-        ~ClSource_CsvTxt();
+class ClSource_CsvTxt : public ClSource_Nav
+{
+public:
+  ClSource_CsvTxt(ClSimState* pclSimState, std::string sPrefix);
+  ~ClSource_CsvTxt();
 
-    // Class variables
+  // Class variables
 protected:
-    FILE                                      * hCsvInput;
-    CSV_Parser                                  CsvParser;
-    CSV_FIELDS                                  CsvDataLabels;
-    KEY_VAL_FIELDS                              CsvMap;
+  FILE* hCsvInput;
+  CSV_Parser                                  CsvParser;
+  CSV_FIELDS                                  CsvDataLabels;
+  KEY_VAL_FIELDS                              CsvMap;
 
 public:
 
-    // Methods
+  // Methods
 public:
-    virtual bool    Open(std::string sFilename);
-    virtual void    Init();
-    virtual void    Close();
-    virtual bool    ReadNextLine();
-    virtual bool    UpdateSimState(double fSimElapsedTime);
-    virtual bool    ConvertTime(std::string sTime, double *fDecodedTime);
+  virtual bool    Open(std::string sFilename);
+  virtual void    Init();
+  virtual void    Close();
+  virtual bool    ReadNextLine();
+  virtual bool    UpdateSimState(double fSimElapsedTime);
+  virtual bool    ConvertTime(std::string sTime, double* fDecodedTime);
 
-    };
+  CSV_FIELDS GetCsvFields();
+
+};
 

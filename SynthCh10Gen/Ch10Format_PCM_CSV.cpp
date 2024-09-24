@@ -1,0 +1,191 @@
+
+
+//#include <cstdio>
+#include <cassert>
+//#include <ctime>
+#include <string>       // std::string
+#include <iostream>     // std::cout
+#include <iomanip>
+#include <sstream>      // std::stringstream
+//#include <string.h>
+#include <stdlib.h>
+#include <memory>
+//#include <math.h>
+
+// irig106lib
+#include "config.h"
+#include "i106_stdint.h"
+#include "irig106ch10.h"
+#include "i106_time.h"
+#include "i106_decode_tmats.h"
+
+using namespace std;
+using namespace Irig106;
+
+#include "Common.h"
+#include "Ch10Format_PCM_CSV.h"
+
+// ----------------------------------------------------------------------------
+// ClCh10Format_PCM_SynthFmt1 - PCM Synthetic Data Format 1
+//
+// Constructor / Destructor
+// ----------------------------------------------------------------------------
+
+// Construct PCM packet
+ClCh10Format_PCM_SynthFmtCsv::ClCh10Format_PCM_SynthFmtCsv(float fFrameRate, CSV_FIELDS fields)
+{
+  this->uWordLen = 32;  // bits
+  this->uIPHLen = 10;  // bytes
+  this->uFrameLen = GetFrameLength(fields);
+  this->fFrameRate = fFrameRate;
+
+  memset(&suIPH, 0, sizeof(SuPcmF1_IntraPktHeader));
+
+  // Init in intrapacket header
+  suIPH.uMajorFrStatus = 3;
+  suIPH.uMinorFrStatus = 3;
+
+  // Init the PCM data frame
+  pcmFrame = vector<uint32_t>(this->uFrameLen, 0);
+
+  pcmFrame[0] = 0x2840FE6B;    // Sync word swapped
+
+  // Init frame field pointers
+  InitFrameFieldPointers(fields);
+}
+
+// ----------------------------------------------------------------------------
+
+void ClCh10Format_PCM_SynthFmtCsv::InitFrameFieldPointers(CSV_FIELDS fields) {
+  int i = 1;
+  for (auto iter = fields.begin() + 1; iter != fields.end(); iter++) {
+    PcmField field;
+    field.name = (*iter);
+    field.pValue = &pcmFrame[i++];
+    pcmFields.push_back(field);
+  }
+}
+
+uint32_t ClCh10Format_PCM_SynthFmtCsv::GetFrameLength(CSV_FIELDS fields) {
+  uint32_t words = fields.size() - 1 + 1; // num fields - time field + framesync
+  return words * 4;
+}
+
+ClCh10Format_PCM_SynthFmtCsv::~ClCh10Format_PCM_SynthFmtCsv()
+{
+}
+
+
+// ----------------------------------------------------------------------------
+// Methods
+// ----------------------------------------------------------------------------
+
+// Set the relative time counter
+
+void ClCh10Format_PCM_SynthFmtCsv::SetRTC(int64_t* pullRelTime)
+{
+  vLLInt2TimeArray(pullRelTime, suIPH.aubyIntPktTime);
+}
+
+
+// ----------------------------------------------------------------------------
+
+// Fill in a frame of synthetic PCM Format CSV data from the current sim state
+
+void ClCh10Format_PCM_SynthFmtCsv::MakeMsg(ClSimState* pclSimState)
+{
+  for (auto iter = pcmFields.begin(); iter != pcmFields.end(); iter++) {
+    float v = (float)pclSimState->fState[iter->name];
+    uint32_t* w = (uint32_t*)&v;
+    *w = WordSwap(*w);
+    memcpy(iter->pValue, w, 4);
+    //float* p = (float*)iter->pValue;
+    //*p = v;
+    //(*iter->pValue) = _byteswap_ulong(*iter->pValue);
+  }
+}
+
+uint32_t ClCh10Format_PCM_SynthFmtCsv::WordSwap(uint32_t value) {
+  uint16_t* w = (uint16_t*)&value;
+  uint16_t tmp = w[0];
+  w[0] = w[1];
+  w[1] = tmp;
+  return value;
+}
+
+// ----------------------------------------------------------------------------
+
+std::string ClCh10Format_PCM_SynthFmtCsv::TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN)
+    {
+    std::stringstream   ssTMATS;
+    unsigned long       ulDataRate;
+    unsigned            uWordsPerMinorFrame;
+    unsigned            uBitsPerMinorFrame;
+    int                 iMeasIdx;
+
+    // Calculate some parameters
+    uBitsPerMinorFrame  = uFrameLen * 8;
+    uWordsPerMinorFrame = ((uBitsPerMinorFrame - 32) / uWordLen) + 1;
+    ulDataRate          = unsigned long(fFrameRate * float(uBitsPerMinorFrame));
+    
+    // PCM attributes specific to Synthetic PCM Data Format 1
+    ssTMATS <<
+        "P-" << TmatsIndex.iPIndex << "\\DLN:" << sCDLN << ";\n"
+        "P-" << TmatsIndex.iPIndex << "\\D1:NRZ-L;\n"
+        "P-" << TmatsIndex.iPIndex << "\\D2:" << ulDataRate << ";\n"
+        "P-" << TmatsIndex.iPIndex << "\\D3:U;\n"
+        "P-" << TmatsIndex.iPIndex << "\\D4:N;\n"
+        "P-" << TmatsIndex.iPIndex << "\\D5:N;\n"
+        "P-" << TmatsIndex.iPIndex << "\\D6:N;\n"
+        "P-" << TmatsIndex.iPIndex << "\\D7:N;\n"
+        "P-" << TmatsIndex.iPIndex << "\\D8:N/A;\n"
+        "P-" << TmatsIndex.iPIndex << "\\TF:ONE;\n"
+        "P-" << TmatsIndex.iPIndex << "\\F1:" << uWordLen << ";\n"
+        "P-" << TmatsIndex.iPIndex << "\\F2:M;\n"
+        "P-" << TmatsIndex.iPIndex << "\\F3:NO;\n"
+        "P-" << TmatsIndex.iPIndex << "\\MF\\N:1;\n"
+        "P-" << TmatsIndex.iPIndex << "\\MF1:" << uWordsPerMinorFrame << ";\n"
+        "P-" << TmatsIndex.iPIndex << "\\MF2:" << uBitsPerMinorFrame  << ";\n"
+        "P-" << TmatsIndex.iPIndex << "\\MF3:FPT;\n"
+        "P-" << TmatsIndex.iPIndex << "\\MF4:32;\n"
+        "P-" << TmatsIndex.iPIndex << "\\MF5:11111110011010110010100001000000;\n"
+        "P-" << TmatsIndex.iPIndex << "\\SYNC1:2;\n"
+        "P-" << TmatsIndex.iPIndex << "\\SYNC2:0;\n"
+        "P-" << TmatsIndex.iPIndex << "\\SYNC3:2;\n"
+        "P-" << TmatsIndex.iPIndex << "\\SYNC4:0;\n"
+        "P-" << TmatsIndex.iPIndex << "\\ISF\\N:0;\n";
+    TmatsIndex.iPIndex++;
+
+    // PCM Measurement Description (D)
+    // -------------------------------
+
+    // This stuff is confusing so I break down the first couple in some detail
+
+    ssTMATS <<
+        "D-" << TmatsIndex.iDIndex << "\\DLN:" << sCDLN << ";\n"
+        "D-" << TmatsIndex.iDIndex << "\\ML\\N:1;\n";
+
+    ssTMATS <<
+    // Measurement List 1 - Synthetic PCM Data Format 1;
+        "D-" << TmatsIndex.iDIndex << "\\MLN-1:SynthPcmFormat1;\n"
+        //                                   ^--- Measurement List Number 1
+        "D-" << TmatsIndex.iDIndex << "\\MN\\N-1:" << pcmFields.size() << ";\n";
+
+
+    // Set the measurand counter
+    iMeasIdx = 1;
+
+    for (auto iter = pcmFields.begin(); iter != pcmFields.end(); iter++) {
+      D_MEASURAND_1WORD_GENERIC(iter->name, iMeasIdx, iMeasIdx, "FW")
+    }
+
+    assert(iMeasIdx == pcmFields.size() + 1);
+
+    for (auto iter = pcmFields.begin(); iter != pcmFields.end(); iter++) {
+      C_CONVERSION_OFFSET_SCALE_GENERIC(iter->name, iter->name, "", "FPT", 0.0, 1.0);
+    }
+
+    return ssTMATS.str();
+    }
+
+

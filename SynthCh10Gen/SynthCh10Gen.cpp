@@ -70,6 +70,9 @@ increases at the defined tick rate.
 #ifdef COMPILE_NASA
 #include "Source_NasaNavTxt.h"
 #endif
+#ifdef COMPILE_CSV
+#include "Source_CsvTxt.h"
+#endif
 
 #include "SimTimer.h"
 
@@ -78,6 +81,7 @@ increases at the defined tick rate.
 #include "Ch10Format_1553_Nav.h"
 #include "Ch10Format_A429.h"
 #include "Ch10Format_A429_AR100.h"
+#include "Ch10Format_PCM_CSV.h"
 
 // Sim data Ch 10 packet writers
 #include "Ch10Writer.h"
@@ -139,6 +143,7 @@ ClTmatsIndexes          TmatsIndex;
 // ClCh10Format_1553_Nav      * p1553Fmt_Nav_1Hz;
 ClCh10Format_1553_Nav       * p1553Fmt_Nav_25Hz;
 ClCh10Format_PCM_SynthFmt1  * pPCM_SynthFmt1;
+ClCh10Format_PCM_SynthFmtCsv* pPCM_SynthFmtCsv;
 ClCh10Format_ARINC429_AR100 * pA429_AR100_1;
 ClCh10Format_ARINC429_AR100 * pA429_AR100_2;
 
@@ -186,6 +191,10 @@ int main(int iArgc, char * aszArgv[])
 #ifdef COMPILE_NASA
     std::string             sProgramName = "Synth Data NASA";
     ClSource_NasaNavTxt   * pSource_NasaNavTxt = nullptr;
+#endif
+#ifdef COMPILE_CSV
+    std::string             sProgramName = "Synth Data CSV";
+    ClSource_CsvTxt       * pSource_CsvTxt = nullptr;
 #endif
 
     int                     iI106Handle;
@@ -305,6 +314,18 @@ int main(int iArgc, char * aszArgv[])
             break;
 #endif
 
+#ifdef COMPILE_CSV
+          case 'C' :                  // Input CSV text file
+            if (pSource_Nav != NULL)
+            {
+              vUsage();
+              return 1;
+            }
+            iArgIdx++;
+            strcpy(szInFile, aszArgv[iArgIdx]);
+            pSource_CsvTxt = new ClSource_CsvTxt(&clSimState, "");
+            pSource_Nav = dynamic_cast<ClSource_Nav *>(pSource_CsvTxt);
+#endif
           default :
             break;
           } // end flag switch
@@ -350,6 +371,12 @@ int main(int iArgc, char * aszArgv[])
 #ifdef COMPILE_BLUEMAX6
         fStartSimClockTime  = double(time(NULL));
 #endif
+#ifdef COMPILE_CSV
+        if (pSource_Nav->enInputType == ClSource_Nav::InputNasaCsv)
+          fStartSimClockTime = dynamic_cast<ClSource_CsvTxt*>(pSource_Nav)->fStartTime;
+        else
+          fStartSimClockTime = double(time(NULL));
+#endif
         } // end if start time needs to be set to something
 
     // Open video sources
@@ -363,6 +390,9 @@ int main(int iArgc, char * aszArgv[])
 //  p1553Fmt_Nav_1Hz  = new ClCh10Format_1553_Nav(RT_NAV, 1, 29, 32);
     p1553Fmt_Nav_25Hz = new ClCh10Format_1553_Nav(RT_NAV, 1, 29, 32);
     pPCM_SynthFmt1    = new ClCh10Format_PCM_SynthFmt1(100);    // 100 Hz rate
+#ifdef COMPILE_CSV
+    pPCM_SynthFmtCsv  = new ClCh10Format_PCM_SynthFmtCsv(100, pSource_CsvTxt->GetCsvFields());
+#endif
     pA429_AR100_1     = new ClCh10Format_ARINC429_AR100(0, ARINC429_BUS_SPEED_LOW, 1);
     pA429_AR100_2     = new ClCh10Format_ARINC429_AR100(0, ARINC429_BUS_SPEED_LOW, 2);
 
@@ -421,7 +451,11 @@ int main(int iArgc, char * aszArgv[])
     // meaningful TMATS. For now provide the PCM writer a reference to the PCM
     // formatter object. In the future this will be generalized for all writers
     // and formatters.
+#ifdef COMPILE_CSV
+    pCh10Writer_PCM->pSynthPcmFmtCsv = pPCM_SynthFmtCsv;
+#else
     pCh10Writer_PCM->pSynthPcmFmt1 = pPCM_SynthFmt1;
+#endif
 
     // Get time setup
     pCh10Writer_Time->SetRelTime(ClSimTimer::lSimClockTicks, fStartSimClockTime);
@@ -479,9 +513,16 @@ int main(int iArgc, char * aszArgv[])
             clSimTimer_10ms.FromPrev();
 
             // PCM
+#ifdef COMPILE_NASA
             pPCM_SynthFmt1->MakeMsg(&clSimState);
             pPCM_SynthFmt1->SetRTC(&ClSimTimer::lSimClockTicks);
             pCh10Writer_PCM->AppendMsg(pPCM_SynthFmt1);
+#endif
+#ifdef COMPILE_CSV
+            pPCM_SynthFmtCsv->MakeMsg(&clSimState);
+            pPCM_SynthFmtCsv->SetRTC(&ClSimTimer::lSimClockTicks);
+            pCh10Writer_PCM->AppendMsg(pPCM_SynthFmtCsv);
+#endif
 
             } // end 40 msec / 25 Hz events
 
@@ -642,6 +683,8 @@ void WriteTmats(int iI106Handle, std::string sProgramName, double fCurrSimClockT
 #if defined(COMPILE_BLUEMAX6)
     const int           iTotalRSrcs = 5;
 #elif defined(COMPILE_NASA)
+    const int           iTotalRSrcs = 5;
+#elif defined(COMPILE_CSV)
     const int           iTotalRSrcs = 5;
 #else
     const int           iTotalRSrcs = 0;

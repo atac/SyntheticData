@@ -22,6 +22,7 @@
 
 #include "Common.h"
 #include "Ch10Format_PCM.h"
+#include "Ch10Format_PCM_CSV.h"
 
 using namespace Irig106;
 
@@ -50,12 +51,14 @@ public:
     unsigned int                  uChanID;
     std::string                   sCDLN;        // Linking Channel Data Link Name for TMATS
     ClCh10Format_PCM_SynthFmt1  * pSynthPcmFmt1;
+    ClCh10Format_PCM_SynthFmtCsv* pSynthPcmFmtCsv;
 
     // Methods
 public:
     void Init(int iHandle, unsigned int uChanID);
     std::string TMATS(ClTmatsIndexes & TmatsIndex, std::string sDescription="");
     void AppendMsg(ClCh10Format_PCM_SynthFmt1 * psuPcmFrame);
+    void AppendMsg(ClCh10Format_PCM_SynthFmtCsv* psuPcmFrame);
     void Commit();
 
     };
