@@ -391,7 +391,7 @@ int main(int iArgc, char * aszArgv[])
     p1553Fmt_Nav_25Hz = new ClCh10Format_1553_Nav(RT_NAV, 1, 29, 32);
     pPCM_SynthFmt1    = new ClCh10Format_PCM_SynthFmt1(100);    // 100 Hz rate
 #ifdef COMPILE_CSV
-    pPCM_SynthFmtCsv  = new ClCh10Format_PCM_SynthFmtCsv(100, pSource_CsvTxt->GetCsvFields());
+    pPCM_SynthFmtCsv  = new ClCh10Format_PCM_SynthFmtCsv(100, pSource_CsvTxt->GetCsvFields(), pSource_CsvTxt->GetCsvFieldTypes());
 #endif
     pA429_AR100_1     = new ClCh10Format_ARINC429_AR100(0, ARINC429_BUS_SPEED_LOW, 1);
     pA429_AR100_2     = new ClCh10Format_ARINC429_AR100(0, ARINC429_BUS_SPEED_LOW, 2);

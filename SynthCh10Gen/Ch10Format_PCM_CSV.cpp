@@ -32,11 +32,11 @@ using namespace Irig106;
 // ----------------------------------------------------------------------------
 
 // Construct PCM packet
-ClCh10Format_PCM_SynthFmtCsv::ClCh10Format_PCM_SynthFmtCsv(float fFrameRate, CSV_FIELDS fields)
+ClCh10Format_PCM_SynthFmtCsv::ClCh10Format_PCM_SynthFmtCsv(float fFrameRate, CSV_FIELDS fields, CSV_FIELDS types)
 {
   this->uWordLen = 32;  // bits
   this->uIPHLen = 10;  // bytes
-  this->uFrameLen = GetFrameLength(fields);
+  this->uFrameLen = GetFrameLength(fields.size());
   this->fFrameRate = fFrameRate;
 
   memset(&suIPH, 0, sizeof(SuPcmF1_IntraPktHeader));
@@ -51,23 +51,43 @@ ClCh10Format_PCM_SynthFmtCsv::ClCh10Format_PCM_SynthFmtCsv(float fFrameRate, CSV
   pcmFrame[0] = 0x2840FE6B;    // Sync word swapped
 
   // Init frame field pointers
-  InitFrameFieldPointers(fields);
+  InitFrameFieldPointers(fields, types);
 }
 
 // ----------------------------------------------------------------------------
 
-void ClCh10Format_PCM_SynthFmtCsv::InitFrameFieldPointers(CSV_FIELDS fields) {
+void ClCh10Format_PCM_SynthFmtCsv::InitFrameFieldPointers(CSV_FIELDS fields, CSV_FIELDS types) {
+  bool useTypes = (fields.size() == types.size());
+
   int i = 1;
   for (auto iter = fields.begin() + 1; iter != fields.end(); iter++) {
     PcmField field;
+
+    field.type = FieldType::FLOAT_FIELD;
+
+    if (useTypes) {
+      STR typeStr = types[i];
+      ToLower(typeStr);
+      if (typeStr == "integer")
+        field.type = FieldType::INTEGER_FIELD;
+    }
+
     field.name = (*iter);
-    field.pValue = &pcmFrame[i++];
+    field.pValue = &pcmFrame[i];
+
     pcmFields.push_back(field);
+
+    i++;
   }
 }
 
-uint32_t ClCh10Format_PCM_SynthFmtCsv::GetFrameLength(CSV_FIELDS fields) {
-  uint32_t words = fields.size() - 1 + 1; // num fields - time field + framesync
+void ClCh10Format_PCM_SynthFmtCsv::ToLower(STR& str) {
+  for (int i = 0; i < strlen(str.data()); i++)
+    str[i] = tolower(str[i]);
+}
+
+uint32_t ClCh10Format_PCM_SynthFmtCsv::GetFrameLength(size_t numFields) {
+  uint32_t words = numFields - 1 + 1; // num fields - time field + framesync
   return words * 4;
 }
 
@@ -96,12 +116,18 @@ void ClCh10Format_PCM_SynthFmtCsv::MakeMsg(ClSimState* pclSimState)
 {
   for (auto iter = pcmFields.begin(); iter != pcmFields.end(); iter++) {
     float v = (float)pclSimState->fState[iter->name];
-    uint32_t* w = (uint32_t*)&v;
-    *w = WordSwap(*w);
-    memcpy(iter->pValue, w, 4);
-    //float* p = (float*)iter->pValue;
-    //*p = v;
-    //(*iter->pValue) = _byteswap_ulong(*iter->pValue);
+
+    switch (iter->type) {
+    case FieldType::INTEGER_FIELD:
+      *iter->pValue = (int32_t)v;
+      break;
+    case FieldType::FLOAT_FIELD:
+    default:
+      uint32_t* w = (uint32_t*)&v;
+      *w = WordSwap(*w);
+      memcpy(iter->pValue, w, 4);
+      break;
+    }
   }
 }
 

@@ -60,6 +60,35 @@ void display_map_contents(const STR& input_line, const KEY_VAL_FIELDS& output_ma
     }
 
 
+bool ClSource_CsvTxt::GetLine(char* buf, size_t bufLen) {
+  fgets(buf, bufLen, hCsvInput);
+  if (feof(hCsvInput))
+    return false;
+
+  // Trim any CR or LF at the end
+  for (int iLineCharIdx = strlen(buf) - 1; iLineCharIdx > 0; iLineCharIdx--)
+    if ((buf[iLineCharIdx] == 10) || (buf[iLineCharIdx] == 13))
+      buf[iLineCharIdx] = '\0';
+    else
+      break;
+
+  return true;
+}
+
+bool ClSource_CsvTxt::HasNumericData(CSV_FIELDS &values) {
+  bool foundNumber = false;
+  for (auto i = values.begin(); i != values.end(); i++) {
+    try {
+      std::stof(*i);
+      foundNumber = true;
+    }
+    catch (const std::invalid_argument& ia) {
+    }
+  }
+
+  return foundNumber;
+}
+
 // ----------------------------------------------------------------------------
 
 /// Open the CSV data file and read the header line. The first line must be a
@@ -67,7 +96,8 @@ void display_map_contents(const STR& input_line, const KEY_VAL_FIELDS& output_ma
 
 bool ClSource_CsvTxt::Open(std::string sFilename)
     {
-    char                szLine[2000];   // Make sure this is big enough!
+    const size_t        maxLength = 2000;
+    char                szLine[maxLength];   // Make sure this is big enough!
     bool                bCsvStatus;
 
     hCsvInput = fopen(sFilename.c_str(), "r");
@@ -75,19 +105,35 @@ bool ClSource_CsvTxt::Open(std::string sFilename)
         return false;
 
     // Get the first header line
-    fgets(szLine, sizeof(szLine), hCsvInput);
-
-    // Trim any CR or LF at the end
-    for (int iLineCharIdx = strlen(szLine)-1; iLineCharIdx > 0; iLineCharIdx--)
-        if ((szLine[iLineCharIdx] == 10) || (szLine[iLineCharIdx] == 13))
-            szLine[iLineCharIdx] = '\0';
-        else
-            break;
+    if (!GetLine(szLine, maxLength))
+      return false;
 
     // Parse the header line
     CsvDataLabels.clear();
     bCsvStatus = CsvParser.parse_line(szLine, CsvDataLabels);
     assert(bCsvStatus == true);
+
+    // Look for column types within the next two lines
+    CSV_FIELDS tmpFields;
+    for (int i = 2; i > 0; i--) 
+    {
+      fpos_t lastLinePos;
+      fgetpos(hCsvInput, &lastLinePos);
+
+      if (!GetLine(szLine, maxLength))
+        return false;
+
+      tmpFields.clear();
+      CsvParser.parse_line(szLine, tmpFields);
+      if (HasNumericData(tmpFields)) {
+        fsetpos(hCsvInput, &lastLinePos); // reset position before line
+        break;
+      }
+      else
+        CsvDataTypes = tmpFields;
+    }
+
+
 
 //    display_vector_contents(szLine, CsvFields);
 
@@ -151,22 +197,15 @@ void ClSource_CsvTxt::Close()
 
 bool ClSource_CsvTxt::ReadNextLine()
     {
-    char                szLine[2000];
+    const size_t        maxLength = 2000;
+    char                szLine[maxLength];
     bool                bCsvStatus;
     bool                bStatus;
     double              fDecodedTime;
 
-    // Get the next line        
-    fgets(szLine, sizeof(szLine), hCsvInput);
-    if (feof(hCsvInput))
-        return false;
 
-    // Trim any CR or LF at the end
-    for (int iLineCharIdx = strlen(szLine)-1; iLineCharIdx > 0; iLineCharIdx--)
-        if ((szLine[iLineCharIdx] == 10) || (szLine[iLineCharIdx] == 13))
-            szLine[iLineCharIdx] = '\0';
-        else
-            break;
+    // Get the next line
+    GetLine(szLine, maxLength);
 
     // Parse the input data line
     CsvMap.clear();
@@ -262,4 +301,8 @@ bool ClSource_CsvTxt::ConvertTime(std::string sTime, double *fDecodedTime)
 
 CSV_FIELDS ClSource_CsvTxt::GetCsvFields() {
   return this->CsvDataLabels;
+}
+
+CSV_FIELDS ClSource_CsvTxt::GetCsvFieldTypes() {
+  return this->CsvDataTypes;
 }

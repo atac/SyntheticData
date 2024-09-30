@@ -41,13 +41,19 @@ class ClCh10Format_PCM_SynthFmtCsv
 {
   typedef unsigned char byte;
 
+  enum class FieldType {
+    FLOAT_FIELD = 0,
+    INTEGER_FIELD
+  };
+
   struct PcmField {
     uint32_t* pValue;
+    FieldType type;
     std::string name;
   };
 
 public:
-  ClCh10Format_PCM_SynthFmtCsv(float fFrameRate, CSV_FIELDS fields);
+  ClCh10Format_PCM_SynthFmtCsv(float fFrameRate, CSV_FIELDS fields, CSV_FIELDS types);
   ~ClCh10Format_PCM_SynthFmtCsv();
 
   // Class variables
@@ -68,8 +74,9 @@ public:
   virtual std::string TMATS(ClTmatsIndexes& TmatsIndex, std::string sCDLN);
 
 private:
-  uint32_t GetFrameLength(CSV_FIELDS fields);
-  void InitFrameFieldPointers(CSV_FIELDS fields);
+  uint32_t GetFrameLength(size_t numFields);
+  void InitFrameFieldPointers(CSV_FIELDS fields, CSV_FIELDS types);
   uint32_t WordSwap(uint32_t value);
+  void ToLower(STR& str);
 };
 

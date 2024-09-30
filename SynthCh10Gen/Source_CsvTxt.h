@@ -34,6 +34,7 @@ protected:
   FILE* hCsvInput;
   CSV_Parser                                  CsvParser;
   CSV_FIELDS                                  CsvDataLabels;
+  CSV_FIELDS                                  CsvDataTypes;
   KEY_VAL_FIELDS                              CsvMap;
 
 public:
@@ -48,6 +49,10 @@ public:
   virtual bool    ConvertTime(std::string sTime, double* fDecodedTime);
 
   CSV_FIELDS GetCsvFields();
+  CSV_FIELDS GetCsvFieldTypes();
 
+private:
+  bool GetLine(char* buf, size_t bufLen);
+  bool HasNumericData(CSV_FIELDS& values);
 };
 
