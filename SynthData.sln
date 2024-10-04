@@ -19,7 +19,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Synthetic Data Generator ICD.md = Synthetic Data Generator ICD.md
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SynthCh10Gen_CSV", "SynthCh10Gen\SynthCh10Gen_CSV.vcxproj", "{0467B76C-86FC-470A-B495-C19885FE900D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SynthCh10Gen-CSV", "SynthCh10Gen\SynthCh10Gen_CSV.vcxproj", "{0467B76C-86FC-470A-B495-C19885FE900D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SynthCh10Gen-All", "SynthCh10Gen\SynthCh10Gen.vcxproj", "{4D298FBB-1A45-4FC4-9318-2CBD54F5939B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -74,6 +76,14 @@ Global
 		{0467B76C-86FC-470A-B495-C19885FE900D}.Release|x64.Build.0 = Release|x64
 		{0467B76C-86FC-470A-B495-C19885FE900D}.Release|x86.ActiveCfg = Release|Win32
 		{0467B76C-86FC-470A-B495-C19885FE900D}.Release|x86.Build.0 = Release|Win32
+		{4D298FBB-1A45-4FC4-9318-2CBD54F5939B}.Debug|x64.ActiveCfg = Debug|x64
+		{4D298FBB-1A45-4FC4-9318-2CBD54F5939B}.Debug|x64.Build.0 = Debug|x64
+		{4D298FBB-1A45-4FC4-9318-2CBD54F5939B}.Debug|x86.ActiveCfg = Debug|Win32
+		{4D298FBB-1A45-4FC4-9318-2CBD54F5939B}.Debug|x86.Build.0 = Debug|Win32
+		{4D298FBB-1A45-4FC4-9318-2CBD54F5939B}.Release|x64.ActiveCfg = Release|x64
+		{4D298FBB-1A45-4FC4-9318-2CBD54F5939B}.Release|x64.Build.0 = Release|x64
+		{4D298FBB-1A45-4FC4-9318-2CBD54F5939B}.Release|x86.ActiveCfg = Release|Win32
+		{4D298FBB-1A45-4FC4-9318-2CBD54F5939B}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -18,13 +18,88 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\3rdParty\csv-parser\csv_parser.cpp" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_1553f1.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_index.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_time.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_tmats.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_tmats_b.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_tmats_c.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_tmats_d.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_tmats_g.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_tmats_m.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_tmats_p.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_tmats_r.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_video.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_index.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_time.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\irig106ch10.c" />
+    <ClCompile Include="..\3rdParty\SQLite\sqlite3.c" />
+    <ClCompile Include="Ch10Format_1553.cpp" />
+    <ClCompile Include="Ch10Format_1553_Nav.cpp" />
+    <ClCompile Include="Ch10Format_A429.cpp" />
+    <ClCompile Include="Ch10Format_A429_AR100.cpp" />
+    <ClCompile Include="Ch10Format_PCM.cpp" />
+    <ClCompile Include="Ch10Format_PCM_CSV.cpp" />
+    <ClCompile Include="Ch10Writer_1553.cpp" />
+    <ClCompile Include="Ch10Writer_A429.cpp" />
+    <ClCompile Include="Ch10Writer_Index.cpp" />
+    <ClCompile Include="Ch10Writer_PCM.cpp" />
+    <ClCompile Include="Ch10Writer_Time.cpp" />
+    <ClCompile Include="Ch10Writer_Video.cpp" />
+    <ClCompile Include="Source_CsvTxt.cpp" />
+    <ClCompile Include="Source_NasaNavTxt.cpp" />
+    <ClCompile Include="SynthCh10Gen-All.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\3rdParty\csv-parser\csv_parser.hpp" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\config.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_1553f1.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_arinc429.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_index.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_pcmf1.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_time.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats_b.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats_c.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats_common.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats_d.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats_g.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats_m.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats_p.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats_r.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_video.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_index.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\i106_time.h" />
+    <ClInclude Include="..\3rdParty\irig106lib\src\irig106ch10.h" />
+    <ClInclude Include="..\3rdParty\SQLite\sqlite3.h" />
+    <ClInclude Include="Ch10Format_1553.h" />
+    <ClInclude Include="Ch10Format_1553_Nav.h" />
+    <ClInclude Include="Ch10Format_A429.h" />
+    <ClInclude Include="Ch10Format_A429_AR100.h" />
+    <ClInclude Include="Ch10Format_PCM.h" />
+    <ClInclude Include="Ch10Format_PCM_CSV.h" />
+    <ClInclude Include="Ch10Writer.h" />
+    <ClInclude Include="Ch10Writer_1553.h" />
+    <ClInclude Include="Ch10Writer_A429.h" />
+    <ClInclude Include="Ch10Writer_Index.h" />
+    <ClInclude Include="Ch10Writer_PCM.h" />
+    <ClInclude Include="Ch10Writer_Time.h" />
+    <ClInclude Include="Common.h" />
+    <ClInclude Include="SimState.h" />
+    <ClInclude Include="SimTimer.h" />
+    <ClInclude Include="Source_CsvTxt.h" />
+    <ClInclude Include="Source_NasaNavTxt.h" />
+    <ClInclude Include="Source_Nav.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{0467b76c-86fc-470a-b495-c19885fe900d}</ProjectGuid>
-    <RootNamespace>SynthCh10GenCSV</RootNamespace>
+    <ProjectGuid>{4d298fbb-1a45-4fc4-9318-2cbd54f5939b}</ProjectGuid>
+    <RootNamespace>SynthCh10Gen</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>SynthCh10Gen-CSV</ProjectName>
+    <ProjectName>SynthCh10Gen-All</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -74,7 +149,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>..\3rdParty\csv-parser;..\3rdParty\SQLite;..\3rdParty\irig106lib\src;$(IncludePath)</IncludePath>
-    <IntDir>CSV\$(Configuration)\</IntDir>
+    <IntDir>All\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -144,81 +219,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="..\3rdParty\csv-parser\csv_parser.hpp" />
-    <ClInclude Include="..\3rdParty\irig106lib\src\config.h" />
-    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_1553f1.h" />
-    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_arinc429.h" />
-    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_index.h" />
-    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_pcmf1.h" />
-    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_time.h" />
-    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats.h" />
-    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats_b.h" />
-    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats_c.h" />
-    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats_common.h" />
-    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats_d.h" />
-    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats_g.h" />
-    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats_m.h" />
-    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats_p.h" />
-    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats_r.h" />
-    <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_video.h" />
-    <ClInclude Include="..\3rdParty\irig106lib\src\i106_index.h" />
-    <ClInclude Include="..\3rdParty\irig106lib\src\i106_time.h" />
-    <ClInclude Include="..\3rdParty\irig106lib\src\irig106ch10.h" />
-    <ClInclude Include="..\3rdParty\SQLite\sqlite3.h" />
-    <ClInclude Include="Ch10Format_1553.h" />
-    <ClInclude Include="Ch10Format_1553_Nav.h" />
-    <ClInclude Include="Ch10Format_A429.h" />
-    <ClInclude Include="Ch10Format_A429_AR100.h" />
-    <ClInclude Include="Ch10Format_PCM.h" />
-    <ClInclude Include="Ch10Format_PCM_CSV.h" />
-    <ClInclude Include="Ch10Writer.h" />
-    <ClInclude Include="Ch10Writer_1553.h" />
-    <ClInclude Include="Ch10Writer_A429.h" />
-    <ClInclude Include="Ch10Writer_Index.h" />
-    <ClInclude Include="Ch10Writer_PCM.h" />
-    <ClInclude Include="Ch10Writer_Time.h" />
-    <ClInclude Include="Common.h" />
-    <ClInclude Include="SimState.h" />
-    <ClInclude Include="SimTimer.h" />
-    <ClInclude Include="Source_CsvTxt.h" />
-    <ClInclude Include="Source_NasaNavTxt.h" />
-    <ClInclude Include="Source_Nav.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\3rdParty\csv-parser\csv_parser.cpp" />
-    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_1553f1.c" />
-    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_index.c" />
-    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_time.c" />
-    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_tmats.c" />
-    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_tmats_b.c" />
-    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_tmats_c.c" />
-    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_tmats_d.c" />
-    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_tmats_g.c" />
-    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_tmats_m.c" />
-    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_tmats_p.c" />
-    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_tmats_r.c" />
-    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_video.c" />
-    <ClCompile Include="..\3rdParty\irig106lib\src\i106_index.c" />
-    <ClCompile Include="..\3rdParty\irig106lib\src\i106_time.c" />
-    <ClCompile Include="..\3rdParty\irig106lib\src\irig106ch10.c" />
-    <ClCompile Include="..\3rdParty\SQLite\sqlite3.c" />
-    <ClCompile Include="Ch10Format_1553.cpp" />
-    <ClCompile Include="Ch10Format_1553_Nav.cpp" />
-    <ClCompile Include="Ch10Format_A429.cpp" />
-    <ClCompile Include="Ch10Format_A429_AR100.cpp" />
-    <ClCompile Include="Ch10Format_PCM.cpp" />
-    <ClCompile Include="Ch10Format_PCM_CSV.cpp" />
-    <ClCompile Include="Ch10Writer_1553.cpp" />
-    <ClCompile Include="Ch10Writer_A429.cpp" />
-    <ClCompile Include="Ch10Writer_Index.cpp" />
-    <ClCompile Include="Ch10Writer_PCM.cpp" />
-    <ClCompile Include="Ch10Writer_Time.cpp" />
-    <ClCompile Include="Ch10Writer_Video.cpp" />
-    <ClCompile Include="Source_CsvTxt.cpp" />
-    <ClCompile Include="Source_NasaNavTxt.cpp" />
-    <ClCompile Include="SynthCh10Gen.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
