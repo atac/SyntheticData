@@ -173,6 +173,7 @@ void vUsage(void);
 
 int main(int iArgc, char* aszArgv[])
 {
+  char                    szConfigFile[256]; // Configuration name
   char                    szInFile[256];     // Input file name
   char                    szOutFile[256];    // Output file name
   bool                    bStatus;
@@ -222,6 +223,7 @@ int main(int iArgc, char* aszArgv[])
   double          fNextPrintTime;
 
   // Init some stuff
+  szConfigFile[0] = '\0';
   szInFile[0] = '\0';
   szOutFile[0] = '\0';
   bStatus = false;
@@ -280,7 +282,7 @@ int main(int iArgc, char* aszArgv[])
           return 1;
         }
         iArgIdx++;
-        strcpy(szInFile, aszArgv[iArgIdx]);
+        strcpy(szConfigFile, aszArgv[iArgIdx]);
         pSource_CsvTxt = new ClSource_CsvTxt(&clSimState, "");
         pSource_Nav = dynamic_cast<ClSource_Nav*>(pSource_CsvTxt);
 #endif
@@ -720,7 +722,7 @@ void WriteTmats(int iI106Handle, std::string sProgramName, double fCurrSimClockT
 
   // 1553 R section, then linked B and C sections
   ssTMATS << pCh10Writer_1553->TMATS(TmatsIndex, pCh10Writer_1553->sCDLN, "1553-Nav");
-  ssTMATS << p1553Fmt_Nav_25Hz->TMATS(TmatsIndex);
+  ssTMATS << p1553Fmt_Nav_25Hz->TMATS(TmatsIndex, "");
   TmatsIndex.iBIndex++;
   TmatsIndex.iRSrcNum++;
 

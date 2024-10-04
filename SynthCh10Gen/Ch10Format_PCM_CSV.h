@@ -22,6 +22,8 @@
 
 #include "csv_parser.hpp"
 
+#include "Ch10Formatter.h"
+
 #include <vector>
 
 using namespace Irig106;
@@ -37,7 +39,7 @@ using namespace Irig106;
 // ClCh10Format_PCM_SynthFmtCsv - PCM Synthetic Data Format Generic CSV
 // ----------------------------------------------------------------------------
 
-class ClCh10Format_PCM_SynthFmtCsv
+class ClCh10Format_PCM_SynthFmtCsv : public Ch10Formatter
 {
   typedef unsigned char byte;
 

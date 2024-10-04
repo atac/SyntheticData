@@ -13,6 +13,8 @@
 #include "Common.h"
 #include "SimState.h"
 
+#include "Ch10Formatter.h"
+
 using namespace Irig106;
 
 
@@ -20,7 +22,7 @@ using namespace Irig106;
 // ClCh10Format_ARINC429 - ARINC 429 Synthetic Data base class
 // ----------------------------------------------------------------------------
 
-class ClCh10Format_ARINC429
+class ClCh10Format_ARINC429 : public Ch10Formatter
     {
 public:
     ClCh10Format_ARINC429();

@@ -20,10 +20,12 @@
 #include "Common.h"
 #include "SimState.h"
 
+#include "Ch10Formatter.h"
+
 using namespace Irig106;
 
 
-class ClCh10Format_1553
+class ClCh10Format_1553 : public Ch10Formatter
     {
 public:
     ClCh10Format_1553(unsigned uRT, unsigned bTR, unsigned uSubAddr, unsigned uWC);
@@ -47,7 +49,7 @@ public:
     void SetWordCount(unsigned uWordCnt);
 
     virtual void MakeMsg(ClSimState * pclSimState) = 0;
-    virtual std::string TMATS(ClTmatsIndexes & TmatsIndex) = 0;
+    virtual std::string TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN) = 0;
 
     };
 

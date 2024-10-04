@@ -4,6 +4,9 @@ Some day this will be the base class for the Ch 10 writer objects. For now I
 just need a place to put Ch 10 TMATS and data headers versions.
 */
 
+
+#include "Ch10Formatter.h"
+
 // IRIG 106-15
 #define CH10_VER_TMATS          "15"
 #define CH10_VER_RECORDER       0x0B
@@ -14,3 +17,20 @@ just need a place to put Ch 10 TMATS and data headers versions.
 #define CH10_VER_HDR_PCM        0x06
 #define CH10_VER_HDR_VIDEO      0x06
 #define CH10_VER_HDR_A429       0x06
+
+
+class Ch10Writer
+{
+public:
+  int iHandle;
+  unsigned int uChanId;
+
+  void Init(int iHandle, unsigned int uChanID)
+  {
+    this->iHandle = iHandle;
+    this->uChanId = uChanID;
+  }
+
+  virtual void AppendMsg(Ch10Formatter* pFormatter) = 0;
+  virtual void Commit() = 0;
+};

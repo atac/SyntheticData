@@ -20,6 +20,8 @@
 #include "Common.h"
 #include "SimState.h"
 
+#include "Ch10Formatter.h"
+
 using namespace Irig106;
 
 // Some helper macros for converting back and forth with semi-circles
@@ -33,10 +35,10 @@ using namespace Irig106;
 // ClCh10Format_PCM_SynthFmt1 - PCM Synthetic Data Format 1
 // ----------------------------------------------------------------------------
 
-class ClCh10Format_PCM_SynthFmt1
+class ClCh10Format_PCM_SynthFmt1 : public Ch10Formatter
     {
 public:
-    ClCh10Format_PCM_SynthFmt1(float fFrameRate);
+  ClCh10Format_PCM_SynthFmt1(float fFrameRate);
     ~ClCh10Format_PCM_SynthFmt1();
 
     // Data structure for PCM data frame. Note that there are not multiple
