@@ -283,6 +283,7 @@ int main(int iArgc, char* aszArgv[])
         }
         iArgIdx++;
         strcpy(szConfigFile, aszArgv[iArgIdx]);
+        //
         pSource_CsvTxt = new ClSource_CsvTxt(&clSimState, "");
         pSource_Nav = dynamic_cast<ClSource_Nav*>(pSource_CsvTxt);
 #endif

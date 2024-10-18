@@ -20,29 +20,32 @@
 
 using namespace Irig106;
 
-class ClCh10Writer_Index
-    {
-    public:
-        ClCh10Writer_Index();
-        ~ClCh10Writer_Index();
-
-    // Structures
-    uint8_t                         uSeqNum;
-    std::vector<SuIndex_NodeMsg>    asuNodeData;
-    std::vector<SuIndex_RootMsg>    asuRootData;
-    SuIndex_RootMsg                 suPrevRootPacket;
-
-    // Data
+class ClCh10Writer_Index : public Ch10Writer
+{
 public:
-    int                 iHandle;
-    unsigned int        uChanID;
+  ClCh10Writer_Index();
+  ~ClCh10Writer_Index();
 
-    // Methods
-    void Init(int iHandle, unsigned int uChanID);
-    void AppendNodeIndex(SuI106Ch10Header * psuHeader);
-    void WriteNodePacket();
-    void AppendRootIndex(SuIndex_Time * psuNodeIndexTime, __int64 llNodeIndexOffset);
-    void WriteRootPacket();
+  // Structures
+  uint8_t                         uSeqNum;
+  std::vector<SuIndex_NodeMsg>    asuNodeData;
+  std::vector<SuIndex_RootMsg>    asuRootData;
+  SuIndex_RootMsg                 suPrevRootPacket;
 
-    };
+  // Data
+public:
+  int                 iHandle;
+  unsigned int        uChanID;
+
+  // Methods
+  void Init(int iHandle, unsigned int uChanID);
+  void AppendNodeIndex(SuI106Ch10Header* psuHeader);
+  void WriteNodePacket();
+  void WriteRootPacket();
+
+private:
+  void AppendRootIndex(SuIndex_Time* psuNodeIndexTime, __int64 llNodeIndexOffset);
+
+  void Commit() {};
+};
 

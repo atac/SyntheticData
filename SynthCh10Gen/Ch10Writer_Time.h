@@ -21,37 +21,40 @@
 
 using namespace Irig106;
 
-class ClCh10Writer_Time
-    {
-    public:
-        ClCh10Writer_Time();
-        ~ClCh10Writer_Time();
+class ClCh10Writer_Time : public Ch10Writer
+{
+public:
+  ClCh10Writer_Time();
+  ~ClCh10Writer_Time();
 
-    // Structures
+  // Structures
 #pragma pack(push, 1)
     // Time write buffer info
-    struct SuWritePktTimeF1
-        {
-        SuI106Ch10Header        suCh10Header;
-        struct
-            {
-            SuTimeF1_ChanSpec   suTimeF1CSDW;
-            SuTime_MsgDmyFmt    suTimeDataBuff;
-            unsigned char       abyFillChksum[8];   // Just for safety
-            } suTimePktBuffer;
-        } suWritePktTimeF1;
+  struct SuWritePktTimeF1
+  {
+    SuI106Ch10Header        suCh10Header;
+    struct
+    {
+      SuTimeF1_ChanSpec   suTimeF1CSDW;
+      SuTime_MsgDmyFmt    suTimeDataBuff;
+      unsigned char       abyFillChksum[8];   // Just for safety
+    } suTimePktBuffer;
+  } suWritePktTimeF1;
 #pragma pack(pop)
 
-    // Data
+  // Data
 public:
-    int                 iHandle;
-    unsigned int        uChanID;
+  int                 iHandle;
+  unsigned int        uChanID;
 
-    // Methods
-    void        Init(int iHandle, unsigned int uChanID);
-    std::string TMATS(ClTmatsIndexes & TmatsIndex, std::string sDescription="");
-    void        SetRelTime(int64_t lSimClockTicks, double fSimClockTime);
-    void        Write(double fCurrSimClockTime);
+  // Methods
+  void        Init(int iHandle, unsigned int uChanID);
+  std::string TMATS(ClTmatsIndexes& TmatsIndex, std::string sDescription = "");
+  void        SetRelTime(int64_t lSimClockTicks, double fSimClockTime);
+  void        WriteTime(double fCurrSimClockTime);
 
-    };
+private:
+  void        Commit() {};
+
+};
 

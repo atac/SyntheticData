@@ -28,5 +28,6 @@ public:
     bool Expired()  { return lSimClockTicks >= lTimer; }
     void FromNow()  { this->lTimer = lSimClockTicks + lTimeoutVal; }
     void FromPrev() { this->lTimer += lTimeoutVal; }
+    int64_t GetTimeoutValue() { return lTimeoutVal; }
     };
 

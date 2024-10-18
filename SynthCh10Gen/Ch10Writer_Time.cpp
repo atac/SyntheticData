@@ -109,7 +109,7 @@ unsigned uLowBcdDigit(int * piValToConvert)
     return uBcdDigit;
     }
 
-void ClCh10Writer_Time::Write(double fCurrSimClockTime)
+void ClCh10Writer_Time::WriteTime(double fCurrSimClockTime)
     {
     SuIrig106Time       suIrigTime;
     struct tm         * psuCurrSimClockTime;

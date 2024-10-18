@@ -106,6 +106,14 @@ std::string ClCh10Writer_PCM::TMATS(ClTmatsIndexes & TmatsIndex, std::string sDe
 
 // ----------------------------------------------------------------------------
 
+
+void ClCh10Writer_PCM::AppendMsg(Ch10Formatter* formatter) {
+  ClCh10Format_PCM_SynthFmtCsv* formatCsv = dynamic_cast<ClCh10Format_PCM_SynthFmtCsv*>(formatter);
+  if (formatCsv != nullptr) {
+    AppendMsg(formatCsv);
+  }
+}
+
 // Append a PCM frame/subframe to the end of a PCM packet.
 
 void ClCh10Writer_PCM::AppendMsg(ClCh10Format_PCM_SynthFmt1* psuPcmFrame)

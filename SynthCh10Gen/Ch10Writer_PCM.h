@@ -27,7 +27,7 @@
 using namespace Irig106;
 
 
-class ClCh10Writer_PCM
+class ClCh10Writer_PCM : public Ch10Writer
     {
     public:
         ClCh10Writer_PCM();
@@ -59,6 +59,7 @@ public:
     std::string TMATS(ClTmatsIndexes & TmatsIndex, std::string sDescription="");
     void AppendMsg(ClCh10Format_PCM_SynthFmt1 * psuPcmFrame);
     void AppendMsg(ClCh10Format_PCM_SynthFmtCsv* psuPcmFrame);
+    void AppendMsg(Ch10Formatter* formatter);
     void Commit();
 
     };
