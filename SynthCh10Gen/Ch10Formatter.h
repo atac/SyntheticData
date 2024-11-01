@@ -8,10 +8,7 @@
 class Ch10Formatter
 {
 public:
-  unsigned int uChanID;
-
   virtual void SetRTC(int64_t* pullRelTime) = 0;
-  virtual void MakeMsg(ClSimState* pclSimState) = 0;
-  virtual std::string TMATS(ClTmatsIndexes& TmatsIndex, std::string sCDLN) = 0;
+  virtual void FormatMsg(ClSimState* simState) = 0;
+  virtual std::string TMATS(ClTmatsIndexes& tmatsIndex, std::string sCDLN, int chanID) = 0;
 };
-

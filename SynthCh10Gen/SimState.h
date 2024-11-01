@@ -4,30 +4,43 @@
 #include <unordered_map>
 
 class ClSimState
-    {
+{
 public:
-    ClSimState() {};
-    ~ClSimState() {};
+  ClSimState() {};
+  ~ClSimState() {};
 
-    // Data
+  // Data
 public:
-    std::unordered_map<std::string, double>     fState;
-    std::unordered_map<std::string, bool>       bState;
-    std::unordered_map<std::string, long>       lState;
+  std::unordered_map<std::string, double>     fState;
+  std::unordered_map<std::string, bool>       bState;
+  std::unordered_map<std::string, long>       lState;
 
-    // Methods
+  // Methods
 public:
-    void clear();
-    void insert(std::string sKey, double fValue);
-    void update(std::string sKey, double fValue);
-    void insert(std::string sKey, bool   bValue);
-    void update(std::string sKey, bool   bValue);
-    void insert(std::string sKey, long   lValue);
-    void update(std::string sKey, long   lValue);
+  void clear();
+  void insert(std::string sKey, double fValue);
+  void update(std::string sKey, double fValue);
+  void insert(std::string sKey, bool   bValue);
+  void update(std::string sKey, bool   bValue);
+  void insert(std::string sKey, long   lValue);
+  void update(std::string sKey, long   lValue);
 
-    };
+  void SetSimClockTime(double* currTime);
+  double GetCurrSimClockTime();
+
+private:
+  double* currentTime;
+};
 
 // ----------------------------------------------------------------------------
+
+inline void ClSimState::SetSimClockTime(double* currTime) {
+  currentTime = currTime;
+}
+
+inline double ClSimState::GetCurrSimClockTime() {
+  return *currentTime;
+}
 
 
 inline void ClSimState::clear()

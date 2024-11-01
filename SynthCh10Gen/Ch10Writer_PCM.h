@@ -28,39 +28,37 @@ using namespace Irig106;
 
 
 class ClCh10Writer_PCM : public Ch10Writer
-    {
-    public:
-        ClCh10Writer_PCM();
-        ~ClCh10Writer_PCM();
+{
+public:
+  ClCh10Writer_PCM();
+  ~ClCh10Writer_PCM();
 
-    // Structures
+  // Structures
 #pragma pack(push, 1)
     // PCM write buffer info (why did I make this struct?)
-    struct SuWriteMsgPCM
-        {
-        SuI106Ch10Header          suCh10Header;
-        SuPcmF1_ChanSpec        * psuPCM_CSDW;
-        unsigned char           * pchDataBuff;  // Make this char * makes pointer math easier
-        uint32_t                  uBuffLen;     // Size of the write buffer
-        } suWriteMsgPCM;
+  struct SuWriteMsgPCM
+  {
+    SuI106Ch10Header          suCh10Header;
+    SuPcmF1_ChanSpec* psuPCM_CSDW;
+    unsigned char* pchDataBuff;  // Make this char * makes pointer math easier
+    uint32_t                  uBuffLen;     // Size of the write buffer
+  } suWriteMsgPCM;
 #pragma pack(pop)
 
-    // Data
+  // Data
 public:
-    int                           iHandle;
-    unsigned int                  uChanID;
-    std::string                   sCDLN;        // Linking Channel Data Link Name for TMATS
-    ClCh10Format_PCM_SynthFmt1  * pSynthPcmFmt1;
-    ClCh10Format_PCM_SynthFmtCsv* pSynthPcmFmtCsv;
+  int                           iHandle;
+  ClCh10Format_PCM_SynthFmtCsv* formatter;
 
-    // Methods
+private:
+  ClCh10Format_PCM_SynthFmtCsv* formatter;
+
+  // Methods
 public:
-    void Init(int iHandle, unsigned int uChanID);
-    std::string TMATS(ClTmatsIndexes & TmatsIndex, std::string sDescription="");
-    void AppendMsg(ClCh10Format_PCM_SynthFmt1 * psuPcmFrame);
-    void AppendMsg(ClCh10Format_PCM_SynthFmtCsv* psuPcmFrame);
-    void AppendMsg(Ch10Formatter* formatter);
-    void Commit();
+  void Init(int iHandle, unsigned int uChanID, ClCh10Format_PCM_SynthFmtCsv* formatter);
+  void AppendMsg();
+  void Commit();
 
-    };
+  std::string TMATS(ClTmatsIndexes& tmatsIndex, std::string sCDLN);
+};
 

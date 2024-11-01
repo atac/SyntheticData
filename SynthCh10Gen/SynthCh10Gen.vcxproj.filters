@@ -118,12 +118,16 @@
     <ClCompile Include="SynthCh10Gen-All.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Ch10Formatter.cpp">
+    <ClCompile Include="Ch10Channel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Ch10Writer.cpp">
+    <ClCompile Include="Ch10Format_Time.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GenerationController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Ch10Format_Index.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\3rdParty\csv-parser\csv_parser.hpp">
@@ -246,5 +250,19 @@
     <ClInclude Include="Ch10Formatter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Ch10Channel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Ch10Format_Time.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GenerationController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GenerationControllerTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Ch10Format_Index.h" />
+    <ClInclude Include="TmatsFormatter.h" />
   </ItemGroup>
 </Project>

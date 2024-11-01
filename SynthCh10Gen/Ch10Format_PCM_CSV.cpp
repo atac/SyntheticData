@@ -56,6 +56,47 @@ ClCh10Format_PCM_SynthFmtCsv::ClCh10Format_PCM_SynthFmtCsv(float fFrameRate, CSV
 
 // ----------------------------------------------------------------------------
 
+ClCh10Format_PCM_SynthFmtCsv::~ClCh10Format_PCM_SynthFmtCsv()
+{
+}
+
+
+// ----------------------------------------------------------------------------
+// Methods
+// ----------------------------------------------------------------------------
+
+// Set the relative time counter
+
+void ClCh10Format_PCM_SynthFmtCsv::SetRTC(int64_t* pullRelTime)
+{
+  vLLInt2TimeArray(pullRelTime, suIPH.aubyIntPktTime);
+}
+
+
+// ----------------------------------------------------------------------------
+
+// Fill in a frame of synthetic PCM Format CSV data from the current sim state
+
+void ClCh10Format_PCM_SynthFmtCsv::FormatMsg(ClSimState* simState)
+{
+  for (auto iter = pcmFields.begin(); iter != pcmFields.end(); iter++) {
+    float v = (float)simState->fState[iter->name];
+
+    switch (iter->type) {
+    case FieldType::INTEGER_FIELD:
+      *iter->pValue = (int32_t)v;
+      break;
+    case FieldType::FLOAT_FIELD:
+    default:
+      uint32_t* w = (uint32_t*)&v;
+      *w = WordSwap(*w);
+      memcpy(iter->pValue, w, 4);
+      break;
+    }
+  }
+}
+
+
 void ClCh10Format_PCM_SynthFmtCsv::InitFrameFieldPointers(CSV_FIELDS fields, CSV_FIELDS types) {
   bool useTypes = (fields.size() == types.size());
 
@@ -91,46 +132,6 @@ uint32_t ClCh10Format_PCM_SynthFmtCsv::GetFrameLength(size_t numFields) {
   return words * 4;
 }
 
-ClCh10Format_PCM_SynthFmtCsv::~ClCh10Format_PCM_SynthFmtCsv()
-{
-}
-
-
-// ----------------------------------------------------------------------------
-// Methods
-// ----------------------------------------------------------------------------
-
-// Set the relative time counter
-
-void ClCh10Format_PCM_SynthFmtCsv::SetRTC(int64_t* pullRelTime)
-{
-  vLLInt2TimeArray(pullRelTime, suIPH.aubyIntPktTime);
-}
-
-
-// ----------------------------------------------------------------------------
-
-// Fill in a frame of synthetic PCM Format CSV data from the current sim state
-
-void ClCh10Format_PCM_SynthFmtCsv::MakeMsg(ClSimState* pclSimState)
-{
-  for (auto iter = pcmFields.begin(); iter != pcmFields.end(); iter++) {
-    float v = (float)pclSimState->fState[iter->name];
-
-    switch (iter->type) {
-    case FieldType::INTEGER_FIELD:
-      *iter->pValue = (int32_t)v;
-      break;
-    case FieldType::FLOAT_FIELD:
-    default:
-      uint32_t* w = (uint32_t*)&v;
-      *w = WordSwap(*w);
-      memcpy(iter->pValue, w, 4);
-      break;
-    }
-  }
-}
-
 uint32_t ClCh10Format_PCM_SynthFmtCsv::WordSwap(uint32_t value) {
   uint16_t* w = (uint16_t*)&value;
   uint16_t tmp = w[0];
@@ -141,7 +142,7 @@ uint32_t ClCh10Format_PCM_SynthFmtCsv::WordSwap(uint32_t value) {
 
 // ----------------------------------------------------------------------------
 
-std::string ClCh10Format_PCM_SynthFmtCsv::TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN)
+std::string ClCh10Format_PCM_SynthFmtCsv::TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN, int chanID)
     {
     std::stringstream   ssTMATS;
     unsigned long       ulDataRate;

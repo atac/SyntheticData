@@ -9,11 +9,11 @@ enum class ChannelActionType {
 
 class ChannelAction {
 public:
-  ChannelAction(Ch10Channel* channel, ChannelActionType action)
-    : channel(channel), action(action) {};
+  ChannelAction(Ch10Channel* channel, ChannelActionType actionType)
+    : channel(channel), type(actionType) {};
 
   Ch10Channel* channel;
-  ChannelActionType action;
+  ChannelActionType type;
 };
 
 enum class RateType {

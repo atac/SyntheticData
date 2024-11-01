@@ -14,11 +14,15 @@
 #include "SimTimer.h"
 #include "irig106ch10.h"
 
+#include "TmatsFormatter.h"
+
 using namespace std;
 
 class GenerationController
 {
   const int CONTROLLER_OK = 0;
+
+  string programName;
 
   ClSimState* simState;
   ControllerTime time;
@@ -28,6 +32,8 @@ class GenerationController
   map<ClSimTimer*, vector<ChannelAction>*>* timers;
   //TimersMapToChannels (specify relationship action as PUSH or COMMIT)
   int outFileHandle;
+
+  Ch10Channel* timeChannel;
 
 public:
   GenerationController();
@@ -40,6 +46,7 @@ private:
   //void ReadConfig(std::string configPathname);
   int TmpCreateConfig(); // temporary function to demonstrate a single configuration process
 
+
   // Configuration functions
   // =======================
 
@@ -50,10 +57,14 @@ private:
   //Source_Nav AddSource(std::string sourcePathname);
   //Ch10Channel AddChannel(void channelConfig); 
 
-  void AddIndexWriter();
-  void AddTimeWriter();
+  void                AddIndexWriter(Rate indexRate, Rate nodeRate, uint8_t nodesPerRoot, ClCh10Writer_Time* timeWriter);
+  ClCh10Writer_Time*  AddTimeWriter();
+
+  std::string GenerateChannelName(Ch10Channel::ChannelType type);
+  Ch10Channel* CreateChannel(Ch10Writer* writer, Ch10Formatter* formatter, Ch10Channel::ChannelType type, std::string name = "");
   
   // =======================
+
 
   // Initialization functions
   // ========================
@@ -62,8 +73,14 @@ private:
 
   // ========================
 
-  //void UpdateSources();
-  //void PollTimers(); // Check all timers for expiration, and perform associated channel actions
-  //void Tick(); // update the various timers
+
+  // Execution Functions
+  // ===================
+  bool UpdateSources();
+  void PollTimers(); // Check all timers for expiration, and perform associated channel actions
+  void DoChannelActions(vector<ChannelAction>* chanActions);
+  void DoAction(ChannelAction);
+  void Tick(); // update the clocks
+  // ===================
 };
 

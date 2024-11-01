@@ -23,14 +23,16 @@ class Ch10Writer
 {
 public:
   int iHandle;
-  unsigned int uChanId;
+  unsigned int uChanID;
 
   void Init(int iHandle, unsigned int uChanID)
   {
     this->iHandle = iHandle;
-    this->uChanId = uChanID;
+    this->uChanID = uChanID;
   }
 
-  virtual void AppendMsg(Ch10Formatter* pFormatter) = 0;
+  virtual void AppendMsg() = 0;
   virtual void Commit() = 0;
+
+  virtual std::string TMATS(ClTmatsIndexes& tmatsIndex, std::string sCDLN) = 0;
 };

@@ -1,6 +1,9 @@
 #include "GenerationController.h"
 
 
+// TODO:
+// Need more time conversions
+
 GenerationController::GenerationController() {
   simState = nullptr;
   sources = nullptr;
@@ -11,6 +14,8 @@ GenerationController::GenerationController() {
 
   time.srcTime = 0.0;
   time.startSimClockTime = -1.0;
+
+  programName = "Synthetic Chapter 10";
 }
 
 GenerationController::~GenerationController() {
@@ -27,17 +32,6 @@ GenerationController::~GenerationController() {
     delete timers;
 }
 
-// After configuration:
-// X init timers
-// set time
-// write setup channel (change how formatter TMATS is passed to writer)
-// write time
-// START LOOP
-
-
-// TODO:
-// Need more time conversions
-
 int GenerationController::Init(string configPathname) {
   // TODO: open config file
   int result = TmpCreateConfig();
@@ -46,11 +40,62 @@ int GenerationController::Init(string configPathname) {
 
   InitTimers();
 
-
-
-  // TODO....
+  this->time.currSimClockTime = this->time.startSimClockTime;
+  TmatsFormatter::WriteTMATS(outFileHandle, programName, this->time.currSimClockTime, this->channels);
+  timeChannel->PushData(simState, &ClSimTimer::lSimClockTicks);
+  timeChannel->CommitPacket();
 
   return result;
+}
+
+bool GenerationController::Fire() {
+  UpdateSources();
+  PollTimers();
+  Tick();
+}
+
+bool GenerationController::UpdateSources() {
+  for (auto s : *sources) {
+    if (!s->UpdateSimState(time.srcTime))
+      return false;
+  }
+
+  return true;
+}
+
+void GenerationController::PollTimers() {
+  for (auto t : *timers) {
+    if (t.first->Expired()) {
+      t.first->FromPrev();
+      DoChannelActions(t.second);
+    }
+  }
+}
+
+void GenerationController::DoChannelActions(vector<ChannelAction>* chanActions) {
+  for (auto ca : *chanActions) {
+    DoAction(ca);
+  }
+}
+
+void GenerationController::DoAction(ChannelAction chanAction) {
+  switch (chanAction.type) {
+
+  case ChannelActionType::PUSH:
+    chanAction.channel->PushData(simState, &ClSimTimer::lSimClockTicks);
+    break;
+
+  case ChannelActionType::COMMIT:
+    chanAction.channel->CommitPacket();
+    break;
+
+  }
+}
+
+void GenerationController::Tick() {
+  ClSimTimer::Tick();
+  time.srcTime = ClSimTimer::fSimElapsedTime;
+  time.currSimClockTime = time.startSimClockTime + ClSimTimer::fSimElapsedTime;
 }
 
 void GenerationController::InitTimers() {
@@ -61,11 +106,17 @@ void GenerationController::InitTimers() {
 
 int GenerationController::TmpCreateConfig() {
   // from each config item
+  string configProgramName = "Fully Generic Data"; 
   string configFileSource = "pathtofile";
   Rate configDataRate(100, RateType::FREQUENCY); // frequency of frames in a packet
   Rate configPacketRate(10, RateType::FREQUENCY); // frequency of packets in a file
+  Rate configIndexAppendRate(1000, RateType::TIME);
+  Rate configIndexCommitRate(6000, RateType::TIME);
+  int configIndexNodesPerRoot = 10;
   string configOutfile = "pathtofile";
   unsigned int configChanID = 20;
+  string configChanName = "mychannel";
+  Ch10Channel::ChannelType configChanType = Ch10Channel::ChannelType::PCM;
 
   // init structures
   sources = new std::vector<ClSource_Nav*>();
@@ -75,6 +126,7 @@ int GenerationController::TmpCreateConfig() {
   // init simstate object
   simState = new ClSimState();
   simState->clear();
+  simState->SetSimClockTime(&(this->time.currSimClockTime));
 
 
   // create output file
@@ -85,8 +137,9 @@ int GenerationController::TmpCreateConfig() {
     return 1;
   }
 
-  AddIndexWriter();
-  AddTimeWriter();
+  // create required ch10 channel writers
+  ClCh10Writer_Time* timeWriter = AddTimeWriter();
+  AddIndexWriter(configIndexAppendRate, configIndexCommitRate, configIndexNodesPerRoot, timeWriter);
 
   // create source(s) passing simstate
   int sourceCount = 0;
@@ -123,9 +176,7 @@ int GenerationController::TmpCreateConfig() {
   writer->Init(outFileHandle, configChanID);
 
   // create channel passing formatter/writer
-  Ch10Channel* channel = new Ch10Channel();
-  channels->push_back(channel);
-  channel->Init(writer, formatter);
+  Ch10Channel* channel = CreateChannel(writer, formatter, configChanType, configChanName);
 
   // create timers with maps to channel/action
   AddTimedChannelAction(channel, configDataRate, ChannelActionType::PUSH);
@@ -133,19 +184,42 @@ int GenerationController::TmpCreateConfig() {
   //
   // END FOREACH SOURCE
 
+  timeWriter->SetRelTime(ClSimTimer::lSimClockTicks, this->time.startSimClockTime);
+
   return 0;
 }
 
-void GenerationController::AddIndexWriter() {
+void GenerationController::AddIndexWriter(Rate indexRate, Rate nodeRate, uint8_t nodesPerRoot, ClCh10Writer_Time* timeWriter) {
+  Ch10Format_Index* formatter = new Ch10Format_Index();
+  formatter->Init(&(timeWriter->suWritePktTimeF1.suCh10Header));
+
   ClCh10Writer_Index* indexWriter = new ClCh10Writer_Index();
+  indexWriter->Init(outFileHandle, 0, 10, formatter);
   Ch10Writer* writer = dynamic_cast<Ch10Writer*>(indexWriter);
-  writer->Init(outFileHandle, 0);
+
+  Ch10Channel::ChannelType type = Ch10Channel::ChannelType::Index;
+
+  Ch10Channel* channel = CreateChannel(writer, formatter, type);
+
+  AddTimedChannelAction(channel, indexRate, ChannelActionType::PUSH);
+  AddTimedChannelAction(channel, nodeRate, ChannelActionType::COMMIT);
 }
 
-void GenerationController::AddTimeWriter() {
+ClCh10Writer_Time* GenerationController::AddTimeWriter() {
+  Ch10Format_Time* formatter = new Ch10Format_Time();
+
   ClCh10Writer_Time* timeWriter = new ClCh10Writer_Time();
+  timeWriter->Init(outFileHandle, 1, formatter);
   Ch10Writer* writer = dynamic_cast<Ch10Writer*>(timeWriter);
-  writer->Init(outFileHandle, 1);
+
+  Ch10Channel::ChannelType type = Ch10Channel::ChannelType::Time;
+
+  this->timeChannel = CreateChannel(writer, formatter, type);
+  channels->push_back(this->timeChannel);
+
+  Rate timeRate = Rate(1000, RateType::TIME);
+
+  AddTimedChannelAction(this->timeChannel, timeRate, ChannelActionType::COMMIT);
 }
 
 void GenerationController::AddTimedChannelAction(Ch10Channel* channel, Rate rate, ChannelActionType actionType) {
@@ -183,4 +257,59 @@ ClSimTimer* GenerationController::CreateTimer(int64_t timeout) {
   vector<ChannelAction>* relationships = new vector<ChannelAction>();
   pair<ClSimTimer*, vector<ChannelAction>*> timerPair(timer, relationships);
   timers->insert(timerPair);
+}
+
+std::string GenerationController::GenerateChannelName(Ch10Channel::ChannelType type) {
+  static std::map<Ch10Channel::ChannelType, int> typeCounts;
+
+  std::string prefix = "";
+
+  int count = 1;
+
+  auto c = typeCounts.find(type);
+  if (c != typeCounts.end()) {
+    c->second++;
+    count = c->second;
+  }
+  else
+    typeCounts.insert(std::pair<Ch10Channel::ChannelType, int>(type, 1));
+
+  switch (type) {
+  case Ch10Channel::ChannelType::A429:
+    prefix = "A429";
+    break;
+  case Ch10Channel::ChannelType::PCM:
+    prefix = "PCM";
+    break;
+  case Ch10Channel::ChannelType::MS1553:
+    prefix = "1553";
+    break;
+  case Ch10Channel::ChannelType::Video:
+    prefix = "Video";
+    break;
+  case Ch10Channel::ChannelType::Time:
+    prefix = "Time";
+    break;
+  case Ch10Channel::ChannelType::Index:
+    prefix = "Index";
+    break;
+  }
+
+  return prefix + "InChan" + to_string(count);
+}
+
+// Create a new, initialized channel and add it to the channels list
+Ch10Channel* GenerationController::CreateChannel(
+  Ch10Writer* writer, 
+  Ch10Formatter* formatter,
+  Ch10Channel::ChannelType type,
+  std::string name) 
+{
+  if (name == "")
+    name = GenerateChannelName(type);
+
+  Ch10Channel* channel = new Ch10Channel();
+  channels->push_back(channel);
+  channel->Init(writer, formatter, type, name);
+  return channel;
 }

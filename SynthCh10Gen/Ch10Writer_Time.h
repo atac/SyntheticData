@@ -19,9 +19,12 @@
 #include "i106_decode_1553f1.h"
 //#include "i106_decode_tmats.h"
 
+#include "Ch10Format_Time.h"
+
 using namespace Irig106;
 
-class ClCh10Writer_Time : public Ch10Writer
+class ClCh10Writer_Time :
+  public Ch10Writer
 {
 public:
   ClCh10Writer_Time();
@@ -43,18 +46,19 @@ public:
 #pragma pack(pop)
 
   // Data
+private:
+  Ch10Format_Time* formatter;
+  double currentTime;
+
 public:
-  int                 iHandle;
-  unsigned int        uChanID;
 
   // Methods
-  void        Init(int iHandle, unsigned int uChanID);
-  std::string TMATS(ClTmatsIndexes& TmatsIndex, std::string sDescription = "");
+  void        Init(int iHandle, unsigned int uChanID, Ch10Format_Time* formatter);
+  void        AppendMsg() {};
+  void        Commit();
+
+  std::string TMATS(ClTmatsIndexes& tmatsIndex, std::string sCDLN);
+
   void        SetRelTime(int64_t lSimClockTicks, double fSimClockTime);
-  void        WriteTime(double fCurrSimClockTime);
-
-private:
-  void        Commit() {};
-
 };
 

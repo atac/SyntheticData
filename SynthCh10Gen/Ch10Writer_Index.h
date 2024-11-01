@@ -18,9 +18,12 @@
 #include "i106_time.h"
 #include "i106_decode_index.h"
 
+#include "Ch10Format_Index.h"
+
 using namespace Irig106;
 
-class ClCh10Writer_Index : public Ch10Writer
+class ClCh10Writer_Index :
+  public Ch10Writer
 {
 public:
   ClCh10Writer_Index();
@@ -38,14 +41,20 @@ public:
   unsigned int        uChanID;
 
   // Methods
-  void Init(int iHandle, unsigned int uChanID);
-  void AppendNodeIndex(SuI106Ch10Header* psuHeader);
-  void WriteNodePacket();
-  void WriteRootPacket();
+  void Init(int iHandle, unsigned int uChanID, uint8_t nodesPerRoot, Ch10Format_Index* formatter);
+  void AppendMsg();
+  void Commit();
+
+  std::string TMATS(ClTmatsIndexes& tmatsIndex, std::string sCDLN) {};
 
 private:
+  void AppendNodeIndex();
+  void WriteNodePacket();
+  void WriteRootPacket();
   void AppendRootIndex(SuIndex_Time* psuNodeIndexTime, __int64 llNodeIndexOffset);
 
-  void Commit() {};
+  Ch10Format_Index* formatter;
+  uint8_t nodesPerRoot;
+  uint8_t rootNodeCount;
 };
 

@@ -60,7 +60,6 @@ public:
 
   // Class variables
 public:
-  unsigned int            uChanID;
   SuPcmF1_IntraPktHeader  suIPH;
   std::vector<uint32_t>   pcmFrame;
   std::vector<PcmField>   pcmFields;
@@ -71,14 +70,14 @@ public:
 
   // Methods
 public:
-  void SetRTC(int64_t* pullRelTime);
-  virtual void MakeMsg(ClSimState* pclSimState);
-  virtual std::string TMATS(ClTmatsIndexes& TmatsIndex, std::string sCDLN);
+  void        SetRTC(int64_t* pullRelTime);
+  void        FormatMsg(ClSimState* simState);
+  std::string TMATS(ClTmatsIndexes& tmatsIndex, std::string sCDLN, int chanID);
 
 private:
-  uint32_t GetFrameLength(size_t numFields);
-  void InitFrameFieldPointers(CSV_FIELDS fields, CSV_FIELDS types);
-  uint32_t WordSwap(uint32_t value);
-  void ToLower(STR& str);
+  uint32_t  GetFrameLength(size_t numFields);
+  void      InitFrameFieldPointers(CSV_FIELDS fields, CSV_FIELDS types);
+  uint32_t  WordSwap(uint32_t value);
+  void      ToLower(STR& str);
 };
 
