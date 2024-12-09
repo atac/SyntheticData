@@ -14,9 +14,6 @@
 
 ClCh10Writer_PCM::ClCh10Writer_PCM()
 {
-  this->iHandle = 0;
-  this->uChanID = 0;
-
   this->formatter = nullptr;
 }
 

@@ -7,6 +7,7 @@
 #include "Ch10Channel.h"
 
 #include "Source_CsvTxt.h"
+#include "Ch10Writer.h"
 #include "Ch10Format_PCM_CSV.h"
 #include "Ch10Writer_PCM.h"
 #include "Ch10Writer_Index.h"
@@ -20,7 +21,6 @@ using namespace std;
 
 class GenerationController
 {
-  const int CONTROLLER_OK = 0;
 
   string programName;
 
@@ -30,12 +30,14 @@ class GenerationController
   vector<ClSource_Nav*>* sources;
   vector<Ch10Channel*>* channels;
   map<ClSimTimer*, vector<ChannelAction>*>* timers;
-  //TimersMapToChannels (specify relationship action as PUSH or COMMIT)
   int outFileHandle;
 
   Ch10Channel* timeChannel;
 
+
 public:
+  static const int CONTROLLER_OK = 0;
+
   GenerationController();
   ~GenerationController();
 

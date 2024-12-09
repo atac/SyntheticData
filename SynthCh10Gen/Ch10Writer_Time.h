@@ -54,11 +54,14 @@ public:
 
   // Methods
   void        Init(int iHandle, unsigned int uChanID, Ch10Format_Time* formatter);
-  void        AppendMsg() {};
+  void        AppendMsg();
   void        Commit();
 
   std::string TMATS(ClTmatsIndexes& tmatsIndex, std::string sCDLN);
 
   void        SetRelTime(int64_t lSimClockTicks, double fSimClockTime);
+
+private:
+  unsigned uLowBcdDigit(int* piValToConvert);
 };
 

@@ -29,7 +29,7 @@ void Ch10Channel::CommitPacket() {
 }
 
 std::string Ch10Channel::GetTMATS(ClTmatsIndexes index) {
-  return this->formatter->TMATS(index, this->name);
+  return this->writer->TMATS(index, this->name);
 }
 
 Ch10Channel::ChannelType Ch10Channel::Type() {

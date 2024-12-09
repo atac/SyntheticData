@@ -22,6 +22,7 @@
     <ClCompile Include="..\3rdParty\csv-parser\csv_parser.cpp" />
     <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_1553f1.c" />
     <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_index.c" />
+    <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_pcmf1.c" />
     <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_time.c" />
     <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_tmats.c" />
     <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_tmats_b.c" />
@@ -52,9 +53,9 @@
     <ClCompile Include="Ch10Writer_Time.cpp" />
     <ClCompile Include="Ch10Writer_Video.cpp" />
     <ClCompile Include="GenerationController.cpp" />
+    <ClCompile Include="Program.cpp" />
     <ClCompile Include="Source_CsvTxt.cpp" />
     <ClCompile Include="Source_NasaNavTxt.cpp" />
-    <ClCompile Include="SynthCh10Gen-All.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\3rdParty\csv-parser\csv_parser.hpp" />
@@ -177,8 +178,8 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>COMPILE_CSV;_USE_32BIT_TIME_T;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>_USE_32BIT_TIME_T;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>Default</ConformanceMode>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

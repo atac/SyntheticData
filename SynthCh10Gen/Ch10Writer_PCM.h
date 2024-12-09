@@ -15,10 +15,10 @@
 #include "i106_stdint.h"
 #include "irig106ch10.h"
 #include "i106_time.h"
-#include "i106_decode_time.h"
+//#include "i106_decode_time.h"
 //#include "i106_decode_1553f1.h"
-#include "i106_decode_pcmf1.h"
-#include "i106_decode_tmats.h"
+//#include "i106_decode_pcmf1.h"
+//#include "i106_decode_tmats.h"
 
 #include "Common.h"
 #include "Ch10Format_PCM.h"
@@ -48,7 +48,6 @@ public:
   // Data
 public:
   int                           iHandle;
-  ClCh10Format_PCM_SynthFmtCsv* formatter;
 
 private:
   ClCh10Format_PCM_SynthFmtCsv* formatter;

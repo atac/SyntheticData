@@ -153,7 +153,7 @@ std::string ClCh10Writer_Time::TMATS(ClTmatsIndexes& tmatsIndex, std::string sCD
 // Return the low BCD from an integer and then divide by 10 shifting the BCD
 // value to the right one digit.
 
-unsigned uLowBcdDigit(int* piValToConvert)
+unsigned ClCh10Writer_Time::uLowBcdDigit(int* piValToConvert)
 {
   unsigned    uBcdDigit;
 

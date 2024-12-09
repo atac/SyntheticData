@@ -15,10 +15,10 @@
 #include "SimState.h"
 
 #include "Ch10Writer.h"
-#include "Ch10Channel.h";
+#include "Ch10Channel.h"
 
-#include <vector>;
-#include <assert.h>;
+#include <vector>
+#include <assert.h>
 
 using namespace Irig106;
 

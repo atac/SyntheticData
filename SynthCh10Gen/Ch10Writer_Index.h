@@ -45,7 +45,7 @@ public:
   void AppendMsg();
   void Commit();
 
-  std::string TMATS(ClTmatsIndexes& tmatsIndex, std::string sCDLN) {};
+  std::string TMATS(ClTmatsIndexes& tmatsIndex, std::string sCDLN) { return ""; };
 
 private:
   void AppendNodeIndex();
