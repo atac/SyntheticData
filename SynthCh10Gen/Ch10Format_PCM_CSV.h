@@ -15,6 +15,7 @@
 #include "i106_stdint.h"
 #include "irig106ch10.h"
 #include "i106_time.h"
+#include "i106_decode_tmats_r.h"
 #include "i106_decode_pcmf1.h"
 
 #include "Common.h"

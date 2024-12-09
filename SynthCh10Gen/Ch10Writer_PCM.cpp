@@ -1,6 +1,8 @@
 
 
 // irig106lib
+#include "i106_stdint.h"
+#include "irig106ch10.h"
 #include "i106_decode_tmats_r.h"
 
 #include "Common.h"

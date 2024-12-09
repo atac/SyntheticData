@@ -13,6 +13,8 @@
 #include "Ch10Writer_Index.h"
 #include "Ch10Writer_Time.h"
 #include "SimTimer.h"
+
+#include "i106_stdint.h"
 #include "irig106ch10.h"
 
 #include "TmatsFormatter.h"
