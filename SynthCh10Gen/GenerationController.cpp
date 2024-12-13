@@ -10,7 +10,7 @@ GenerationController::GenerationController() {
   channels = nullptr;
   timers = nullptr;
 
-  outFileHandle = 0;
+  i106OutFileHandle = -1;
 
   time.srcTime = 0.0;
   time.startSimClockTime = -1.0;
@@ -38,10 +38,10 @@ int GenerationController::Init(string configPathname) {
   if (result != CONTROLLER_OK)
     return result;
 
+  this->time.currSimClockTime = this->time.startSimClockTime;
   InitTimers();
 
-  this->time.currSimClockTime = this->time.startSimClockTime;
-  TmatsFormatter::WriteTMATS(outFileHandle, programName, this->time.currSimClockTime, this->channels);
+  TmatsFormatter::WriteTMATS(i106OutFileHandle, programName, this->time.currSimClockTime, this->channels);
   timeChannel->PushData(simState, &ClSimTimer::lSimClockTicks);
   timeChannel->CommitPacket();
 
@@ -49,9 +49,12 @@ int GenerationController::Init(string configPathname) {
 }
 
 bool GenerationController::Fire() {
-  UpdateSources();
+  if (!UpdateSources())
+    return false;
   PollTimers();
   Tick();
+
+  return CONTROLLER_OK;
 }
 
 bool GenerationController::UpdateSources() {
@@ -65,9 +68,9 @@ bool GenerationController::UpdateSources() {
 
 void GenerationController::PollTimers() {
   for (auto t : *timers) {
-    if (t.first->Expired()) {
-      t.first->FromPrev();
-      DoChannelActions(t.second);
+    if (t->Expired()) {
+      t->FromPrev();
+      DoChannelActions(t->actions);
     }
   }
 }
@@ -99,29 +102,29 @@ void GenerationController::Tick() {
 }
 
 void GenerationController::InitTimers() {
-  for (auto timerAction : *timers) {
-    timerAction.first->FromNow();
+  for (auto t : *timers) {
+    t->FromNow();
   }
 }
 
 int GenerationController::TmpCreateConfig() {
   // from each config item
   string configProgramName = "Fully Generic Data"; 
-  string configFileSource = "pathtofile";
-  Rate configDataRate(100, RateType::FREQUENCY); // frequency of frames in a packet
-  Rate configPacketRate(10, RateType::FREQUENCY); // frequency of packets in a file
-  Rate configIndexAppendRate(1000, RateType::TIME);
-  Rate configIndexCommitRate(6000, RateType::TIME);
+  string configFileSource = "C:\\atac\\vsprojects\\SyntheticData\\Debug\\30931-small.csv";
+  Rate configDataRate(100, RateUnit::FREQUENCY); // frequency of frames in a packet
+  Rate configPacketRate(10, RateUnit::FREQUENCY); // frequency of packets in a file
+  Rate configIndexAppendRate(1000, RateUnit::TIME_MS);
+  Rate configIndexCommitRate(6000, RateUnit::TIME_MS);
   int configIndexNodesPerRoot = 10;
-  string configOutfile = "pathtofile";
+  string configOutfile = "C:\\atac\\vsprojects\\SyntheticData\\Debug\\test_generic_pcm.ch10";
   unsigned int configChanID = 20;
-  string configChanName = "mychannel";
+  string configChanName = "genericPcmChan";
   Ch10Channel::ChannelType configChanType = Ch10Channel::ChannelType::PCM;
 
   // init structures
   sources = new std::vector<ClSource_Nav*>();
   channels = new vector<Ch10Channel*>();
-  timers = new map<ClSimTimer*, vector<ChannelAction>*>();
+  timers = new vector<ClSimTimer*>();
 
   // init simstate object
   simState = new ClSimState();
@@ -130,7 +133,7 @@ int GenerationController::TmpCreateConfig() {
 
 
   // create output file
-  EnI106Status enStatus = enI106Ch10Open(&outFileHandle, configOutfile.data(), I106_OVERWRITE);
+  EnI106Status enStatus = enI106Ch10Open(&i106OutFileHandle, configOutfile.data(), I106_OVERWRITE);
   if (enStatus != I106_OK)
   {
     fprintf(stderr, "Error opening data file : Status = %d\n", enStatus);
@@ -147,7 +150,7 @@ int GenerationController::TmpCreateConfig() {
   // FOREACH SOURCE
   //
   // if (configLine.type == CSV)
-  string sourcePrefix = "src" + (++sourceCount);
+  string sourcePrefix = "src" + to_string(++sourceCount);
   ClSource_CsvTxt* csvSrc = new ClSource_CsvTxt(simState, sourcePrefix);
   ClSource_Nav* navSrc = dynamic_cast<ClSource_Nav*>(csvSrc);
   if (navSrc != nullptr) {
@@ -172,8 +175,8 @@ int GenerationController::TmpCreateConfig() {
 
   // create writer
   ClCh10Writer_PCM* writerPcm = new ClCh10Writer_PCM();
+  writerPcm->Init(i106OutFileHandle, configChanID, formatCsv);
   Ch10Writer* writer = dynamic_cast<Ch10Writer*>(writerPcm);
-  writer->Init(outFileHandle, configChanID);
 
   // create channel passing formatter/writer
   Ch10Channel* channel = CreateChannel(writer, formatter, configChanType, configChanName);
@@ -194,7 +197,7 @@ void GenerationController::AddIndexWriter(Rate indexRate, Rate nodeRate, uint8_t
   formatter->Init(&(timeWriter->suWritePktTimeF1.suCh10Header));
 
   ClCh10Writer_Index* indexWriter = new ClCh10Writer_Index();
-  indexWriter->Init(outFileHandle, 0, 10, formatter);
+  indexWriter->Init(i106OutFileHandle, 0, 10, formatter);
   Ch10Writer* writer = dynamic_cast<Ch10Writer*>(indexWriter);
 
   Ch10Channel::ChannelType type = Ch10Channel::ChannelType::Index;
@@ -209,29 +212,30 @@ ClCh10Writer_Time* GenerationController::AddTimeWriter() {
   Ch10Format_Time* formatter = new Ch10Format_Time();
 
   ClCh10Writer_Time* timeWriter = new ClCh10Writer_Time();
-  timeWriter->Init(outFileHandle, 1, formatter);
+  timeWriter->Init(i106OutFileHandle, 1, formatter);
   Ch10Writer* writer = dynamic_cast<Ch10Writer*>(timeWriter);
 
   Ch10Channel::ChannelType type = Ch10Channel::ChannelType::Time;
 
   this->timeChannel = CreateChannel(writer, formatter, type);
-  channels->push_back(this->timeChannel);
 
-  Rate timeRate = Rate(1000, RateType::TIME);
+  Rate timeRate = Rate(1000, RateUnit::TIME_MS);
 
+  AddTimedChannelAction(this->timeChannel, timeRate, ChannelActionType::PUSH);
   AddTimedChannelAction(this->timeChannel, timeRate, ChannelActionType::COMMIT);
+
+  return timeWriter;
 }
 
 void GenerationController::AddTimedChannelAction(Ch10Channel* channel, Rate rate, ChannelActionType actionType) {
-  ClSimTimer* timer = GetTimer(rate);
   ChannelAction action(channel, actionType);
-  timers->find(timer)->second->push_back(action);
+  ClSimTimer* timer = GetTimer(rate);
+  timer->AddAction(action);
 }
 
 // Get or create timer based on the specified rate
 ClSimTimer* GenerationController::GetTimer(Rate rate) {
-  if (rate.type == RateType::FREQUENCY)
-    ConvertRateUnits(rate);
+  ConvertRateUnits(rate, RateUnit::TIME_RTC);
 
   ClSimTimer* timer = GetExistingTimer(rate.value);
 
@@ -242,21 +246,36 @@ ClSimTimer* GenerationController::GetTimer(Rate rate) {
 }
 
 // Check if a timer with the same timeout already exists
-ClSimTimer* GenerationController::GetExistingTimer(int64_t timeout) {
-  for (auto timerPair : *timers) {
-    if (timerPair.first->GetTimeoutValue() == timeout) {
-      return timerPair.first;
+ClSimTimer* GenerationController::GetExistingTimer(int64_t rtcTimeout) {
+  for (auto t : *timers) {
+    if (t->GetTimeoutValue() == rtcTimeout) {
+      return t;
     }
   }
   return nullptr;
 }
 
-// Create timer and add entry in map
+// Create timer and add to timers list
 ClSimTimer* GenerationController::CreateTimer(int64_t timeout) {
   ClSimTimer* timer = new ClSimTimer(timeout);
-  vector<ChannelAction>* relationships = new vector<ChannelAction>();
-  pair<ClSimTimer*, vector<ChannelAction>*> timerPair(timer, relationships);
-  timers->insert(timerPair);
+  InsertTimer(timer);
+  return timer;
+}
+
+// Add a timer to the timers vector by insertion sorting on increasing timeout value
+void GenerationController::InsertTimer(ClSimTimer* timer) {
+  bool inserted = false;
+
+  for (auto i = timers->begin(); i != timers->end(); i++) {
+    if (timer->GetTimeoutValue() < (*i)->GetTimeoutValue()) { // sorting comparison
+      timers->insert(i, timer);
+      inserted = true;
+      break;
+    }
+  }
+
+  if (!inserted)
+    timers->push_back(timer);
 }
 
 std::string GenerationController::GenerateChannelName(Ch10Channel::ChannelType type) {

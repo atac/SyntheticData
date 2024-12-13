@@ -40,7 +40,7 @@ public:
     SuTmats_ChanSpec*   psuTmats_ChanSpec;
     ClTmatsIndexes      tmatsIndex;
     
-    const int dataChannelCount = channels->size();
+    const int channelCount = channels->size() - 1; // minus the index channel
 
     // Make current time string
     time_t        iCurrTime;
@@ -96,14 +96,14 @@ public:
       "R-1\\ERBS:AUTO;\n"
       "R-1\\EV\\E:F;\n"
       "R-1\\IDX\\E:T;\n"
-      "R-1\\N:" << dataChannelCount << ";\n";
+      "R-1\\N:" << channelCount << ";\n";
 
     for (auto c : *channels) {
-      ssTMATS << c->GetTMATS(tmatsIndex);
       UpdateTmatsIndexes(tmatsIndex, c->Type());
+      ssTMATS << c->GetTMATS(tmatsIndex);
     }
 
-    assert(tmatsIndex.iRSrcNum - 1 == dataChannelCount);
+    assert(tmatsIndex.iRSrcNum == channelCount);
 
     // Form the TMATS packet header
     iHeaderInit(&suI106Hdr, 0, I106CH10_DTYPE_TMATS, I106CH10_PFLAGS_CHKSUM_NONE | I106CH10_PFLAGS_TIMEFMT_IRIG106, 0);
@@ -131,12 +131,16 @@ public:
     case Ch10Channel::ChannelType::A429:
     case Ch10Channel::ChannelType::MS1553:
       index.iBIndex++;
-      index.iRIndex++;
+      index.iRSrcNum++;
       break;
     case Ch10Channel::ChannelType::PCM:
+      index.iPIndex++;
+      index.iDIndex++;
+      index.iRSrcNum++;
+      break;
     case Ch10Channel::ChannelType::Video:
     case Ch10Channel::ChannelType::Time:
-      index.iRIndex++;
+      index.iRSrcNum++;
       break;
     default:
       break;

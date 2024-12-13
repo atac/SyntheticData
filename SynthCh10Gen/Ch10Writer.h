@@ -27,13 +27,14 @@ protected:
   unsigned int uChanID;
   int iHandle;
 
-public:
+protected:
   void Init(int iHandle, unsigned int uChanID)
   {
     this->iHandle = iHandle;
     this->uChanID = uChanID;
   };
 
+public:
   virtual void AppendMsg() = 0;
   virtual void Commit() = 0;
 

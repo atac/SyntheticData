@@ -124,11 +124,11 @@ class ClTmatsIndexes
     {
 public:
     int                 iRIndex  = 1;
-    int                 iRSrcNum = 1;
-    int                 iBIndex  = 1;
-    int                 iCIndex  = 1;
-    int                 iPIndex  = 1;
-    int                 iDIndex  = 1;
+    int                 iRSrcNum = 0;
+    int                 iBIndex  = 0;
+    int                 iCIndex  = 0;
+    int                 iPIndex  = 0;
+    int                 iDIndex  = 0;
 
     };
 

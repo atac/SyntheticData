@@ -31,8 +31,9 @@ class GenerationController
 
   vector<ClSource_Nav*>* sources;
   vector<Ch10Channel*>* channels;
-  map<ClSimTimer*, vector<ChannelAction>*>* timers;
-  int outFileHandle;
+  vector<ClSimTimer*>* timers;
+
+  int i106OutFileHandle;
 
   Ch10Channel* timeChannel;
 
@@ -56,8 +57,9 @@ private:
 
   void AddTimedChannelAction(Ch10Channel* channel, Rate rate, ChannelActionType action);
   ClSimTimer* GetTimer(Rate rate);
-  ClSimTimer* GetExistingTimer(int64_t timeout);
+  ClSimTimer* GetExistingTimer(int64_t msTimeout);
   ClSimTimer* CreateTimer(int64_t timeout);
+  void InsertTimer(ClSimTimer* timer);
   //Source_Nav AddSource(std::string sourcePathname);
   //Ch10Channel AddChannel(void channelConfig); 
 

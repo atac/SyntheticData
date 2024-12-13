@@ -113,6 +113,10 @@ bool ClSource_CsvTxt::Open(std::string sFilename)
     bCsvStatus = CsvParser.parse_line(szLine, CsvDataLabels);
     assert(bCsvStatus == true);
 
+    // Add prefix to data labels
+    for (auto i = CsvDataLabels.begin(); i != CsvDataLabels.end(); i++)
+      (*i) = sPrefix + (*i);
+
     // Look for column types within the next two lines
     CSV_FIELDS tmpFields;
     for (int i = 2; i > 0; i--) 
@@ -209,7 +213,7 @@ bool ClSource_CsvTxt::ReadNextLine()
 
     // Parse the input data line
     CsvMap.clear();
-    bCsvStatus = CsvParser.parse_line(szLine, CsvDataLabels, CsvMap);
+    bCsvStatus = CsvPatodorser.parse_line(szLine, CsvDataLabels, CsvMap);
     assert(bCsvStatus == true);
 
 //    display_map_contents(szLine, CsvMap);
@@ -230,39 +234,37 @@ bool ClSource_CsvTxt::ReadNextLine()
 /// Return false when end of file.
 
 bool ClSource_CsvTxt::UpdateSimState(double fSimElapsedTime)
+{
+  bool    bStatus;
+
+  // Return if simulation time is less than current data time from this source
+  if (fSimElapsedTime < fRelTime)
+    return true;
+
+  // Copy parsed data into the SimState variable.
+  for (CONST_MAP_ITR itCsvMap = CsvMap.begin(); itCsvMap != CsvMap.end(); ++itCsvMap)
+  {
+
+    // Handle any special conversion cases
+    if (itCsvMap->first == sPrefix + "DATE_TIME")
     {
-    bool    bStatus;
-
-    // Return if simulation time is less than current data time from this source
-    if (fSimElapsedTime < fRelTime)
-        return true;
-
-    // Copy parsed data into the SimState variable.
-    for (CONST_MAP_ITR itCsvMap = CsvMap.begin(); itCsvMap != CsvMap.end(); ++itCsvMap)
-        {
-        // I wonder if the "sPrefix+" construct should be optimized. It seems like
-        // a lot of string concatination.
-
-        // Handle any special conversion cases
-        if (itCsvMap->first == sPrefix + "DATE_TIME")
-            {
-            // Relative time has already been calculated so store it
-            pclSimState->update(sPrefix+"AC_TIME", fRelTime);
-            }
-
-        // Default is to convert to a double and store it
-        else
-            {
-//            double fDecodedVal = std::stod(itCsvMap->second);
-            pclSimState->update(sPrefix+itCsvMap->first, std::stod(itCsvMap->second));
-            } // end if default copy
-        } // end for all CSV labeled data
-
-    // Get the next line of data
-    bStatus = ReadNextLine();
-
-    return bStatus;
+      // Relative time has already been calculated so store it
+      pclSimState->update(sPrefix + "AC_TIME", fRelTime);
     }
+
+    // Default is to convert to a double and store it
+    else
+    {
+      //            double fDecodedVal = std::stod(itCsvMap->second);
+      pclSimState->update(itCsvMap->first, std::stod(itCsvMap->second));
+    } // end if default copy
+  } // end for all CSV labeled data
+
+// Get the next line of data
+  bStatus = ReadNextLine();
+
+  return bStatus;
+}
 
 
 // ----------------------------------------------------------------------------
