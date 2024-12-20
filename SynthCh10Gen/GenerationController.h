@@ -18,8 +18,9 @@
 #include "irig106ch10.h"
 
 #include "TmatsFormatter.h"
+#include "Config.h"
 
-using namespace std;
+using namespace std;  
 
 class GenerationController
 {
@@ -39,16 +40,15 @@ class GenerationController
 
 
 public:
-  static const int CONTROLLER_OK = 0;
 
   GenerationController();
   ~GenerationController();
 
-  int Init(string configPathname);
-  bool Fire(); // run an iteration
+  ControllerStatus Init(string configPathname);
+  ControllerStatus Fire(); // run an iteration
 
 private:
-  //void ReadConfig(std::string configPathname);
+  ControllerStatus ReadConfig(std::string configFilepath);
   int TmpCreateConfig(); // temporary function to demonstrate a single configuration process
 
 
@@ -75,6 +75,7 @@ private:
   // Initialization functions
   // ========================
   
+  void InitControllerObjects();
   void InitTimers();
 
   // ========================

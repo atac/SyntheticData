@@ -4,17 +4,17 @@
 void vUsage(void);
 
 int main(int iArgc, char* aszArgv[]) {
-  int result = 0;
+  ControllerStatus result = ControllerStatus::OK;
 
   GenerationController* controller = new GenerationController();
 
-  result = controller->Init("");
-  if (result != GenerationController::CONTROLLER_OK)
-    return result;
+  result = controller->Init("C:\\atac\\synthetic\\sample config.json");
+  if (result != ControllerStatus::OK)
+    return 1;
 
-  while (result == GenerationController::CONTROLLER_OK) {
+  while (result == ControllerStatus::OK) {
     result = controller->Fire();
   }
 
-  return result;
+  return 0;
 }

@@ -2,6 +2,12 @@
 
 #include "Ch10Channel.h"
 
+enum class ControllerStatus {
+  OK = 0,
+  INVALID_CONFIG,
+  SOURCES_DEPLETED
+};
+
 enum class ChannelActionType {
   PUSH = 0,
   COMMIT
@@ -27,11 +33,71 @@ enum class RateUnit {
 
 class Rate {
 public:
+  Rate() 
+    : value(0), units(RateUnit::TIME_MS) {};
   Rate(int64_t value, RateUnit units)
     : value(value), units(units) {};
 
   int64_t value;
   RateUnit units;
+
+  void ConvertUnits(RateUnit toUnit) {
+    static const uint64_t ONE_BILLION = 1000000000;
+    static const uint64_t ONE_MILLION = 1000000;
+    static const uint64_t ONE_THOUSAND = 1000;
+
+    if (this->units == toUnit) // nothing to do
+      return;
+
+    uint64_t val = this->value;
+
+    // convert to ns
+    switch (this->units) {
+    case RateUnit::FREQUENCY:
+      val = (uint64_t)((1.0 / (double)val) * ONE_BILLION);
+      break;
+    case RateUnit::TIME_SEC:
+      val *= ONE_BILLION;
+      break;
+    case RateUnit::TIME_MS:
+      val *= ONE_MILLION;
+      break;
+    case RateUnit::TIME_US:
+      val *= ONE_THOUSAND;
+      break;
+    case RateUnit::TIME_RTC:
+      val *= 100;
+      break;
+    case RateUnit::TIME_NS:
+    default:
+      break;
+    }
+
+    // convert to destination unit
+    switch (toUnit) {
+    case RateUnit::FREQUENCY:
+      val = (uint64_t)((1.0 / (double)val) * ONE_BILLION);
+      break;
+    case RateUnit::TIME_SEC:
+      val /= ONE_BILLION;
+      break;
+    case RateUnit::TIME_MS:
+      val /= ONE_MILLION;
+      break;
+    case RateUnit::TIME_US:
+      val /= ONE_THOUSAND;
+      break;
+    case RateUnit::TIME_RTC:
+      val /= 100;
+      break;
+    case RateUnit::TIME_NS:
+    default:
+      break;
+    }
+
+    this->value = val;
+    this->units = toUnit;
+  }
 };
 
 struct ControllerTime {
@@ -40,61 +106,3 @@ struct ControllerTime {
   double currSimClockTime;     // Current simulation Data/Time
   double nextPrintTime;
 };
-
-static void ConvertRateUnits(Rate& rate, RateUnit toUnit) {
-  static const uint64_t ONE_BILLION = 1000000000;
-  static const uint64_t ONE_MILLION = 1000000;
-  static const uint64_t ONE_THOUSAND = 1000;
-
-  if (rate.units == toUnit) // nothing to do
-    return;
-
-  uint64_t val = rate.value;
-
-  // convert to ns
-  switch (rate.units) {
-  case RateUnit::FREQUENCY:
-    val = (uint64_t)((1.0 / (double)rate.value) * ONE_BILLION);
-    break;
-  case RateUnit::TIME_SEC:
-    val *= ONE_BILLION;
-    break;
-  case RateUnit::TIME_MS:
-    val *= ONE_MILLION;
-    break;
-  case RateUnit::TIME_US:
-    val *= ONE_THOUSAND;
-    break;
-  case RateUnit::TIME_RTC:
-    val *= 100;
-    break;
-  case RateUnit::TIME_NS:
-  default:
-    break;
-  }
-
-  // convert to destination unit
-  switch (toUnit) {
-  case RateUnit::FREQUENCY:
-    val = (uint64_t)((1.0 / (double)rate.value) * ONE_BILLION);
-    break;
-  case RateUnit::TIME_SEC:
-    val /= ONE_BILLION;
-    break;
-  case RateUnit::TIME_MS:
-    val /= ONE_MILLION;
-    break;
-  case RateUnit::TIME_US:
-    val /= ONE_THOUSAND;
-    break;
-  case RateUnit::TIME_RTC:
-    val /= 100;
-    break;
-  case RateUnit::TIME_NS:
-  default:
-    break;
-  }
-
-  rate.value = val;
-  rate.units = toUnit;
-}

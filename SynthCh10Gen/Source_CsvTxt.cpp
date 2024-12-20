@@ -213,7 +213,7 @@ bool ClSource_CsvTxt::ReadNextLine()
 
     // Parse the input data line
     CsvMap.clear();
-    bCsvStatus = CsvPatodorser.parse_line(szLine, CsvDataLabels, CsvMap);
+    bCsvStatus = CsvParser.parse_line(szLine, CsvDataLabels, CsvMap);
     assert(bCsvStatus == true);
 
 //    display_map_contents(szLine, CsvMap);

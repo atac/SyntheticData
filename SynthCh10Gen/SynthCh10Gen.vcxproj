@@ -52,6 +52,7 @@
     <ClCompile Include="Ch10Writer_PCM.cpp" />
     <ClCompile Include="Ch10Writer_Time.cpp" />
     <ClCompile Include="Ch10Writer_Video.cpp" />
+    <ClCompile Include="Config.cpp" />
     <ClCompile Include="GenerationController.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Source_CsvTxt.cpp" />
@@ -95,6 +96,7 @@
     <ClInclude Include="Ch10Writer_Index.h" />
     <ClInclude Include="Ch10Writer_PCM.h" />
     <ClInclude Include="Ch10Writer_Time.h" />
+    <ClInclude Include="Config.h" />
     <ClInclude Include="TmatsFormatter.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="GenerationController.h" />
@@ -160,7 +162,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>..\3rdParty\csv-parser;..\3rdParty\SQLite;..\3rdParty\irig106lib\src;$(IncludePath)</IncludePath>
+    <IncludePath>..\3rdParty\json;..\3rdParty\csv-parser;..\3rdParty\SQLite;..\3rdParty\irig106lib\src;$(IncludePath)</IncludePath>
     <IntDir>All\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

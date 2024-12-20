@@ -32,10 +32,10 @@ GenerationController::~GenerationController() {
     delete timers;
 }
 
-int GenerationController::Init(string configPathname) {
+ControllerStatus GenerationController::Init(string configPathname) {
   // TODO: open config file
-  int result = TmpCreateConfig();
-  if (result != CONTROLLER_OK)
+  ControllerStatus result = ReadConfig(configPathname);
+  if (result != ControllerStatus::OK)
     return result;
 
   this->time.currSimClockTime = this->time.startSimClockTime;
@@ -48,13 +48,13 @@ int GenerationController::Init(string configPathname) {
   return result;
 }
 
-bool GenerationController::Fire() {
+ControllerStatus GenerationController::Fire() {
   if (!UpdateSources())
-    return false;
+    return ControllerStatus::SOURCES_DEPLETED;
   PollTimers();
   Tick();
 
-  return CONTROLLER_OK;
+  return ControllerStatus::OK;
 }
 
 bool GenerationController::UpdateSources() {
@@ -107,12 +107,37 @@ void GenerationController::InitTimers() {
   }
 }
 
+ControllerStatus GenerationController::ReadConfig(string configFilepath) {
+  Config config = Config(configFilepath);
+
+  if (!config.Valid())
+    return ControllerStatus::INVALID_CONFIG;
+  
+    InitControllerObjects();
+
+
+  return ControllerStatus::OK;
+  // TODO
+}
+
+void GenerationController::InitControllerObjects() {
+  // init structures
+  sources = new std::vector<ClSource_Nav*>();
+  channels = new vector<Ch10Channel*>();
+  timers = new vector<ClSimTimer*>();
+
+  // init simstate object
+  simState = new ClSimState();
+  simState->clear();
+  simState->SetSimClockTime(&(this->time.currSimClockTime));
+}
+
 int GenerationController::TmpCreateConfig() {
   // from each config item
   string configProgramName = "Fully Generic Data"; 
   string configFileSource = "C:\\atac\\vsprojects\\SyntheticData\\Debug\\30931-small.csv";
   Rate configDataRate(100, RateUnit::FREQUENCY); // frequency of frames in a packet
-  Rate configPacketRate(10, RateUnit::FREQUENCY); // frequency of packets in a file
+  Rate configPacketRate(20, RateUnit::FREQUENCY); // frequency of packets in a file
   Rate configIndexAppendRate(1000, RateUnit::TIME_MS);
   Rate configIndexCommitRate(6000, RateUnit::TIME_MS);
   int configIndexNodesPerRoot = 10;
@@ -150,6 +175,8 @@ int GenerationController::TmpCreateConfig() {
   // FOREACH SOURCE
   //
   // if (configLine.type == CSV)
+
+  // open source file
   string sourcePrefix = "src" + to_string(++sourceCount);
   ClSource_CsvTxt* csvSrc = new ClSource_CsvTxt(simState, sourcePrefix);
   ClSource_Nav* navSrc = dynamic_cast<ClSource_Nav*>(csvSrc);
@@ -181,7 +208,7 @@ int GenerationController::TmpCreateConfig() {
   // create channel passing formatter/writer
   Ch10Channel* channel = CreateChannel(writer, formatter, configChanType, configChanName);
 
-  // create timers with maps to channel/action
+  // create timers for channel actions
   AddTimedChannelAction(channel, configDataRate, ChannelActionType::PUSH);
   AddTimedChannelAction(channel, configPacketRate, ChannelActionType::COMMIT);
   //
@@ -235,7 +262,7 @@ void GenerationController::AddTimedChannelAction(Ch10Channel* channel, Rate rate
 
 // Get or create timer based on the specified rate
 ClSimTimer* GenerationController::GetTimer(Rate rate) {
-  ConvertRateUnits(rate, RateUnit::TIME_RTC);
+  rate.ConvertUnits(RateUnit::TIME_RTC);
 
   ClSimTimer* timer = GetExistingTimer(rate.value);
 

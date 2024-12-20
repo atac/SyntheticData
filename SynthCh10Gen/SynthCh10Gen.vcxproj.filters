@@ -129,6 +129,7 @@
     <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_pcmf1.c">
       <Filter>irig106lib</Filter>
     </ClCompile>
+    <ClCompile Include="Config.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\3rdParty\csv-parser\csv_parser.hpp">
@@ -265,5 +266,6 @@
     <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats_r.h">
       <Filter>irig106lib</Filter>
     </ClInclude>
+    <ClInclude Include="Config.h" />
   </ItemGroup>
 </Project>
