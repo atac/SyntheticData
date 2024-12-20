@@ -14,7 +14,6 @@ using namespace nlohmann;
 
 
 struct ConfigChannel;
-enum class ConfigChannelType;
 
 
 class Config
@@ -51,34 +50,26 @@ private:
   void ParseChannel(json channel);
   Rate ParseRate(json rate);
 
-  ConfigChannelType GetChannelTypeFromString(string typeStr);
+  Ch10Channel::ChannelType GetChannelTypeFromString(string typeStr);
   RateUnit GetRateUnitFromString(string unitStr);
 
   string GenerateProgramName();
   string GenerateOutputPathname();
   int GenerateChannelID();
-  string GenerateChannelName(int channelID, ConfigChannelType type);
+  string GenerateChannelName(int channelID, Ch10Channel::ChannelType type);
 
   void CheckForTimeSource(ConfigChannel channel);
 };
 
 struct ConfigChannel 
 {
-  ConfigChannel(ConfigChannelType type, int id) : type(type), id(id) { };
+  ConfigChannel(Ch10Channel::ChannelType type, int id) : type(type), id(id) { };
 
   bool timeSource;
   int id;
-  ConfigChannelType type;
+  Ch10Channel::ChannelType type;
   string name;
   string sourcePathname;
   Rate pollRate;
   Rate packetRate;
-};
-
-enum class ConfigChannelType {
-  INVALID,
-  PCM,
-  ARINC_429,
-  MIL_STD_1553,
-  VIDEO
 };

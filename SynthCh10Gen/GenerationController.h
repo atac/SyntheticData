@@ -49,7 +49,7 @@ public:
 
 private:
   ControllerStatus ReadConfig(std::string configFilepath);
-  int TmpCreateConfig(); // temporary function to demonstrate a single configuration process
+  //int TmpCreateConfig(); // temporary function to demonstrate a single configuration process
 
 
   // Configuration functions
@@ -63,8 +63,9 @@ private:
   //Source_Nav AddSource(std::string sourcePathname);
   //Ch10Channel AddChannel(void channelConfig); 
 
-  void                AddIndexWriter(Rate indexRate, Rate nodeRate, uint8_t nodesPerRoot, ClCh10Writer_Time* timeWriter);
-  ClCh10Writer_Time*  AddTimeWriter();
+  void                AddIndexChannel(ClCh10Writer_Time* timeWriter);
+  ClCh10Writer_Time*  AddTimeChannel();
+  ControllerStatus    AddDataChannel(ConfigChannel channel);
 
   std::string GenerateChannelName(Ch10Channel::ChannelType type);
   Ch10Channel* CreateChannel(Ch10Writer* writer, Ch10Formatter* formatter, Ch10Channel::ChannelType type, std::string name = "");
@@ -76,6 +77,7 @@ private:
   // ========================
   
   void InitControllerObjects();
+  int  InitOutputFile(string pathname);
   void InitTimers();
 
   // ========================

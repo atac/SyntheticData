@@ -5,6 +5,8 @@
 enum class ControllerStatus {
   OK = 0,
   INVALID_CONFIG,
+  OPEN_OUTPUT_FILE_FAILED,
+  OPEN_SOURCE_FILE_FAILED,
   SOURCES_DEPLETED
 };
 
@@ -28,7 +30,7 @@ enum class RateUnit {
   TIME_US,      // microseconds
   TIME_RTC,     // 100 nanoseconds | 10 MHz
   TIME_NS,      // nanoseconds
-  FREQUENCY,    // Hz
+  HERTZ,        // frequency (Hz)
 };
 
 class Rate {
@@ -53,7 +55,7 @@ public:
 
     // convert to ns
     switch (this->units) {
-    case RateUnit::FREQUENCY:
+    case RateUnit::HERTZ:
       val = (uint64_t)((1.0 / (double)val) * ONE_BILLION);
       break;
     case RateUnit::TIME_SEC:
@@ -75,7 +77,7 @@ public:
 
     // convert to destination unit
     switch (toUnit) {
-    case RateUnit::FREQUENCY:
+    case RateUnit::HERTZ:
       val = (uint64_t)((1.0 / (double)val) * ONE_BILLION);
       break;
     case RateUnit::TIME_SEC:

@@ -9,12 +9,13 @@ class Ch10Channel
 {
 public:
   enum class ChannelType {
-    A429 = 0,
+    INVALID = 0,
+    A429,
     PCM,
     MS1553,
-    Video,
-    Time,
-    Index
+    VIDEO,
+    TIME,
+    INDEX
   };
 
 private:

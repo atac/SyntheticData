@@ -138,8 +138,8 @@ public:
       index.iDIndex++;
       index.iRSrcNum++;
       break;
-    case Ch10Channel::ChannelType::Video:
-    case Ch10Channel::ChannelType::Time:
+    case Ch10Channel::ChannelType::VIDEO:
+    case Ch10Channel::ChannelType::TIME:
       index.iRSrcNum++;
       break;
     default:

@@ -7,6 +7,9 @@ Config::Config(string configPathname) {
 
   if (Valid())
     ParseConfig();
+
+  file->close();
+  delete file;
 }
 
 void Config::Open(string pathname) {
@@ -59,7 +62,7 @@ bool Config::ChannelIsValid(json channel) {
   auto t = channel.find("type");
   if (t == channel.end() 
     || !t->is_string()
-    || GetChannelTypeFromString(t->get<string>()) == ConfigChannelType::INVALID)
+    || GetChannelTypeFromString(t->get<string>()) == Ch10Channel::ChannelType::INVALID)
     return false;
 
   auto sf = channel.find("sourceFile");
@@ -116,7 +119,7 @@ void Config::ParseChannels() {
 }
 
 void Config::ParseChannel(json channel) {
-  ConfigChannelType t = GetChannelTypeFromString(channel["type"].get<string>());
+  Ch10Channel::ChannelType t = GetChannelTypeFromString(channel["type"].get<string>());
 
   int id;
   if (channel.contains("id") && channel["id"].is_number_unsigned())
@@ -162,19 +165,19 @@ bool Config::Valid() {
   return valid;
 }
 
-ConfigChannelType Config::GetChannelTypeFromString(string typeStr) {
-  ConfigChannelType t = ConfigChannelType::INVALID;
+Ch10Channel::ChannelType Config::GetChannelTypeFromString(string typeStr) {
+  Ch10Channel::ChannelType t = Ch10Channel::ChannelType::INVALID;
 
   transform(typeStr.begin(), typeStr.end(), typeStr.begin(), ::tolower);
 
   if (typeStr == "pcm")
-    t = ConfigChannelType::PCM;
+    t = Ch10Channel::ChannelType::PCM;
   else if (typeStr == "a429" || typeStr == "arinc-429" || typeStr == "arinc_429")
-    t = ConfigChannelType::ARINC_429;
+    t = Ch10Channel::ChannelType::A429;
   else if (typeStr == "1553" || typeStr == "mil-std-1553" || typeStr == "mil_std_1553" || typeStr == "ms1553")
-    t = ConfigChannelType::MIL_STD_1553;
+    t = Ch10Channel::ChannelType::MS1553;
   else if (typeStr == "video" || typeStr == "vid")
-    t = ConfigChannelType::VIDEO;
+    t = Ch10Channel::ChannelType::VIDEO;
 
   return t;
 }
@@ -193,7 +196,7 @@ RateUnit Config::GetRateUnitFromString(string unitStr) {
   else if (unitStr == "ns" || unitStr == "nano" || unitStr == "nanoseconds")
     u = RateUnit::TIME_NS;
   else if (unitStr == "hz" || unitStr == "hertz" || unitStr == "frequency")
-    u = RateUnit::FREQUENCY;
+    u = RateUnit::HERTZ;
 
   return u;
 }
@@ -221,14 +224,14 @@ int Config::GenerateChannelID() {
   return nextID++;
 }
 
-string Config::GenerateChannelName(int channelID, ConfigChannelType type) {
+string Config::GenerateChannelName(int channelID, Ch10Channel::ChannelType type) {
   string typestr = "PCM";
 
-  if (type == ConfigChannelType::MIL_STD_1553)
+  if (type == Ch10Channel::ChannelType::MS1553)
     typestr = "1553";
-  if (type == ConfigChannelType::ARINC_429)
+  if (type == Ch10Channel::ChannelType::A429)
     typestr = "A429";
-  if (type == ConfigChannelType::VIDEO)
+  if (type == Ch10Channel::ChannelType::VIDEO)
     typestr = "VIDEO";
 
   return typestr + "in" + to_string(channelID);
@@ -241,8 +244,8 @@ void Config::CheckForTimeSource(ConfigChannel channel) {
       timeSourceFound = true;
     }
     else {
-      string n;
-      transform(channel.name.begin(), channel.name.end(), n.begin(), ::tolower);
+      string n = channel.name;
+      transform(n.begin(), n.end(), n.begin(), ::tolower);
       if (n == timeSourceChannel) {
         channel.timeSource = true;
         timeSourceFound = true;

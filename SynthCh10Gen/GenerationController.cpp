@@ -33,7 +33,6 @@ GenerationController::~GenerationController() {
 }
 
 ControllerStatus GenerationController::Init(string configPathname) {
-  // TODO: open config file
   ControllerStatus result = ReadConfig(configPathname);
   if (result != ControllerStatus::OK)
     return result;
@@ -113,11 +112,26 @@ ControllerStatus GenerationController::ReadConfig(string configFilepath) {
   if (!config.Valid())
     return ControllerStatus::INVALID_CONFIG;
   
-    InitControllerObjects();
+  InitControllerObjects();
 
+  if (config.programName.size() > 0)
+    this->programName = config.programName;
+
+  if (InitOutputFile(config.outputPathname) != 0)
+    return ControllerStatus::OPEN_OUTPUT_FILE_FAILED;
+
+  ClCh10Writer_Time* timeWriter = AddTimeChannel();
+  AddIndexChannel(timeWriter);
+
+  // Initialize each channel
+  for (int i = 0; i < config.channels.size(); i++) {
+    if (AddDataChannel(config.channels[i]) != ControllerStatus::OK)
+      return ControllerStatus::OPEN_SOURCE_FILE_FAILED;
+  }
+
+  timeWriter->SetRelTime(ClSimTimer::lSimClockTicks, this->time.startSimClockTime);
 
   return ControllerStatus::OK;
-  // TODO
 }
 
 void GenerationController::InitControllerObjects() {
@@ -132,58 +146,121 @@ void GenerationController::InitControllerObjects() {
   simState->SetSimClockTime(&(this->time.currSimClockTime));
 }
 
-int GenerationController::TmpCreateConfig() {
-  // from each config item
-  string configProgramName = "Fully Generic Data"; 
-  string configFileSource = "C:\\atac\\vsprojects\\SyntheticData\\Debug\\30931-small.csv";
-  Rate configDataRate(100, RateUnit::FREQUENCY); // frequency of frames in a packet
-  Rate configPacketRate(20, RateUnit::FREQUENCY); // frequency of packets in a file
-  Rate configIndexAppendRate(1000, RateUnit::TIME_MS);
-  Rate configIndexCommitRate(6000, RateUnit::TIME_MS);
-  int configIndexNodesPerRoot = 10;
-  string configOutfile = "C:\\atac\\vsprojects\\SyntheticData\\Debug\\test_generic_pcm.ch10";
-  unsigned int configChanID = 20;
-  string configChanName = "genericPcmChan";
-  Ch10Channel::ChannelType configChanType = Ch10Channel::ChannelType::PCM;
-
-  // init structures
-  sources = new std::vector<ClSource_Nav*>();
-  channels = new vector<Ch10Channel*>();
-  timers = new vector<ClSimTimer*>();
-
-  // init simstate object
-  simState = new ClSimState();
-  simState->clear();
-  simState->SetSimClockTime(&(this->time.currSimClockTime));
-
-
+int GenerationController::InitOutputFile(string pathname) {
   // create output file
-  EnI106Status enStatus = enI106Ch10Open(&i106OutFileHandle, configOutfile.data(), I106_OVERWRITE);
+  EnI106Status enStatus = enI106Ch10Open(&i106OutFileHandle, pathname.data(), I106_OVERWRITE);
   if (enStatus != I106_OK)
   {
     fprintf(stderr, "Error opening data file : Status = %d\n", enStatus);
     return 1;
   }
 
-  // create required ch10 channel writers
-  ClCh10Writer_Time* timeWriter = AddTimeWriter();
-  AddIndexWriter(configIndexAppendRate, configIndexCommitRate, configIndexNodesPerRoot, timeWriter);
+  return 0;
+}
 
-  // create source(s) passing simstate
-  int sourceCount = 0;
+//int GenerationController::TmpCreateConfig() {
+//  // from each config item
+//  string configProgramName = "Fully Generic Data"; 
+//  string configFileSource = "C:\\atac\\vsprojects\\SyntheticData\\Debug\\30931-small.csv";
+//  Rate configDataRate(100, RateUnit::HERTZ); // frequency of frames in a packet
+//  Rate configPacketRate(20, RateUnit::HERTZ); // frequency of packets in a file
+//  Rate configIndexAppendRate(1000, RateUnit::TIME_MS);
+//  Rate configIndexCommitRate(6000, RateUnit::TIME_MS);
+//  int configIndexNodesPerRoot = 10;
+//  string configOutfile = "C:\\atac\\vsprojects\\SyntheticData\\Debug\\test_generic_pcm.ch10";
+//  unsigned int configChanID = 20;
+//  string configChanName = "genericPcmChan";
+//  Ch10Channel::ChannelType configChanType = Ch10Channel::ChannelType::PCM;
+//
+//  // init structures
+//  sources = new std::vector<ClSource_Nav*>();
+//  channels = new vector<Ch10Channel*>();
+//  timers = new vector<ClSimTimer*>();
+//
+//  // init simstate object
+//  simState = new ClSimState();
+//  simState->clear();
+//  simState->SetSimClockTime(&(this->time.currSimClockTime));
+//
+//
+//  // create output file
+//  EnI106Status enStatus = enI106Ch10Open(&i106OutFileHandle, configOutfile.data(), I106_OVERWRITE);
+//  if (enStatus != I106_OK)
+//  {
+//    fprintf(stderr, "Error opening data file : Status = %d\n", enStatus);
+//    return 1;
+//  }
+//
+//  // create required ch10 channel writers
+//  ClCh10Writer_Time* timeWriter = AddTimeWriter();
+//  AddIndexWriter(configIndexAppendRate, configIndexCommitRate, configIndexNodesPerRoot, timeWriter);
+//
+//  // create source(s) passing simstate
+//  int sourceCount = 0;
+//
+//  // FOREACH SOURCE
+//  //
+//  // if (configLine.type == CSV)
+//
+//  // open source file
+//  string sourcePrefix = "src" + to_string(++sourceCount);
+//  ClSource_CsvTxt* csvSrc = new ClSource_CsvTxt(simState, sourcePrefix);
+//  ClSource_Nav* navSrc = dynamic_cast<ClSource_Nav*>(csvSrc);
+//  if (navSrc != nullptr) {
+//    if (!navSrc->Open(configFileSource)) {
+//      fprintf(stderr, "Failed to open source");
+//      return 1;
+//    }
+//    sources->push_back(navSrc);
+//  }
+//
+//  // get start time from source
+//  time.startSimClockTime = csvSrc->fStartTime;
+//
+//  // create formatter
+//  ClCh10Format_PCM_SynthFmtCsv* formatCsv =
+//    new ClCh10Format_PCM_SynthFmtCsv(
+//      configDataRate.value,
+//      csvSrc->GetCsvFields(),
+//      csvSrc->GetCsvFieldTypes()
+//    );
+//  Ch10Formatter* formatter = dynamic_cast<Ch10Formatter*>(formatCsv);
+//
+//  // create writer
+//  ClCh10Writer_PCM* writerPcm = new ClCh10Writer_PCM();
+//  writerPcm->Init(i106OutFileHandle, configChanID, formatCsv);
+//  Ch10Writer* writer = dynamic_cast<Ch10Writer*>(writerPcm);
+//
+//  // create channel passing formatter/writer
+//  Ch10Channel* channel = CreateChannel(writer, formatter, configChanType, configChanName);
+//
+//  // create timers for channel actions
+//  AddTimedChannelAction(channel, configDataRate, ChannelActionType::PUSH);
+//  AddTimedChannelAction(channel, configPacketRate, ChannelActionType::COMMIT);
+//  //
+//  // END FOREACH SOURCE
+//
+//  timeWriter->SetRelTime(ClSimTimer::lSimClockTicks, this->time.startSimClockTime);
+//
+//  return 0;
+//}
 
-  // FOREACH SOURCE
+// TODO: validate sourcefile type by extension
+// TODO: need to make sure we are pulling rate definitions from configuration file
+// TODO: handle case for pollRate being "on demand"
+
+ControllerStatus GenerationController::AddDataChannel(ConfigChannel config) {  // FOREACH SOURCE
   //
   // if (configLine.type == CSV)
 
   // open source file
-  string sourcePrefix = "src" + to_string(++sourceCount);
+  string sourcePrefix = "src" + to_string(config.id);
   ClSource_CsvTxt* csvSrc = new ClSource_CsvTxt(simState, sourcePrefix);
   ClSource_Nav* navSrc = dynamic_cast<ClSource_Nav*>(csvSrc);
   if (navSrc != nullptr) {
-    if (!navSrc->Open(configFileSource)) {
+    if (!navSrc->Open(config.sourcePathname)) {
       fprintf(stderr, "Failed to open source");
-      return 1;
+      return ControllerStatus::OPEN_SOURCE_FILE_FAILED;
     }
     sources->push_back(navSrc);
   }
@@ -191,10 +268,13 @@ int GenerationController::TmpCreateConfig() {
   // get start time from source
   time.startSimClockTime = csvSrc->fStartTime;
 
+  Rate framerate = config.pollRate;
+  framerate.ConvertUnits(RateUnit::HERTZ);
+
   // create formatter
   ClCh10Format_PCM_SynthFmtCsv* formatCsv =
     new ClCh10Format_PCM_SynthFmtCsv(
-      configDataRate.value,
+      framerate.value,
       csvSrc->GetCsvFields(),
       csvSrc->GetCsvFieldTypes()
     );
@@ -202,24 +282,25 @@ int GenerationController::TmpCreateConfig() {
 
   // create writer
   ClCh10Writer_PCM* writerPcm = new ClCh10Writer_PCM();
-  writerPcm->Init(i106OutFileHandle, configChanID, formatCsv);
+  writerPcm->Init(i106OutFileHandle, config.id, formatCsv);
   Ch10Writer* writer = dynamic_cast<Ch10Writer*>(writerPcm);
 
   // create channel passing formatter/writer
-  Ch10Channel* channel = CreateChannel(writer, formatter, configChanType, configChanName);
+  Ch10Channel* channel = CreateChannel(writer, formatter, config.type, config.name);
 
   // create timers for channel actions
-  AddTimedChannelAction(channel, configDataRate, ChannelActionType::PUSH);
-  AddTimedChannelAction(channel, configPacketRate, ChannelActionType::COMMIT);
-  //
-  // END FOREACH SOURCE
+  AddTimedChannelAction(channel, config.pollRate, ChannelActionType::PUSH);
+  AddTimedChannelAction(channel, config.packetRate, ChannelActionType::COMMIT);
 
-  timeWriter->SetRelTime(ClSimTimer::lSimClockTicks, this->time.startSimClockTime);
-
-  return 0;
+  return ControllerStatus::OK;
 }
 
-void GenerationController::AddIndexWriter(Rate indexRate, Rate nodeRate, uint8_t nodesPerRoot, ClCh10Writer_Time* timeWriter) {
+void GenerationController::AddIndexChannel(ClCh10Writer_Time* timeWriter) {
+  // TODO: consider making these user-configurable
+  Rate indexAppendRate(1000, RateUnit::TIME_MS);
+  Rate nodeCommitRate(6000, RateUnit::TIME_MS);
+  int indexNodesPerRoot = 10;
+
   Ch10Format_Index* formatter = new Ch10Format_Index();
   formatter->Init(&(timeWriter->suWritePktTimeF1.suCh10Header));
 
@@ -227,22 +308,22 @@ void GenerationController::AddIndexWriter(Rate indexRate, Rate nodeRate, uint8_t
   indexWriter->Init(i106OutFileHandle, 0, 10, formatter);
   Ch10Writer* writer = dynamic_cast<Ch10Writer*>(indexWriter);
 
-  Ch10Channel::ChannelType type = Ch10Channel::ChannelType::Index;
+  Ch10Channel::ChannelType type = Ch10Channel::ChannelType::INDEX;
 
   Ch10Channel* channel = CreateChannel(writer, formatter, type);
 
-  AddTimedChannelAction(channel, indexRate, ChannelActionType::PUSH);
-  AddTimedChannelAction(channel, nodeRate, ChannelActionType::COMMIT);
+  AddTimedChannelAction(channel, indexAppendRate, ChannelActionType::PUSH);
+  AddTimedChannelAction(channel, nodeCommitRate, ChannelActionType::COMMIT);
 }
 
-ClCh10Writer_Time* GenerationController::AddTimeWriter() {
+ClCh10Writer_Time* GenerationController::AddTimeChannel() {
   Ch10Format_Time* formatter = new Ch10Format_Time();
 
   ClCh10Writer_Time* timeWriter = new ClCh10Writer_Time();
   timeWriter->Init(i106OutFileHandle, 1, formatter);
   Ch10Writer* writer = dynamic_cast<Ch10Writer*>(timeWriter);
 
-  Ch10Channel::ChannelType type = Ch10Channel::ChannelType::Time;
+  Ch10Channel::ChannelType type = Ch10Channel::ChannelType::TIME;
 
   this->timeChannel = CreateChannel(writer, formatter, type);
 
@@ -330,13 +411,13 @@ std::string GenerationController::GenerateChannelName(Ch10Channel::ChannelType t
   case Ch10Channel::ChannelType::MS1553:
     prefix = "1553";
     break;
-  case Ch10Channel::ChannelType::Video:
+  case Ch10Channel::ChannelType::VIDEO:
     prefix = "Video";
     break;
-  case Ch10Channel::ChannelType::Time:
+  case Ch10Channel::ChannelType::TIME:
     prefix = "Time";
     break;
-  case Ch10Channel::ChannelType::Index:
+  case Ch10Channel::ChannelType::INDEX:
     prefix = "Index";
     break;
   }
