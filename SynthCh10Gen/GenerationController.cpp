@@ -15,7 +15,7 @@ GenerationController::GenerationController() {
   time.srcTime = 0.0;
   time.startSimClockTime = -1.0;
 
-  programName = "Synthetic Chapter 10";
+  programName = "";
 }
 
 GenerationController::~GenerationController() {
@@ -117,7 +117,7 @@ ControllerStatus GenerationController::ReadConfig(string configFilepath) {
   if (config.programName.size() > 0)
     this->programName = config.programName;
 
-  if (InitOutputFile(config.outputPathname) != 0)
+  if (InitOutputFile(config.outputDirectory, config.outputFilename) != 0)
     return ControllerStatus::OPEN_OUTPUT_FILE_FAILED;
 
   ClCh10Writer_Time* timeWriter = AddTimeChannel();
@@ -146,12 +146,14 @@ void GenerationController::InitControllerObjects() {
   simState->SetSimClockTime(&(this->time.currSimClockTime));
 }
 
-int GenerationController::InitOutputFile(string pathname) {
+int GenerationController::InitOutputFile(string directory, string filename) {
+  string pathname = directory + "/" + filename;
+
   // create output file
   EnI106Status enStatus = enI106Ch10Open(&i106OutFileHandle, pathname.data(), I106_OVERWRITE);
   if (enStatus != I106_OK)
   {
-    fprintf(stderr, "Error opening data file : Status = %d\n", enStatus);
+    fprintf(stderr, "Error opening output file : Status = %d\n", enStatus);
     return 1;
   }
 
@@ -248,6 +250,7 @@ int GenerationController::InitOutputFile(string pathname) {
 // TODO: validate sourcefile type by extension
 // TODO: need to make sure we are pulling rate definitions from configuration file
 // TODO: handle case for pollRate being "on demand"
+// TODO: generate channel ID needs to start at 2 and account for a mix of specified and unspecified channel IDs
 
 ControllerStatus GenerationController::AddDataChannel(ConfigChannel config) {  // FOREACH SOURCE
   //

@@ -8,6 +8,8 @@ Config::Config(string configPathname) {
   if (Valid())
     ParseConfig();
 
+  configTime = time(nullptr);
+
   file->close();
   delete file;
 }
@@ -37,22 +39,40 @@ void Config::ParseConfig() {
 }
 
 bool Config::ConfigIsValid() {
+  bool valid = true;
+
   try {
-    bool valid = false;
+    json outDir = config["outputDirectory"];
 
-    json chanList = config["channels"];
+    if (outDir.is_null() || !outDir.is_string())
+      valid = false;
 
-    if (!chanList.is_null() && chanList.is_array() && chanList.size() > 0) {
-      for (auto c : chanList) {
-        if (ChannelIsValid(c)) {
-          valid = true;
-          break;
+    if (valid) {
+      valid = filesystem::exists(outDir.get<string>());
+    }
+
+    if (valid) {
+      bool foundValidChannel = false;
+
+      json chanList = config["channels"];
+
+      if (!chanList.is_null() && chanList.is_array() && chanList.size() > 0) {
+        for (auto c : chanList) {
+          if (ChannelIsValid(c)) {
+            foundValidChannel = true;
+            break;
+          }
         }
       }
+
+      if (!foundValidChannel)
+        valid = false;
     }
+
   }
   catch (json::exception e) {
     printf("Error parsing JSON: \n%s\n", e.what());
+    valid = false;
   }
 
   return valid;
@@ -69,6 +89,9 @@ bool Config::ChannelIsValid(json channel) {
   if (sf == channel.end() || !sf->is_string())
     return false;
 
+  if (!filesystem::exists(sf->get<string>()))
+    return false;
+
   return true;
 }
 
@@ -81,12 +104,15 @@ void Config::ParseGeneralInfo() {
   else
     programName = GenerateProgramName();
 
+  // outputDirectory
+  outputDirectory = config["outputDirectory"];
+
   // outputPathname
-  auto of = config.find("outputFile");
+  auto of = config.find("outputFilename");
   if (of != config.end() && of->is_string())
-    outputPathname = of.value();
+    outputFilename = of.value();
   else
-    outputPathname = GenerateOutputPathname();
+    outputFilename = GenerateOutputFilename();
 
   // startTime
   auto st = config.find("startTime");
@@ -170,13 +196,13 @@ Ch10Channel::ChannelType Config::GetChannelTypeFromString(string typeStr) {
 
   transform(typeStr.begin(), typeStr.end(), typeStr.begin(), ::tolower);
 
-  if (typeStr == "pcm")
+  if (typeStr == "pcmin" || typeStr == "pcm")
     t = Ch10Channel::ChannelType::PCM;
-  else if (typeStr == "a429" || typeStr == "arinc-429" || typeStr == "arinc_429")
+  else if (typeStr == "429in" || typeStr == "a429" || typeStr == "arinc429" || typeStr == "arinc-429" || typeStr == "arinc_429")
     t = Ch10Channel::ChannelType::A429;
-  else if (typeStr == "1553" || typeStr == "mil-std-1553" || typeStr == "mil_std_1553" || typeStr == "ms1553")
+  else if (typeStr == "1553in" || typeStr == "1553" || typeStr == "mil-std-1553" || typeStr == "mil_std_1553" || typeStr == "ms1553")
     t = Ch10Channel::ChannelType::MS1553;
-  else if (typeStr == "video" || typeStr == "vid")
+  else if (typeStr == "vidin" || typeStr == "video" || typeStr == "vid")
     t = Ch10Channel::ChannelType::VIDEO;
 
   return t;
@@ -202,18 +228,16 @@ RateUnit Config::GetRateUnitFromString(string unitStr) {
 }
 
 string Config::GenerateProgramName() {
-  time_t t = time(NULL);
-  return "Synthetic Data Generated " + string(ctime(&t));
+  return "Synthetic Chapter 10";
 }
 
-string Config::GenerateOutputPathname() {
+string Config::GenerateOutputFilename() {
   string prefix = ".\\synthetic_data_";
   string extension = ".ch10";
 
-  time_t t = time(NULL);
-  struct tm* time = localtime(&t);
-  char timestamp[14];
-  strftime(timestamp, 14, "%Y%m%d%R%M%S", time);
+  struct tm* time = localtime(&configTime);
+  char timestamp[20];
+  strftime(timestamp, 20, "%Y%m%d_%H%M%S", time);
 
   return prefix + string(timestamp) + extension;
 }

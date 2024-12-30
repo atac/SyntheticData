@@ -24,12 +24,15 @@ public:
   bool Valid();
 
   string programName;
-  string outputPathname;
+  string outputDirectory;
+  string outputFilename;
   string startTime;
 
   vector<ConfigChannel> channels;
 
 private:
+  time_t configTime;
+
   ifstream* file;
   json config;
 
@@ -54,7 +57,7 @@ private:
   RateUnit GetRateUnitFromString(string unitStr);
 
   string GenerateProgramName();
-  string GenerateOutputPathname();
+  string GenerateOutputFilename();
   int GenerateChannelID();
   string GenerateChannelName(int channelID, Ch10Channel::ChannelType type);
 

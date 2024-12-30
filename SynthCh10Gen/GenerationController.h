@@ -77,7 +77,7 @@ private:
   // ========================
   
   void InitControllerObjects();
-  int  InitOutputFile(string pathname);
+  int  InitOutputFile(string directory, string filename);
   void InitTimers();
 
   // ========================
