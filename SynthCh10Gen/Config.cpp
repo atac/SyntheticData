@@ -182,11 +182,11 @@ Rate Config::ParseRate(json rate) {
   Rate r = Rate();
 
   auto value = rate.find("value");
-  if (value == rate.end() || !value->is_number_unsigned())
+  if (value != rate.end() && value->is_number_unsigned())
     r.value = value->get<unsigned int>();
 
   auto unit = rate.find("unit");
-  if (unit == rate.end() || !unit->is_string())
+  if (unit != rate.end() && unit->is_string())
     r.units = GetRateUnitFromString(unit->get<string>());
 
   return r;

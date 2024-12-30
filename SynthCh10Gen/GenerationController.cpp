@@ -4,6 +4,11 @@
 // TODO:
 // Need more time conversions
 
+// TODO: need to make sure we are pulling rate definitions from configuration file
+// TODO: handle case for pollRate being "on demand"
+// TODO: generate channel ID needs to start at 2 and account for a mix of specified and unspecified channel IDs
+
+
 GenerationController::GenerationController() {
   simState = nullptr;
   sources = nullptr;
@@ -159,12 +164,6 @@ int GenerationController::InitOutputFile(string directory, string filename) {
 
   return 0;
 }
-
-
-// TODO: validate sourcefile type by extension
-// TODO: need to make sure we are pulling rate definitions from configuration file
-// TODO: handle case for pollRate being "on demand"
-// TODO: generate channel ID needs to start at 2 and account for a mix of specified and unspecified channel IDs
 
 ControllerStatus GenerationController::AddDataChannel(ConfigChannel config) {  // FOREACH SOURCE
   //
