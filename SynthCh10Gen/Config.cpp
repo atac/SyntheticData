@@ -89,6 +89,10 @@ bool Config::ChannelIsValid(json channel) {
   if (sf == channel.end() || !sf->is_string())
     return false;
 
+  SourceFileType sft = GetSourceFileTypeFromString(sf->get<string>());
+  if (sft == SourceFileType::INVALID)
+    return false;
+
   if (!filesystem::exists(sf->get<string>()))
     return false;
 
@@ -155,7 +159,8 @@ void Config::ParseChannel(json channel) {
 
   ConfigChannel c(t, id);
 
-  c.sourcePathname = channel["sourceFile"];
+  c.sourcePathname = channel["sourceFile"].get<string>();
+  c.sourceType = GetSourceFileTypeFromString(c.sourcePathname);
 
   if (channel.contains("name") && channel["name"].is_string())
     c.name = channel["name"].get<string>();
@@ -225,6 +230,20 @@ RateUnit Config::GetRateUnitFromString(string unitStr) {
     u = RateUnit::HERTZ;
 
   return u;
+}
+
+SourceFileType Config::GetSourceFileTypeFromString(string pathname) {
+  size_t dotIndex = pathname.find_last_of('.');
+  string ext = pathname.substr(dotIndex + 1);
+
+  transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+
+  SourceFileType sft = SourceFileType::INVALID;
+
+  if (ext == "csv")
+    sft = SourceFileType::CSV;
+
+  return sft;
 }
 
 string Config::GenerateProgramName() {

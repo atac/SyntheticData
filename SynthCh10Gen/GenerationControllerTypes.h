@@ -2,6 +2,11 @@
 
 #include "Ch10Channel.h"
 
+enum class SourceFileType {
+  INVALID = 0,
+  CSV
+};
+
 enum class ControllerStatus {
   OK = 0,
   INVALID_CONFIG,

@@ -55,6 +55,7 @@ private:
 
   Ch10Channel::ChannelType GetChannelTypeFromString(string typeStr);
   RateUnit GetRateUnitFromString(string unitStr);
+  SourceFileType GetSourceFileTypeFromString(string pathname);
 
   string GenerateProgramName();
   string GenerateOutputFilename();
@@ -73,6 +74,7 @@ struct ConfigChannel
   Ch10Channel::ChannelType type;
   string name;
   string sourcePathname;
+  SourceFileType sourceType;
   Rate pollRate;
   Rate packetRate;
 };
