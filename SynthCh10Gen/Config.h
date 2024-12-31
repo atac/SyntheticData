@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <set>
 #include <fstream>
 #include <ctime>
 
@@ -59,7 +60,9 @@ private:
 
   string GenerateProgramName();
   string GenerateOutputFilename();
+  void GenerateUnspecifiedChannelIDs();
   int GenerateChannelID();
+  void GenerateUnspecifiedChannelNames();
   string GenerateChannelName(int channelID, Ch10Channel::ChannelType type);
 
   void CheckForTimeSource(ConfigChannel channel);

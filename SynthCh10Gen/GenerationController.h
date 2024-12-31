@@ -49,7 +49,6 @@ public:
 
 private:
   ControllerStatus ReadConfig(std::string configFilepath);
-  //int TmpCreateConfig(); // temporary function to demonstrate a single configuration process
 
 
   // Configuration functions
@@ -61,7 +60,6 @@ private:
   ClSimTimer* CreateTimer(int64_t timeout);
   void InsertTimer(ClSimTimer* timer);
   //Source_Nav AddSource(std::string sourcePathname);
-  //Ch10Channel AddChannel(void channelConfig); 
 
   void                AddIndexChannel(ClCh10Writer_Time* timeWriter);
   ClCh10Writer_Time*  AddTimeChannel();

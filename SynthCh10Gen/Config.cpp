@@ -146,6 +146,9 @@ void Config::ParseChannels() {
     if (ChannelIsValid(chan))
       ParseChannel(chan);
   }
+
+  GenerateUnspecifiedChannelIDs();
+  GenerateUnspecifiedChannelNames();
 }
 
 void Config::ParseChannel(json channel) {
@@ -155,7 +158,7 @@ void Config::ParseChannel(json channel) {
   if (channel.contains("id") && channel["id"].is_number_unsigned())
     id = channel["id"].get<int>();
   else
-    id = GenerateChannelID();
+    id = -1;
 
   ConfigChannel c(t, id);
 
@@ -165,7 +168,7 @@ void Config::ParseChannel(json channel) {
   if (channel.contains("name") && channel["name"].is_string())
     c.name = channel["name"].get<string>();
   else
-    c.name = GenerateChannelName(id, t);
+    c.name = "";
 
   if (channel.contains("pollRate"))
     c.pollRate = ParseRate(channel["pollRate"]);
@@ -261,10 +264,37 @@ string Config::GenerateOutputFilename() {
   return prefix + string(timestamp) + extension;
 }
 
+void Config::GenerateUnspecifiedChannelIDs() {
+  set<int> ids;
+
+  // get all specified ids for collision detection
+  for (auto c : channels) {
+    if (c.id > 1)
+      ids.insert(c.id);
+  }
+
+  // generate unspecified ids checking for collision
+  for (auto c = channels.begin(); c != channels.end(); c++) {
+    if (c->id == -1) {
+
+      do {
+        c->id = GenerateChannelID();
+      } while (ids.find(c->id) != ids.end());
+    }
+  }
+}
+
 int Config::GenerateChannelID() {
   static int nextID = 2;
 
   return nextID++;
+}
+
+void Config::GenerateUnspecifiedChannelNames() {
+  for (auto c = channels.begin(); c != channels.end(); c++) {
+    if (c->name == "")
+      c->name = GenerateChannelName(c->id, c->type);
+  }
 }
 
 string Config::GenerateChannelName(int channelID, Ch10Channel::ChannelType type) {
