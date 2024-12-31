@@ -172,9 +172,13 @@ void Config::ParseChannel(json channel) {
 
   if (channel.contains("pollRate"))
     c.pollRate = ParseRate(channel["pollRate"]);
+  else
+    c.pollRate = Rate(50, RateUnit::HERTZ);
 
   if (channel.contains("packetRate"))
     c.packetRate = ParseRate(channel["packetRate"]);
+  else
+    c.packetRate = Rate(10, RateUnit::HERTZ);
 
   CheckForTimeSource(c);
 

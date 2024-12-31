@@ -3,9 +3,7 @@
 
 // TODO:
 // Need more time conversions
-
-// TODO: handle case for pollRate being "on demand"
-// TODO: generate channel ID needs to start at 2 and account for a mix of specified and unspecified channel IDs
+// Decide if we need a case for poll and packet rate being "on demand"
 
 
 GenerationController::GenerationController() {

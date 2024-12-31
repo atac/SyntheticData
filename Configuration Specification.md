@@ -20,8 +20,8 @@ Configuration files for SynthCh10Gen provide the application with datasource and
 | name | string | | Channel name, sets the R-x\DSI-n TMATS attribute | Auto generated name |
 | type | string | Yes | Channel Type, sets the R-x\CDT-n TMATS attribute | |
 | sourceFile | string | Yes | Pathname of a data file used as the source for generation | |
-| pollRate | object | | Sets the rate at which the source data is polled | All data is included at the rate it occurs in the source |
-| packetRate | | Sets the rate at which packets are published to the output stream | Equal to the poll rate |
+| pollRate | object | | Sets the rate at which the source data is polled | 50 Hz |
+| packetRate | | Sets the rate at which packets are published to the output stream | 10 Hz |
 
 
 ### Rate Description
