@@ -22,6 +22,9 @@
     <Filter Include="SQLite3">
       <UniqueIdentifier>{2f429e0f-99ed-49ae-8da7-b9275cb8bbec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="CSV Parser">
+      <UniqueIdentifier>{5263ccec-ef1e-4c44-a6c1-28356fa6150c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\SynthCh10Gen\SimState.h">
@@ -33,6 +36,9 @@
     <ClInclude Include="..\3rdParty\SQLite\sqlite3.h">
       <Filter>SQLite3</Filter>
     </ClInclude>
+    <ClInclude Include="..\3rdParty\csv-parser\csv_parser.hpp">
+      <Filter>CSV Parser</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BM6toDB.cpp">
@@ -43,6 +49,9 @@
     </ClCompile>
     <ClCompile Include="..\3rdParty\SQLite\sqlite3.c">
       <Filter>SQLite3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\csv-parser\csv_parser.cpp">
+      <Filter>CSV Parser</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
