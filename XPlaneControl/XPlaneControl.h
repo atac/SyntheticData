@@ -62,33 +62,35 @@ sim/flight_controls/landing_gear_down
 
 
 class ClXPlaneControl
-    {
+{
 
 public:
-    ClXPlaneControl();
-    ~ClXPlaneControl();
+  ClXPlaneControl();
+  ~ClXPlaneControl();
 
 protected:
-    SOCKET                  hXPlaneSocket;
-    struct sockaddr_in      suXPlaneAddr; 
+  SOCKET                  hXPlaneSocket;
+  struct sockaddr_in      suXPlaneAddr;
 
 public:
-    struct SuPosition
-        {
-        double  fLat;       // latitude, in degrees
-        double  fLon;       // longitude, in degrees
-        double  fElevFt;    // elevation above sea level, in feet
-        float   fHeading;   // heading, degrees true
-        float   fPitch;     // pitch, degrees
-        float   fRoll;      // roll, degrees
-        };
-    
-    // Methods
-public:
-    void SendVEHX(SuPosition suACPosition);
-    void SendCMND(const char * szCmd);
-    void SendDREF(const char * szDrefPath, float fDrefValue);
-    void SendDATA(int iIndex, float afValue[]);
+  struct SuPosition
+  {
+    double  fLat;       // latitude, in degrees
+    double  fLon;       // longitude, in degrees
+    double  fElevFt;    // elevation above sea level, in feet
+    float   fHeading;   // heading, degrees true
+    float   fPitch;     // pitch, degrees
+    float   fRoll;      // roll, degrees
+  };
 
-    };
+  // Methods
+public:
+  void SendACFN(int aircraftIndex);
+  void SendPREL(SuPosition suACPosition, int aircraftIndex);
+  void SendVEHX(SuPosition suACPosition, int aircraftIndex = 0);
+  void SendCMND(const char* szCmd);
+  void SendDREF(const char* szDrefPath, float fDrefValue);
+  void SendDATA(int iIndex, float afValue[]);
+
+};
 

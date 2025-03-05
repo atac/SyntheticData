@@ -23,13 +23,13 @@
     <ProjectGuid>{12F00F79-0246-44B2-934E-74DDCF08847C}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>BM6toXPlaneVideo</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -72,8 +72,10 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>..\3rdParty\SQLite\sqlite-amalgamation-3320300;..\3rdParty\ffmpeg-20200211-f15007a-win32-dev\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\3rdParty\ffmpeg-20200211-f15007a-win32-dev\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\3rdParty\csv-parser;..\3rdParty\sqlite;..\3rdParty\ffmpeg\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\3rdParty\ffmpeg\lib;$(LibraryPath)</LibraryPath>
+    <ReferencePath>$(VC_ReferencesPath_x86);</ReferencePath>
+    <ExecutablePath>$(VC_ExecutablePath_x86);$(CommonExecutablePath);..\3rdParty\ffmpeg\bin;</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -101,6 +103,8 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>avcodec.lib;avformat.lib;avutil.lib;swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -160,6 +164,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\3rdParty\csv-parser\csv_parser.cpp" />
     <ClCompile Include="..\3rdParty\SQLite\sqlite3.c" />
     <ClCompile Include="..\SynthCh10Gen\Source_BMNavTxt.cpp" />
     <ClCompile Include="..\SynthCh10Gen\Source_BMNavDB.cpp" />
@@ -172,6 +177,7 @@
     <ClCompile Include="MpegEncoder.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\3rdParty\csv-parser\csv_parser.hpp" />
     <ClInclude Include="..\3rdParty\SQLite\sqlite3.h" />
     <ClInclude Include="..\SynthCh10Gen\SimState.h" />
     <ClInclude Include="..\SynthCh10Gen\Source_BMNavTxt.h" />

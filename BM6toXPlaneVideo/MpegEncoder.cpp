@@ -21,8 +21,8 @@
 #endif
 
 // Video as per MISP Recommended Practice 9720d System Level L4H (IRIG Video Format 0)
-#define OUTPUT_WIDTH    640
-#define OUTPUT_HEIGHT   480
+#define OUTPUT_WIDTH    1280
+#define OUTPUT_HEIGHT   720
 #define BIT_RATE        10000000
 //#define OUTPUT_WIDTH    uSrcWidth
 //#define OUTPUT_HEIGHT   uSrcHeight

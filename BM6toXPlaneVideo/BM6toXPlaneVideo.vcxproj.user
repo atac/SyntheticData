@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LocalDebuggerEnvironment>PATH=%PATH%;$(ProjectDir)\..\3rdParty\ffmpeg\bin;</LocalDebuggerEnvironment>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommandArguments>-t "C:\data\synthetic\simulfour\Simultaneous_Four_1_UDO.txt" -M "C:\data\synthetic\simulfour\tmpout.mp4"</LocalDebuggerCommandArguments>
+  </PropertyGroup>
+</Project>
