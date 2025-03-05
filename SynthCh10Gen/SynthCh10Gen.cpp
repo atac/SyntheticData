@@ -541,8 +541,9 @@ int main(int iArgc, char * aszArgv[])
 //            pCh10Writer_1553->AppendMsg(&suNav_1Hz);
 
             if (bVerbose)
-                printf("%f %f %f %f\n", clSimState.fState["AC_TIME"], clSimState.fState["AC_LAT"], clSimState.fState["AC_LON"], clSimState.fState["AC_TAS"]);
-            } // end 1 Hz events
+              printf("%f %f %f %f\n", clSimState.fState["AC_TIME"], clSimState.fState["AC_LAT"], clSimState.fState["AC_LON"], clSimState.fState["AC_TAS"]);
+              //printf("%f %f %f %f\n", clSimState.fState["actime"], clSimState.fState["aclatd"], clSimState.fState["aclond"], clSimState.fState["acktas"]);
+        } // end 1 Hz events
 
         // 6 second events
         // ---------------
@@ -640,7 +641,7 @@ void WriteTmats(int iI106Handle, std::string sProgramName, double fCurrSimClockT
     // number here would be the number of sources in the list. Later, step
     // through the sources in the list to initialize them.
 #if defined(COMPILE_BLUEMAX6)
-    const int           iTotalRSrcs = 5;
+    const int           iTotalRSrcs = 8;
 #elif defined(COMPILE_NASA)
     const int           iTotalRSrcs = 5;
 #else

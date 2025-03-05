@@ -109,51 +109,51 @@ void ClSource_BMNavDB::Close()
 /// Read the next line of BlueMax data
 
 bool ClSource_BMNavDB::ReadNextLine()
-    {
-    int         iStatus;
+{
+  int         iStatus;
 
-    // Get the next row of data
-    iStatus = sqlite3_step(pSqlStmt);
-    if (iStatus != SQLITE_ROW)
-        return false;
+  // Get the next row of data
+  iStatus = sqlite3_step(pSqlStmt);
+  if (iStatus != SQLITE_ROW)
+    return false;
 
-    // Decode time
-    // TODO
+  // Assume the BMdb actime column is index one and represents seconds since 0.0
+  fRelTime = sqlite3_column_double(pSqlStmt, 1);
 
-    return true;
-    }
+  return true;
+}
 
 
 // ----------------------------------------------------------------------------
 
 bool ClSource_BMNavDB::UpdateSimState(double fSimElapsedTime)
+{
+  unsigned    uColIdx;
+  bool        bStatus;
+
+  // Return if simulation time is less than current data time from this source
+  if (fSimElapsedTime < fRelTime)
+    return true;
+
+  // Get the individual column values
+  for (uColIdx = 0; uColIdx < asColLabel.size(); uColIdx++)
+  {
+    // Read column based on column type
+    switch (sqlite3_column_type(pSqlStmt, uColIdx))
     {
-    unsigned    uColIdx;
-    bool        bStatus;
+    case SQLITE_INTEGER:
+      pclSimState->update(sPrefix + asColLabel[uColIdx], (long)sqlite3_column_int64(pSqlStmt, uColIdx));
+      break;
+    case SQLITE_FLOAT:
+      pclSimState->update(sPrefix + asColLabel[uColIdx], sqlite3_column_double(pSqlStmt, uColIdx));
+      break;
+    default:
+      break;
+    } // end switch on column type
+  } // end for all columns
 
-    // Return if simulation time is less than current data time from this source
-    if (fSimElapsedTime < fRelTime)
-        return false;
+// Get the next line of data
+  bStatus = ReadNextLine();
 
-    // Get the individual column values
-    for (uColIdx = 0; uColIdx < asColLabel.size(); uColIdx++)
-        {
-        // Read column based on column type
-        switch (sqlite3_column_type(pSqlStmt, uColIdx))
-            {
-            case SQLITE_INTEGER :
-                pclSimState->update(sPrefix + asColLabel[uColIdx], (long)sqlite3_column_int64(pSqlStmt, uColIdx));
-                break;
-            case SQLITE_FLOAT :
-                pclSimState->update(sPrefix + asColLabel[uColIdx], sqlite3_column_double(pSqlStmt, uColIdx));
-                break;
-            default :
-                break;
-            } // end switch on column type
-        } // end for all columns
-
-    // Get the next line of data
-    bStatus = ReadNextLine();
-
-    return bStatus;
-    } // end UpdateSimState()
+  return bStatus;
+} // end UpdateSimState()

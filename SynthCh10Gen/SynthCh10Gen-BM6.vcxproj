@@ -73,7 +73,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>..\3rdParty\SQLite\sqlite-amalgamation-3320300;$(IncludePath)</IncludePath>
+    <IncludePath>..\3rdParty\SQLite\sqlite;$(IncludePath)</IncludePath>
     <IntDir>BM6\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -180,9 +180,12 @@
     <ClInclude Include="..\3rdParty\SQLite\sqlite3.h" />
     <ClInclude Include="Ch10Format_1553.h" />
     <ClInclude Include="Ch10Format_1553_Nav.h" />
+    <ClInclude Include="Ch10Format_A429.h" />
+    <ClInclude Include="Ch10Format_A429_AR100.h" />
     <ClInclude Include="Ch10Format_PCM.h" />
     <ClInclude Include="Ch10Writer.h" />
     <ClInclude Include="Ch10Writer_1553.h" />
+    <ClInclude Include="Ch10Writer_A429.h" />
     <ClInclude Include="Ch10Writer_Index.h" />
     <ClInclude Include="Ch10Writer_PCM.h" />
     <ClInclude Include="Ch10Writer_Time.h" />
@@ -214,7 +217,10 @@
     <ClCompile Include="..\3rdParty\irig106lib\src\irig106ch10.c" />
     <ClCompile Include="..\3rdParty\csv-parser\csv_parser.cpp" />
     <ClCompile Include="..\3rdParty\SQLite\sqlite3.c" />
+    <ClCompile Include="Ch10Format_A429.cpp" />
+    <ClCompile Include="Ch10Format_A429_AR100.cpp" />
     <ClCompile Include="Ch10Format_PCM.cpp" />
+    <ClCompile Include="Ch10Writer_A429.cpp" />
     <ClCompile Include="Ch10Writer_Index.cpp" />
     <ClCompile Include="Ch10Writer_PCM.cpp" />
     <ClCompile Include="Ch10Writer_Video.cpp" />

@@ -59,7 +59,7 @@ bool ClSource_VideoDB::Open(std::string sFilename, std::string sVideoTableName)
         return false;
         }
 
-    iCurrRowNum = -1;
+    iCurrRowNum = 0;
 
     return true;
 
@@ -89,37 +89,43 @@ void ClSource_VideoDB::Close()
 
 /// Read the video data associated with given BlueMax data row number
 bool ClSource_VideoDB::Read(int iRowNum)
+{
+  int         iStatus;
+
+  if (iCurrRowNum == iRowNum) {
+    bVideoDataValid = false;
+    return false;
+  }
+
+  // If necessary advance to the give row number
+  while (iCurrRowNum < iRowNum)
+  {
+    // Get the next row of data
+    iStatus = sqlite3_step(pSqlStmt);
+    if (iStatus != SQLITE_ROW)
     {
-    int         iStatus;
+      bVideoDataValid = false;
+      return false;
+    }
 
-    // If necessary advance to the give row number
-    while (iCurrRowNum < iRowNum)
-        {
-        // Get the next row of data
-        iStatus = sqlite3_step(pSqlStmt);
-        if (iStatus != SQLITE_ROW)
-            {
-            bVideoDataValid = false;
-            return false;
-            }
 
-        iCurrRowNum = sqlite3_column_int(pSqlStmt, 0);
-        }
+    iCurrRowNum = sqlite3_column_int(pSqlStmt, 0);
+  }
 
-    // If we have a row at the given row number then get the data and make it available
-    if (iCurrRowNum == iRowNum)
-        {
-        pachTSData    = (uint8_t *)sqlite3_column_blob(pSqlStmt, 1);
-        iTSDataLength =            sqlite3_column_bytes(pSqlStmt, 1);
-        bVideoDataValid = true;
-        return true;
-        }
-    else
-        {
-        bVideoDataValid = false;
-        return false;
-        }
+  // If we have a row at the given row number then get the data and make it available
+  if (iCurrRowNum == iRowNum)
+  {
+    pachTSData = (uint8_t*)sqlite3_column_blob(pSqlStmt, 1);
+    iTSDataLength = sqlite3_column_bytes(pSqlStmt, 1);
+    bVideoDataValid = true;
+    return true;
+  }
+  else
+  {
+    bVideoDataValid = false;
+    return false;
+  }
 
-    } // end Read()
+} // end Read()
 
 

@@ -35,12 +35,15 @@ double fDmsToD(char * szDMS);
 // Constructor / Destructor
 // ----------------------------------------------------------------------------
 
-ClSource_BMNavTxt::ClSource_BMNavTxt(ClSimState * pclSimState, std::string sPrefix) :
+ClSource_BMNavTxt::ClSource_BMNavTxt(ClSimState * pclSimState, std::string sPrefix, int aircraftIndex) :
     ClSource_Nav(pclSimState, sPrefix)
     {
     this->pclSimState = pclSimState;
-    this->sPrefix     = sPrefix;
+    this->sPrefix = sPrefix;
+    if (!sPrefix.empty())
+      this->sPrefix += "." + std::to_string(aircraftIndex) + ".";
     this->enInputType = this->InputBMText;
+    this->aircraftIndex = aircraftIndex;
     }
 
 
@@ -76,7 +79,9 @@ bool ClSource_BMNavTxt::Open(std::string sFilename)
     // Make the list of data labels and populate data map
     // This is the current minimum list
     // UserVariable actime aclatd aclond acaltf acktas acvifps acvxi acvyi acvzi acaxi acayi acazi acphid acthtad acpsid acmagd
-    DataLabel.clear();
+    // UserVariable actime aclatd aclond acaltf acktas         acvxi acvyi acvzi acaxi acayi acazi acphid acthtad acpsid acmagd acaoad acnzb cmthro acgear
+
+    CsvDataLabels.clear();
     iTokens = 1;
     szLabel = strtok(szLine, "\t");
     while (iTokens == 1)
@@ -102,11 +107,14 @@ bool ClSource_BMNavTxt::Open(std::string sFilename)
             else if (strcmp(szTrimmedLabel, "acpsid" ) == 0) sDataLabelKey = sPrefix + "AC_TRUE_HDG";
             else if (strcmp(szTrimmedLabel, "acmagd" ) == 0) sDataLabelKey = sPrefix + "AC_MAG_HDG";
             else if (strcmp(szTrimmedLabel, "acaoad" ) == 0) sDataLabelKey = sPrefix + "AC_AOA";
-            else if (strcmp(szTrimmedLabel, "acthro" ) == 0) sDataLabelKey = sPrefix + "AC_THROTTLE";
-            else                                             sDataLabelKey = sPrefix + szTrimmedLabel;
+            else if (strcmp(szTrimmedLabel, "acnzb" ) == 0) sDataLabelKey = sPrefix + "GS";
+            else if (strcmp(szTrimmedLabel, "cmthro" ) == 0) sDataLabelKey = sPrefix + "AC_THROTTLE";
+            //else if (strcmp(szTrimmedLabel, "acgear" ) == 0) sDataLabelKey = sPrefix + "";
+            else          
+              sDataLabelKey = sPrefix + szTrimmedLabel;
 
             // Insert the label into the list of column labels
-            DataLabel.insert(DataLabel.end(), sDataLabelKey);
+            CsvDataLabels.insert(CsvDataLabels.end(), sDataLabelKey);
             pclSimState->insert(sDataLabelKey,-1.0);
             }
         } // end while tokenizing line
@@ -133,55 +141,70 @@ void ClSource_BMNavTxt::Close()
 /// Read the next line of BlueMax data
 
 bool ClSource_BMNavTxt::ReadNextLine()
+{
+  bool                bCsvStatus;
+  bool                bStatus;
+  double              fDecodedTime;
+
+  // Get the next line        
+  fgets(szLine, sizeof(szLine), hBMInput);
+  if (feof(hBMInput))
+    return false;
+
+  // Trim any CR or LF at the end
+  for (int iLineCharIdx = strlen(szLine) - 1; iLineCharIdx > 0; iLineCharIdx--)
+    if ((szLine[iLineCharIdx] == 10) || (szLine[iLineCharIdx] == 13))
+      szLine[iLineCharIdx] = '\0';
+    else
+      break;
+
+  // Tokenize the line and store values with the appropriate data label
+  CsvMap.clear();
+  char* szDataItem;
+  double  fDataItem;
+  int     iTokens = 1;
+  auto    itDataLabel = std::begin(CsvDataLabels);
+
+  szDataItem = strtok(szLine, "\t");
+  while ((iTokens == 1) && (itDataLabel != std::end(CsvDataLabels)))
+  {
+    iTokens = sscanf(szDataItem, "%lf", &fDataItem);
+    szDataItem = strtok(NULL, "\t");
+    if (iTokens == 1)
     {
-//    int                 iItems;
-//    char                szLine[2000];
-
-    // Get the next line        
-    fgets(szLine, sizeof(szLine), hBMInput);
-    if (feof(hBMInput))
-        return false;
-
-    // Decode time
-    // TODO
-
-    return true;
+      CsvMap.insert(std::pair<STR, STR>(*itDataLabel, std::to_string(fDataItem)));
+      itDataLabel++;
     }
+  } // end while tokenizing line
+
+  // Assume the BMTxt file time column is seconds since 0.0
+  fRelTime = std::stod(CsvMap[sPrefix + "AC_TIME"]);
+
+  return true;
+}
 
 
 
 // ----------------------------------------------------------------------------
 
 bool ClSource_BMNavTxt::UpdateSimState(double fSimElapsedTime)
-    {
-    bool    bStatus;
+{
+  bool    bStatus;
 
-    // Return if simulation time is less than current data time from this source
-    if (fSimElapsedTime < fRelTime)
-        return false;
+  // Return if simulation time is less than current data time from this source
+  if (fSimElapsedTime < fRelTime)
+    return true;
 
-    // Tokenize the line and store values with the appropriate data label
-    char  * szDataItem;
-    double  fDataItem;
-    int     iTokens = 1;
-    auto    itDataLabel = std::begin(DataLabel);
-    szDataItem = strtok(szLine, "\t");
-    while ((iTokens == 1) && (itDataLabel != std::end(DataLabel)))
-        {
-        iTokens = sscanf(szDataItem, "%lf", &fDataItem);
-        szDataItem = strtok(NULL, "\t");
-        if (iTokens == 1)
-            {
-            pclSimState->update(*itDataLabel, fDataItem);
-            itDataLabel++;
-            }
-        } // end while tokenizing line
+  // Store values with the appropriate data label
+  for (auto i = CsvMap.begin(); i != CsvMap.end(); i++) {
+    pclSimState->update(i->first, std::stod(i->second));
+  }
 
-    // Get the next line of data
-    bStatus = ReadNextLine();
+  // Get the next line of data
+  bStatus = ReadNextLine();
 
-    return bStatus;
-    } // end UpdateSimState()
+  return bStatus;
+} // end UpdateSimState()
 
 // ----------------------------------------------------------------------------
 
