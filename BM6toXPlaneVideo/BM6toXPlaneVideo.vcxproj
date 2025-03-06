@@ -35,7 +35,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -82,8 +82,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\3rdParty\SQLite\sqlite-amalgamation-3320300;..\3rdParty\ffmpeg-20200211-f15007a-win32-dev\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\3rdParty\ffmpeg-20200211-f15007a-win32-dev\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\3rdParty\SQLite;..\3rdParty\csv-parser;..\3rdParty\ffmpeg\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\3rdParty\ffmpeg\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
