@@ -82,9 +82,6 @@
     <ClCompile Include="Ch10Format_A429_AR100.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Ch10Format_PCM.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Ch10Format_PCM_CSV.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -124,12 +121,21 @@
     <ClCompile Include="GenerationController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Ch10Format_Index.cpp" />
-    <ClCompile Include="Program.cpp" />
     <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_pcmf1.c">
       <Filter>irig106lib</Filter>
     </ClCompile>
-    <ClCompile Include="Config.cpp" />
+    <ClCompile Include="Ch10Format_PCM_SynthFmt1.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Ch10Format_Index.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Config.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Program.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\3rdParty\csv-parser\csv_parser.hpp">
@@ -145,9 +151,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Ch10Format_A429_AR100.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Ch10Format_PCM.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Ch10Format_PCM_CSV.h">
@@ -261,11 +264,21 @@
     <ClInclude Include="GenerationControllerTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Ch10Format_Index.h" />
-    <ClInclude Include="TmatsFormatter.h" />
     <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats_r.h">
       <Filter>irig106lib</Filter>
     </ClInclude>
-    <ClInclude Include="Config.h" />
+    <ClInclude Include="Ch10Format_PCM_SynthFmt1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Ch10Format_Index.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TmatsFormatter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Ch10Formatter_PCM.h" />
   </ItemGroup>
 </Project>

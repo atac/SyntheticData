@@ -21,8 +21,7 @@
 //#include "i106_decode_tmats.h"
 
 #include "Common.h"
-#include "Ch10Format_PCM.h"
-#include "Ch10Format_PCM_CSV.h"
+#include "Ch10Formatter_PCM.h"
 
 using namespace Irig106;
 
@@ -50,11 +49,11 @@ public:
   int                           iHandle;
 
 private:
-  ClCh10Format_PCM_SynthFmtCsv* formatter;
+  Ch10Formatter_PCM* formatter;
 
   // Methods
 public:
-  void Init(int iHandle, unsigned int uChanID, ClCh10Format_PCM_SynthFmtCsv* formatter);
+  void Init(int iHandle, unsigned int uChanID, Ch10Formatter_PCM* formatter);
   void AppendMsg();
   void Commit();
 

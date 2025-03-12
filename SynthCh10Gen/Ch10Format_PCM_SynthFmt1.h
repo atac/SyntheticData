@@ -20,7 +20,7 @@
 #include "Common.h"
 #include "SimState.h"
 
-#include "Ch10Formatter.h"
+#include "Ch10Formatter_PCM.h"
 
 using namespace Irig106;
 
@@ -35,7 +35,7 @@ using namespace Irig106;
 // ClCh10Format_PCM_SynthFmt1 - PCM Synthetic Data Format 1
 // ----------------------------------------------------------------------------
 
-class ClCh10Format_PCM_SynthFmt1 : public Ch10Formatter
+class ClCh10Format_PCM_SynthFmt1 : public Ch10Formatter_PCM
     {
 public:
   ClCh10Format_PCM_SynthFmt1(float fFrameRate);
@@ -107,19 +107,13 @@ public:
 
     // Class variables
 public:
-    unsigned int            uChanID;
-    SuPcmF1_IntraPktHeader  suIPH;
     SuPcmFrame_Fmt1         suPcmFrame_Fmt1;
-    unsigned                uWordLen;       // PCM common word length in bits
-    unsigned                uIPHLen;        // IPH length in bytes
-    unsigned                uFrameLen;      // PCM frame length in bytes
-    float                   fFrameRate;     // Frame rate in Hz
 
     // Methods
 public:
     void SetRTC(int64_t * pullRelTime);
-    virtual void MakeMsg(ClSimState * pclSimState);
-    virtual std::string TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN);
+    virtual void FormatMsg(ClSimState * pclSimState);
+    virtual std::string TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN, int chanID);
 
     };
 

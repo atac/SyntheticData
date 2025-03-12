@@ -32,7 +32,7 @@ ClCh10Writer_PCM::~ClCh10Writer_PCM()
 // this writer class only supports PCM packed mode. Other PCM modes may be
 // supported in the future.
 
-void ClCh10Writer_PCM::Init(int iHandle, unsigned int uChanID, ClCh10Format_PCM_SynthFmtCsv* formatter)
+void ClCh10Writer_PCM::Init(int iHandle, unsigned int uChanID, Ch10Formatter_PCM* formatter)
 {
   Ch10Writer::Init(iHandle, uChanID);
 

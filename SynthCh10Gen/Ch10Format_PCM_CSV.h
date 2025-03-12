@@ -23,7 +23,7 @@
 
 #include "csv_parser.hpp"
 
-#include "Ch10Formatter.h"
+#include "Ch10Formatter_PCM.h"
 
 #include <vector>
 
@@ -40,34 +40,15 @@ using namespace Irig106;
 // ClCh10Format_PCM_SynthFmtCsv - PCM Synthetic Data Format Generic CSV
 // ----------------------------------------------------------------------------
 
-class ClCh10Format_PCM_SynthFmtCsv : public Ch10Formatter
+class ClCh10Format_PCM_CSV : public Ch10Formatter_PCM
 {
-  typedef unsigned char byte;
-
-  enum class FieldType {
-    FLOAT_FIELD = 0,
-    INTEGER_FIELD
-  };
-
-  struct PcmField {
-    uint32_t* pValue;
-    FieldType type;
-    std::string name;
-  };
 
 public:
-  ClCh10Format_PCM_SynthFmtCsv(float fFrameRate, CSV_FIELDS fields, CSV_FIELDS types);
-  ~ClCh10Format_PCM_SynthFmtCsv();
+  ClCh10Format_PCM_CSV(float fFrameRate, CSV_FIELDS fields, CSV_FIELDS types);
+  ~ClCh10Format_PCM_CSV();
 
   // Class variables
 public:
-  SuPcmF1_IntraPktHeader  suIPH;
-  std::vector<uint32_t>   pcmFrame;
-  std::vector<PcmField>   pcmFields;
-  unsigned                uWordLen;       // PCM common word length in bits
-  unsigned                uIPHLen;        // IPH length in bytes
-  unsigned                uFrameLen;      // PCM frame length in bytes
-  float                   fFrameRate;     // Frame rate in Hz
 
   // Methods
 public:

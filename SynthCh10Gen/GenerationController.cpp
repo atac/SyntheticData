@@ -185,8 +185,8 @@ ControllerStatus GenerationController::AddDataChannel(ConfigChannel config) {  /
   framerate.ConvertUnits(RateUnit::HERTZ);
 
   // create formatter
-  ClCh10Format_PCM_SynthFmtCsv* formatCsv =
-    new ClCh10Format_PCM_SynthFmtCsv(
+  ClCh10Format_PCM_CSV* formatCsv =
+    new ClCh10Format_PCM_CSV(
       framerate.value,
       csvSrc->GetCsvFields(),
       csvSrc->GetCsvFieldTypes()

@@ -23,7 +23,7 @@ using namespace std;
 using namespace Irig106;
 
 #include "Common.h"
-#include "Ch10Format_PCM.h"
+#include "Ch10Format_PCM_SynthFmt1.h"
 
 // ----------------------------------------------------------------------------
 // ClCh10Format_PCM_SynthFmt1 - PCM Synthetic Data Format 1
@@ -76,7 +76,7 @@ void ClCh10Format_PCM_SynthFmt1::SetRTC(int64_t * pullRelTime)
 
 // Fill in a frame of synthetic PCM Format 1 data from the current sim state
 
-void ClCh10Format_PCM_SynthFmt1::MakeMsg(ClSimState * pclSimState)
+void ClCh10Format_PCM_SynthFmt1::FormatMsg(ClSimState * pclSimState)
     {
     // Standard nav data source values that should be in every simulation
     suPcmFrame_Fmt1.lLATP   =  int32_t(FLOAT2SEMICIR32(pclSimState->fState["AC_LAT"]));
@@ -133,7 +133,7 @@ void ClCh10Format_PCM_SynthFmt1::MakeMsg(ClSimState * pclSimState)
 #define PCM_FMT_1_NUM_MEASURANDS    45
 
 
-std::string ClCh10Format_PCM_SynthFmt1::TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN)
+std::string ClCh10Format_PCM_SynthFmt1::TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN, int chanID)
     {
     std::stringstream   ssTMATS;
     unsigned long       ulDataRate;

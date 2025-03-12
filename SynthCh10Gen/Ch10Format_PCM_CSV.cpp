@@ -32,7 +32,7 @@ using namespace Irig106;
 // ----------------------------------------------------------------------------
 
 // Construct PCM packet
-ClCh10Format_PCM_SynthFmtCsv::ClCh10Format_PCM_SynthFmtCsv(float fFrameRate, CSV_FIELDS fields, CSV_FIELDS types)
+ClCh10Format_PCM_CSV::ClCh10Format_PCM_CSV(float fFrameRate, CSV_FIELDS fields, CSV_FIELDS types)
 {
   this->uWordLen = 32;  // bits
   this->uIPHLen = 10;  // bytes
@@ -56,7 +56,7 @@ ClCh10Format_PCM_SynthFmtCsv::ClCh10Format_PCM_SynthFmtCsv(float fFrameRate, CSV
 
 // ----------------------------------------------------------------------------
 
-ClCh10Format_PCM_SynthFmtCsv::~ClCh10Format_PCM_SynthFmtCsv()
+ClCh10Format_PCM_CSV::~ClCh10Format_PCM_CSV()
 {
 }
 
@@ -67,7 +67,7 @@ ClCh10Format_PCM_SynthFmtCsv::~ClCh10Format_PCM_SynthFmtCsv()
 
 // Set the relative time counter
 
-void ClCh10Format_PCM_SynthFmtCsv::SetRTC(int64_t* pullRelTime)
+void ClCh10Format_PCM_CSV::SetRTC(int64_t* pullRelTime)
 {
   vLLInt2TimeArray(pullRelTime, suIPH.aubyIntPktTime);
 }
@@ -77,7 +77,7 @@ void ClCh10Format_PCM_SynthFmtCsv::SetRTC(int64_t* pullRelTime)
 
 // Fill in a frame of synthetic PCM Format CSV data from the current sim state
 
-void ClCh10Format_PCM_SynthFmtCsv::FormatMsg(ClSimState* simState)
+void ClCh10Format_PCM_CSV::FormatMsg(ClSimState* simState)
 {
   for (auto iter = pcmFields.begin(); iter != pcmFields.end(); iter++) {
     float v = (float)simState->fState[iter->name];
@@ -97,7 +97,7 @@ void ClCh10Format_PCM_SynthFmtCsv::FormatMsg(ClSimState* simState)
 }
 
 
-void ClCh10Format_PCM_SynthFmtCsv::InitFrameFieldPointers(CSV_FIELDS fields, CSV_FIELDS types) {
+void ClCh10Format_PCM_CSV::InitFrameFieldPointers(CSV_FIELDS fields, CSV_FIELDS types) {
   bool useTypes = (fields.size() == types.size());
 
   int i = 1;
@@ -122,17 +122,17 @@ void ClCh10Format_PCM_SynthFmtCsv::InitFrameFieldPointers(CSV_FIELDS fields, CSV
   }
 }
 
-void ClCh10Format_PCM_SynthFmtCsv::ToLower(STR& str) {
+void ClCh10Format_PCM_CSV::ToLower(STR& str) {
   for (int i = 0; i < strlen(str.data()); i++)
     str[i] = tolower(str[i]);
 }
 
-uint32_t ClCh10Format_PCM_SynthFmtCsv::GetFrameLength(size_t numFields) {
+uint32_t ClCh10Format_PCM_CSV::GetFrameLength(size_t numFields) {
   uint32_t words = numFields - 1 + 1; // num fields - time field + framesync
   return words * 4;
 }
 
-uint32_t ClCh10Format_PCM_SynthFmtCsv::WordSwap(uint32_t value) {
+uint32_t ClCh10Format_PCM_CSV::WordSwap(uint32_t value) {
   uint16_t* w = (uint16_t*)&value;
   uint16_t tmp = w[0];
   w[0] = w[1];
@@ -142,7 +142,7 @@ uint32_t ClCh10Format_PCM_SynthFmtCsv::WordSwap(uint32_t value) {
 
 // ----------------------------------------------------------------------------
 
-std::string ClCh10Format_PCM_SynthFmtCsv::TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN, int chanID)
+std::string ClCh10Format_PCM_CSV::TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN, int chanID)
     {
     std::stringstream   ssTMATS;
     unsigned long       ulDataRate;
