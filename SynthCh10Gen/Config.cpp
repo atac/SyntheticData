@@ -85,6 +85,14 @@ bool Config::ChannelIsValid(json channel) {
     || GetChannelTypeFromString(t->get<string>()) == Ch10Channel::ChannelType::INVALID)
     return false;
 
+  auto f = channel.find("format");
+  if (f != channel.end() &&
+    (!f->is_string() ||
+      GetChannelDataFormatFromString(f->get<string>()) == Ch10Channel::ChannelDataFormat::INVALID
+      )
+    )
+    return false;
+
   auto sf = channel.find("sourceFile");
   if (sf == channel.end() || !sf->is_string())
     return false;
@@ -165,6 +173,11 @@ void Config::ParseChannel(json channel) {
   c.sourcePathname = channel["sourceFile"].get<string>();
   c.sourceType = GetSourceFileTypeFromString(c.sourcePathname);
 
+  if (channel.contains("format") && channel["format"].is_string())
+    c.format = GetChannelDataFormatFromString(channel["name"].get<string>());
+  else
+    c.format = Ch10Channel::ChannelDataFormat::UNFORMATTED;
+
   if (channel.contains("name") && channel["name"].is_string())
     c.name = channel["name"].get<string>();
   else
@@ -218,6 +231,21 @@ Ch10Channel::ChannelType Config::GetChannelTypeFromString(string typeStr) {
     t = Ch10Channel::ChannelType::VIDEO;
 
   return t;
+}
+
+Ch10Channel::ChannelDataFormat Config::GetChannelDataFormatFromString(string fmtStr) {
+  Ch10Channel::ChannelDataFormat f = Ch10Channel::ChannelDataFormat::INVALID;
+
+  transform(fmtStr.begin(), fmtStr.end(), fmtStr.begin(), ::tolower);
+
+  if (fmtStr == "unformatted")
+    f = Ch10Channel::ChannelDataFormat::UNFORMATTED;
+  else if (fmtStr == "custom")
+    f = Ch10Channel::ChannelDataFormat::CUSTOM;
+  else if (fmtStr == "synthformat1" || fmtStr == "synthfmt1")
+    f = Ch10Channel::ChannelDataFormat::SYNTHFORMAT1;
+
+  return f;
 }
 
 RateUnit Config::GetRateUnitFromString(string unitStr) {

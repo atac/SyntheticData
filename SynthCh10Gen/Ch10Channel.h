@@ -18,6 +18,13 @@ public:
     INDEX
   };
 
+  enum class ChannelDataFormat {
+    INVALID = 0,
+    UNFORMATTED,
+    CUSTOM,
+    SYNTHFORMAT1
+  };
+
 private:
   Ch10Writer* writer;
   Ch10Formatter* formatter;

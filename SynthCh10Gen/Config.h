@@ -55,6 +55,7 @@ private:
   Rate ParseRate(json rate);
 
   Ch10Channel::ChannelType GetChannelTypeFromString(string typeStr);
+  Ch10Channel::ChannelDataFormat GetChannelDataFormatFromString(string formatStr);
   RateUnit GetRateUnitFromString(string unitStr);
   SourceFileType GetSourceFileTypeFromString(string pathname);
 
@@ -75,6 +76,7 @@ struct ConfigChannel
   bool timeSource;
   int id;
   Ch10Channel::ChannelType type;
+  Ch10Channel::ChannelDataFormat format;
   string name;
   string sourcePathname;
   SourceFileType sourceType;
