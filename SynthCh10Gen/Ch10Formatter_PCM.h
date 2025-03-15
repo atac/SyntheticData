@@ -51,8 +51,7 @@ public:
 
   // Class variables
   SuPcmF1_IntraPktHeader  suIPH;
-  std::vector<uint32_t>   pcmFrame;
-  std::vector<PcmField>   pcmFields;
+  uint32_t *              pFrame;         // Pointer to the start of the PCM frame
   unsigned                uWordLen;       // PCM common word length in bits
   unsigned                uIPHLen;        // IPH length in bytes
   unsigned                uFrameLen;      // PCM frame length in bytes

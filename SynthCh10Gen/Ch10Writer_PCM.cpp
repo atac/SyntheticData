@@ -124,7 +124,7 @@ void ClCh10Writer_PCM::AppendMsg()
   }
 
   // Data
-  memcpy(suWriteMsgPCM.pchDataBuff + uCurrBufferOffset, &formatter->pcmFrame[0], formatter->uFrameLen);
+  memcpy(suWriteMsgPCM.pchDataBuff + uCurrBufferOffset, formatter->pFrame, formatter->uFrameLen);
   uCurrBufferOffset += formatter->uFrameLen;
 
 } // end AppendMsg()

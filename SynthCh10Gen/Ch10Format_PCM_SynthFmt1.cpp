@@ -51,6 +51,8 @@ ClCh10Format_PCM_SynthFmt1::ClCh10Format_PCM_SynthFmt1(float fFrameRate)
     // Init the PCM data frame
     memset(&suPcmFrame_Fmt1, 0, sizeof(struct SuPcmFrame_Fmt1));
     suPcmFrame_Fmt1.uFrameSync = 0x2840FE6B;    // Sync word swapped
+
+    pFrame = (uint32_t*)&suPcmFrame_Fmt1;
     }
 
 // ----------------------------------------------------------------------------

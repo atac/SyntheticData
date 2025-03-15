@@ -47,8 +47,9 @@ ClCh10Format_PCM_CSV::ClCh10Format_PCM_CSV(float fFrameRate, CSV_FIELDS fields, 
 
   // Init the PCM data frame
   pcmFrame = vector<uint32_t>(this->uFrameLen, 0);
-
   pcmFrame[0] = 0x2840FE6B;    // Sync word swapped
+
+  pFrame = &pcmFrame[0];
 
   // Init frame field pointers
   InitFrameFieldPointers(fields, types);

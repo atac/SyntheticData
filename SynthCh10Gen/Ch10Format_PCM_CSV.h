@@ -49,6 +49,8 @@ public:
 
   // Class variables
 public:
+  std::vector<uint32_t>   pcmFrame;
+  std::vector<PcmField>   pcmFields;
 
   // Methods
 public:
