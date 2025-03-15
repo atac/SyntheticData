@@ -174,7 +174,7 @@ void Config::ParseChannel(json channel) {
   c.sourceType = GetSourceFileTypeFromString(c.sourcePathname);
 
   if (channel.contains("format") && channel["format"].is_string())
-    c.format = GetChannelDataFormatFromString(channel["name"].get<string>());
+    c.format = GetChannelDataFormatFromString(channel["format"].get<string>());
   else
     c.format = Ch10Channel::ChannelDataFormat::UNFORMATTED;
 
