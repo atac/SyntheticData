@@ -9,6 +9,7 @@
 #include "Source_CsvTxt.h"
 #include "Ch10Writer.h"
 #include "Ch10Format_PCM_CSV.h"
+#include "Ch10Format_PCM_SynthFmt1.h"
 #include "Ch10Writer_PCM.h"
 #include "Ch10Writer_Index.h"
 #include "Ch10Writer_Time.h"
@@ -67,6 +68,9 @@ private:
 
   std::string GenerateChannelName(Ch10Channel::ChannelType type);
   Ch10Channel* CreateChannel(Ch10Writer* writer, Ch10Formatter* formatter, Ch10Channel::ChannelType type, std::string name = "");
+
+  // TODO: this should eventually take (or use) a structure containing source setup data rather than a csv source
+  Ch10Formatter_PCM* CreatePcmFormatter(Ch10Channel::ChannelDataFormat format, Rate framerate, ClSource_CsvTxt* src);
   
   // =======================
 

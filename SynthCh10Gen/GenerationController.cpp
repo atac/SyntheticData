@@ -184,19 +184,29 @@ ControllerStatus GenerationController::AddDataChannel(ConfigChannel config) {  /
   Rate framerate = config.pollRate;
   framerate.ConvertUnits(RateUnit::HERTZ);
 
-  // create formatter
-  ClCh10Format_PCM_CSV* formatCsv =
-    new ClCh10Format_PCM_CSV(
-      framerate.value,
-      csvSrc->GetCsvFields(),
-      csvSrc->GetCsvFieldTypes()
-    );
-  Ch10Formatter* formatter = dynamic_cast<Ch10Formatter*>(formatCsv);
+  // create formatter/writer pair
+  Ch10Formatter* formatter = nullptr;
+  Ch10Writer* writer = nullptr;
 
-  // create writer
-  ClCh10Writer_PCM* writerPcm = new ClCh10Writer_PCM();
-  writerPcm->Init(i106OutFileHandle, config.id, formatCsv);
-  Ch10Writer* writer = dynamic_cast<Ch10Writer*>(writerPcm);
+  switch (config.type) {
+
+  case Ch10Channel::ChannelType::PCM: 
+  {
+    Ch10Formatter_PCM* formatPcm = CreatePcmFormatter(config.format, framerate, csvSrc);
+    ClCh10Writer_PCM* writerPcm = new ClCh10Writer_PCM();
+    writerPcm->Init(i106OutFileHandle, config.id, formatPcm);
+
+    formatter = dynamic_cast<Ch10Formatter*>(formatPcm);
+    writer = dynamic_cast<Ch10Writer*>(writerPcm);
+    break;
+  }
+
+  default:
+    break;
+  }
+
+  assert(formatter != nullptr);
+  assert(writer != nullptr);
 
   // create channel passing formatter/writer
   Ch10Channel* channel = CreateChannel(writer, formatter, config.type, config.name);
@@ -352,4 +362,39 @@ Ch10Channel* GenerationController::CreateChannel(
   channels->push_back(channel);
   channel->Init(writer, formatter, type, name);
   return channel;
+}
+
+Ch10Formatter_PCM* GenerationController::CreatePcmFormatter(Ch10Channel::ChannelDataFormat format, Rate framerate, ClSource_CsvTxt* src) {
+  Ch10Formatter_PCM* formatter = nullptr;
+
+  switch (format) {
+
+  case Ch10Channel::ChannelDataFormat::UNFORMATTED:
+  {
+    ClCh10Format_PCM_CSV* formatCsv =
+      new ClCh10Format_PCM_CSV(
+        framerate.value,
+        src->GetCsvFields(),
+        src->GetCsvFieldTypes()
+      );
+    formatter = dynamic_cast<Ch10Formatter_PCM*>(formatCsv);
+    break;
+  }
+
+  case Ch10Channel::ChannelDataFormat::SYNTHFORMAT1:
+  {
+    ClCh10Format_PCM_SynthFmt1* formatSF1 =
+      new ClCh10Format_PCM_SynthFmt1(framerate.value);
+    formatter = dynamic_cast<Ch10Formatter_PCM*>(formatSF1);
+    break;
+  }
+
+  case Ch10Channel::ChannelDataFormat::CUSTOM:
+    break;
+
+  default:
+    break;
+  }
+
+  return formatter;
 }
