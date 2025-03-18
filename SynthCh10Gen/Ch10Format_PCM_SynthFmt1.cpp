@@ -32,7 +32,7 @@ using namespace Irig106;
 // ----------------------------------------------------------------------------
 
 // Construct PCM packet
-ClCh10Format_PCM_SynthFmt1::ClCh10Format_PCM_SynthFmt1(float fFrameRate)
+ClCh10Format_PCM_SynthFmt1::ClCh10Format_PCM_SynthFmt1(float fFrameRate, string stateFieldPrefix)
     {
     // Make sure the size of the PCM frame is still correct
     assert(sizeof(struct SuPcmFrame_Fmt1) == 100);
@@ -53,6 +53,8 @@ ClCh10Format_PCM_SynthFmt1::ClCh10Format_PCM_SynthFmt1(float fFrameRate)
     suPcmFrame_Fmt1.uFrameSync = 0x2840FE6B;    // Sync word swapped
 
     pFrame = (uint32_t*)&suPcmFrame_Fmt1;
+
+    InitStateFieldPrefixes(stateFieldPrefix);
     }
 
 // ----------------------------------------------------------------------------
@@ -78,57 +80,59 @@ void ClCh10Format_PCM_SynthFmt1::SetRTC(int64_t * pullRelTime)
 
 // Fill in a frame of synthetic PCM Format 1 data from the current sim state
 
-void ClCh10Format_PCM_SynthFmt1::FormatMsg(ClSimState * pclSimState)
-    {
-    // Standard nav data source values that should be in every simulation
-    suPcmFrame_Fmt1.lLATP   =  int32_t(FLOAT2SEMICIR32(pclSimState->fState["AC_LAT"]));
-    suPcmFrame_Fmt1.lLONP   =  int32_t(FLOAT2SEMICIR32(pclSimState->fState["AC_LON"]));
-    suPcmFrame_Fmt1.uALT    = uint16_t(pclSimState->fState["AC_ALT"]) + 1000;
-    suPcmFrame_Fmt1.uTAS    = uint16_t(pclSimState->fState["AC_TAS"]);
-    suPcmFrame_Fmt1.uTH     = uint16_t(FLOAT2SEMICIR16(pclSimState->fState["AC_TRUE_HDG"]));
-    suPcmFrame_Fmt1.uMH     = uint16_t(FLOAT2SEMICIR16(pclSimState->fState["AC_MAG_HDR"]));
-    suPcmFrame_Fmt1.iPTCH   =  int16_t(FLOAT2SEMICIR16(pclSimState->fState["AC_PITCH"]));
-    suPcmFrame_Fmt1.iROLL   =  int16_t(FLOAT2SEMICIR16(pclSimState->fState["AC_ROLL"]));
-    suPcmFrame_Fmt1.iAOAC   =  int16_t(FLOAT2SEMICIR16(pclSimState->fState["AC_AOA"]));
-    suPcmFrame_Fmt1.iVRTG   =  int16_t(pclSimState->fState["AC_ACCEL_DOWN"]);
+void ClCh10Format_PCM_SynthFmt1::FormatMsg(ClSimState* pclSimState)
+{
+  int i = 0;
 
-    // Additional data values from NASA data
-    suPcmFrame_Fmt1.uGS     = uint16_t(pclSimState->fState["GS"]);
-    suPcmFrame_Fmt1.iIVV    =  int16_t(pclSimState->fState["IVV"]);
-    suPcmFrame_Fmt1.iFPAC   =  int16_t(pclSimState->fState["FPAC"]);
-    suPcmFrame_Fmt1.iPLA_1  =  int16_t(pclSimState->fState["PLA_1"]);
-    suPcmFrame_Fmt1.iPLA_2  =  int16_t(pclSimState->fState["PLA_2"]);
-    suPcmFrame_Fmt1.iEGT_1  =  int16_t(pclSimState->fState["EGT_1"]);
-    suPcmFrame_Fmt1.iEGT_2  =  int16_t(pclSimState->fState["EGT_2"]);
-    suPcmFrame_Fmt1.iOIT_1  =  int16_t(pclSimState->fState["OIT_1"]);
-    suPcmFrame_Fmt1.iOIT_2  =  int16_t(pclSimState->fState["OIT_2"]);
-    suPcmFrame_Fmt1.uFF_1   = uint16_t(pclSimState->fState["FF_1"]);
-    suPcmFrame_Fmt1.uFF_2   = uint16_t(pclSimState->fState["FF_2"]);
-    suPcmFrame_Fmt1.iN1_1   =  int16_t(pclSimState->fState["N1_1"]);
-    suPcmFrame_Fmt1.iN1_2   =  int16_t(pclSimState->fState["N1_2"]);
-    suPcmFrame_Fmt1.iN2_1   =  int16_t(pclSimState->fState["N2_1"]);
-    suPcmFrame_Fmt1.iN2_2   =  int16_t(pclSimState->fState["N2_2"]);
-    suPcmFrame_Fmt1.iVIB_1  =  int16_t(pclSimState->fState["VIB_1"]);
-    suPcmFrame_Fmt1.iVIB_2  =  int16_t(pclSimState->fState["VIB_2"]);
-    suPcmFrame_Fmt1.iOIP_1  =  int16_t(pclSimState->fState["OIP_1"]);
-    suPcmFrame_Fmt1.iOIP_2  =  int16_t(pclSimState->fState["OIP_2"]);
-    suPcmFrame_Fmt1.iAOA1   =  int16_t(pclSimState->fState["AOA1"]);
-    suPcmFrame_Fmt1.iAOA2   =  int16_t(pclSimState->fState["AOA2"]);
-    suPcmFrame_Fmt1.bWOW    =          pclSimState->fState["WOW"]  == 0.0 ? 0 : 1;
-    suPcmFrame_Fmt1.bLGDN   =          pclSimState->fState["LGDN"] == 0.0 ? 0 : 1;
-    suPcmFrame_Fmt1.bLGUP   =          pclSimState->fState["LGUP"] == 0.0 ? 0 : 1;
-    suPcmFrame_Fmt1.iAIL_1  =  int16_t(pclSimState->fState["AIL_1"]);
-    suPcmFrame_Fmt1.iAIL_2  =  int16_t(pclSimState->fState["AIL_2"]);
-    suPcmFrame_Fmt1.iELEV_1 =  int16_t(pclSimState->fState["ELEV_1"]);
-    suPcmFrame_Fmt1.iELEV_2 =  int16_t(pclSimState->fState["ELEV_2"]);
-    suPcmFrame_Fmt1.iRUDD   =  int16_t(pclSimState->fState["RUDD"]);
-    suPcmFrame_Fmt1.uCWPC   = uint16_t(pclSimState->fState["CWPC"]);
-    suPcmFrame_Fmt1.uCWPF   = uint16_t(pclSimState->fState["CWPF"]);
-    suPcmFrame_Fmt1.uCCPC   = uint16_t(pclSimState->fState["CCPC"]);
-    suPcmFrame_Fmt1.uCCPF   = uint16_t(pclSimState->fState["CCPF"]);
-    suPcmFrame_Fmt1.uRUDP   = uint16_t(pclSimState->fState["RUDP"]);
-    suPcmFrame_Fmt1.uFLAP   = uint16_t(pclSimState->fState["FLAP"]);
-    }
+  // Standard nav data source values that should be in every simulation
+  suPcmFrame_Fmt1.lLATP = int32_t(FLOAT2SEMICIR32(pclSimState->fState[fields[i++]]));
+  suPcmFrame_Fmt1.lLONP = int32_t(FLOAT2SEMICIR32(pclSimState->fState[fields[i++]]));
+  suPcmFrame_Fmt1.uALT = uint16_t(pclSimState->fState[fields[i++]]) + 1000;
+  suPcmFrame_Fmt1.uTAS = uint16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.uTH = uint16_t(FLOAT2SEMICIR16(pclSimState->fState[fields[i++]]));
+  suPcmFrame_Fmt1.uMH = uint16_t(FLOAT2SEMICIR16(pclSimState->fState[fields[i++]]));
+  suPcmFrame_Fmt1.iPTCH = int16_t(FLOAT2SEMICIR16(pclSimState->fState[fields[i++]]));
+  suPcmFrame_Fmt1.iROLL = int16_t(FLOAT2SEMICIR16(pclSimState->fState[fields[i++]]));
+  suPcmFrame_Fmt1.iAOAC = int16_t(FLOAT2SEMICIR16(pclSimState->fState[fields[i++]]));
+  suPcmFrame_Fmt1.iVRTG = int16_t(pclSimState->fState[fields[i++]]);
+
+  // Additional data values from NASA data
+  suPcmFrame_Fmt1.uGS = uint16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.iIVV = int16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.iFPAC = int16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.iPLA_1 = int16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.iPLA_2 = int16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.iEGT_1 = int16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.iEGT_2 = int16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.iOIT_1 = int16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.iOIT_2 = int16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.uFF_1 = uint16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.uFF_2 = uint16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.iN1_1 = int16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.iN1_2 = int16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.iN2_1 = int16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.iN2_2 = int16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.iVIB_1 = int16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.iVIB_2 = int16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.iOIP_1 = int16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.iOIP_2 = int16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.iAOA1 = int16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.iAOA2 = int16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.bWOW = pclSimState->fState[fields[i++]] == 0.0 ? 0 : 1;
+  suPcmFrame_Fmt1.bLGDN = pclSimState->fState[fields[i++]] == 0.0 ? 0 : 1;
+  suPcmFrame_Fmt1.bLGUP = pclSimState->fState[fields[i++]] == 0.0 ? 0 : 1;
+  suPcmFrame_Fmt1.iAIL_1 = int16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.iAIL_2 = int16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.iELEV_1 = int16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.iELEV_2 = int16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.iRUDD = int16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.uCWPC = uint16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.uCWPF = uint16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.uCCPC = uint16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.uCCPF = uint16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.uRUDP = uint16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.uFLAP = uint16_t(pclSimState->fState[fields[i++]]);
+}
 
 // ----------------------------------------------------------------------------
 
@@ -349,3 +353,51 @@ std::string ClCh10Format_PCM_SynthFmt1::TMATS(ClTmatsIndexes & TmatsIndex, std::
     }
 
 
+void ClCh10Format_PCM_SynthFmt1::InitStateFieldPrefixes(string prefix)
+{
+  fields.push_back(prefix + "AC_LAT");
+  fields.push_back(prefix + "AC_LON");
+  fields.push_back(prefix + "AC_ALT");
+  fields.push_back(prefix + "AC_TAS");
+  fields.push_back(prefix + "AC_TRUE_HDG");
+  fields.push_back(prefix + "AC_MAG_HDR");
+  fields.push_back(prefix + "AC_PITCH");
+  fields.push_back(prefix + "AC_ROLL");
+  fields.push_back(prefix + "AC_AOA");
+  fields.push_back(prefix + "AC_ACCEL_DOWN");
+  fields.push_back(prefix + "GS");
+  fields.push_back(prefix + "IVV");
+  fields.push_back(prefix + "FPAC");
+  fields.push_back(prefix + "PLA_1");
+  fields.push_back(prefix + "PLA_2");
+  fields.push_back(prefix + "EGT_1");
+  fields.push_back(prefix + "EGT_2");
+  fields.push_back(prefix + "OIT_1");
+  fields.push_back(prefix + "OIT_2");
+  fields.push_back(prefix + "FF_1");
+  fields.push_back(prefix + "FF_2");
+  fields.push_back(prefix + "N1_1");
+  fields.push_back(prefix + "N1_2");
+  fields.push_back(prefix + "N2_1");
+  fields.push_back(prefix + "N2_2");
+  fields.push_back(prefix + "VIB_1");
+  fields.push_back(prefix + "VIB_2");
+  fields.push_back(prefix + "OIP_1");
+  fields.push_back(prefix + "OIP_2");
+  fields.push_back(prefix + "AOA1");
+  fields.push_back(prefix + "AOA2");
+  fields.push_back(prefix + "WOW");
+  fields.push_back(prefix + "LGDN");
+  fields.push_back(prefix + "LGUP");
+  fields.push_back(prefix + "AIL_1");
+  fields.push_back(prefix + "AIL_2");
+  fields.push_back(prefix + "ELEV_1");
+  fields.push_back(prefix + "ELEV_2");
+  fields.push_back(prefix + "RUDD");
+  fields.push_back(prefix + "CWPC");
+  fields.push_back(prefix + "CWPF");
+  fields.push_back(prefix + "CCPC");
+  fields.push_back(prefix + "CCPF");
+  fields.push_back(prefix + "RUDP");
+  fields.push_back(prefix + "FLAP");
+}

@@ -384,7 +384,7 @@ Ch10Formatter_PCM* GenerationController::CreatePcmFormatter(Ch10Channel::Channel
   case Ch10Channel::ChannelDataFormat::SYNTHFORMAT1:
   {
     ClCh10Format_PCM_SynthFmt1* formatSF1 =
-      new ClCh10Format_PCM_SynthFmt1(framerate.value);
+      new ClCh10Format_PCM_SynthFmt1(framerate.value, src->sPrefix);
     formatter = dynamic_cast<Ch10Formatter_PCM*>(formatSF1);
     break;
   }
