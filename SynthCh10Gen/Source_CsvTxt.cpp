@@ -15,8 +15,7 @@
 // Constructor / Destructor
 // ----------------------------------------------------------------------------
 
-ClSource_CsvTxt::ClSource_CsvTxt(ClSimState * pclSimState, std::string sPrefix) :
-    ClSource_Nav(pclSimState, sPrefix)
+ClSource_CsvTxt::ClSource_CsvTxt(ClSimState * pclSimState, std::string sPrefix)
     {
     this->pclSimState = pclSimState;
     this->sPrefix     = sPrefix;
@@ -155,18 +154,13 @@ bool ClSource_CsvTxt::Open(std::string sFilename)
 
 void ClSource_CsvTxt::Init()
     {
-    std::string         sDataLabelKey;
-
     // Step through all the header labels found
     for (VECTOR_ITR itLabel = CsvDataLabels.begin(); itLabel != CsvDataLabels.end(); ++itLabel)
         {
-        // Make the data label with the appropriate prefix
-        sDataLabelKey = sPrefix + *itLabel;
-
         // Insert an initial placeholder into SimState map
         // Note that it is assumed the data can be represented with a floating point. If this
         // isn't the case it needs to be fixed in a derived class.
-        pclSimState->insert(sDataLabelKey,-1.0);
+        pclSimState->insert((*itLabel),-1.0);
         } // end for all header labels
 
     // Get the first line of data and figure out the start time

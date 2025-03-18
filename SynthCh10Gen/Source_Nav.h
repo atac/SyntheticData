@@ -33,7 +33,7 @@ of time.
 class ClSource_Nav
     {
     public:
-        ClSource_Nav(ClSimState * pclSimState, std::string sPrefix) {};
+        ClSource_Nav() {};
         ~ClSource_Nav() {};
 
     // Class variables
