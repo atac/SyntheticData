@@ -20,7 +20,7 @@
 #include "i106_decode_tmats.h"
 
 #include "Common.h"
-#include "Ch10Format_1553.h"
+#include "Ch10Formatter_1553.h"
 
 using namespace Irig106;
 

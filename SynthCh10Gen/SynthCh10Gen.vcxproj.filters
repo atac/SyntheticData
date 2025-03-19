@@ -70,9 +70,6 @@
     <ClCompile Include="..\3rdParty\irig106lib\src\irig106ch10.c">
       <Filter>irig106lib</Filter>
     </ClCompile>
-    <ClCompile Include="Ch10Format_1553.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Ch10Format_1553_Nav.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -136,13 +133,13 @@
     <ClCompile Include="Program.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Ch10Formatter_1553.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\3rdParty\csv-parser\csv_parser.hpp">
       <Filter>CVS Parser</Filter>
-    </ClInclude>
-    <ClInclude Include="Ch10Format_1553.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Ch10Format_1553_Nav.h">
       <Filter>Header Files</Filter>
@@ -280,6 +277,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Ch10Formatter_PCM.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Ch10Formatter_1553.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

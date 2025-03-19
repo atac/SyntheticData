@@ -38,7 +38,7 @@
     <ClCompile Include="..\3rdParty\irig106lib\src\irig106ch10.c" />
     <ClCompile Include="..\3rdParty\SQLite\sqlite3.c" />
     <ClCompile Include="Ch10Channel.cpp" />
-    <ClCompile Include="Ch10Format_1553.cpp" />
+    <ClCompile Include="Ch10Formatter_1553.cpp" />
     <ClCompile Include="Ch10Format_1553_Nav.cpp" />
     <ClCompile Include="Ch10Format_A429.cpp" />
     <ClCompile Include="Ch10Format_A429_AR100.cpp" />
@@ -82,8 +82,8 @@
     <ClInclude Include="..\3rdParty\SQLite\sqlite3.h" />
     <ClInclude Include="Ch10Channel.h" />
     <ClInclude Include="Ch10Formatter.h" />
+    <ClInclude Include="Ch10Formatter_1553.h" />
     <ClInclude Include="Ch10Formatter_PCM.h" />
-    <ClInclude Include="Ch10Format_1553.h" />
     <ClInclude Include="Ch10Format_1553_Nav.h" />
     <ClInclude Include="Ch10Format_A429.h" />
     <ClInclude Include="Ch10Format_A429_AR100.h" />

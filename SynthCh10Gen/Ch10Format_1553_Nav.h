@@ -19,7 +19,7 @@
 
 #include "Common.h"
 #include "SimState.h"
-#include "Ch10Format_1553.h"
+#include "Ch10Formatter_1553.h"
 
 using namespace Irig106;
 
