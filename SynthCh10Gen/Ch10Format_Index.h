@@ -22,7 +22,7 @@ public:
 
   void Init(SuI106Ch10Header* psuHeader);
   void FormatMsg(ClSimState* simState);
-  std::string TMATS(ClTmatsIndexes& tmatsIndex, std::string sCDLN, int chanID) { return ""; };
+  std::string TMATS(ClTmatsIndexes& tmatsIndex, std::string sCDLN) { return ""; };
 
   RequiredIndexFields GetFormatValues();
 

@@ -103,7 +103,7 @@ void ClCh10Format_1553_Nav::FormatMsg(ClSimState * pclSimState)
 
 // Return a string with the TMATS B and C sections for this 1553 data message
 
-std::string ClCh10Format_1553_Nav::TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN, int chanID)
+std::string ClCh10Format_1553_Nav::TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN)
     {
     int                 iMessageIdx = 1;    // 1553 defined message number counter (only 1 message right now)
     int                 iMeasIdx    = 1;    // 1553 defined measurement number counter

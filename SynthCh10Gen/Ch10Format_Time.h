@@ -4,7 +4,7 @@ class Ch10Format_Time :
     public Ch10Formatter
 {
 public:
-  std::string TMATS(ClTmatsIndexes& TmatsIndex, std::string CLDN, int channelID);
+  std::string TMATS(ClTmatsIndexes& TmatsIndex, std::string CLDN);
   void        FormatMsg(ClSimState* simState);
 
   double      GetCurrentTime();

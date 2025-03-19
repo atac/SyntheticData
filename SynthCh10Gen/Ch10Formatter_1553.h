@@ -47,7 +47,7 @@ public:
 public:
   void SetRTC(int64_t* pullRelTime);
   virtual void FormatMsg(ClSimState* pclSimState) = 0;
-  virtual std::string TMATS(ClTmatsIndexes& TmatsIndex, std::string sCDLN, int chanID) = 0;
+  virtual std::string TMATS(ClTmatsIndexes& TmatsIndex, std::string sCDLN) = 0;
 
 private:
   void SetWordCount(unsigned uWordCnt);

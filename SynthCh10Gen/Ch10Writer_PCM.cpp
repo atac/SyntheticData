@@ -79,7 +79,7 @@ std::string ClCh10Writer_PCM::TMATS(ClTmatsIndexes& TmatsIndex, std::string sCDL
     "R-" << TmatsIndex.iRIndex << "\\PDP-" << TmatsIndex.iRSrcNum << ":PFS;\n"
     "R-" << TmatsIndex.iRIndex << "\\CDLN-" << TmatsIndex.iRSrcNum << ":" << sCDLN << ";\n";
 
-  ssTMATS << formatter->TMATS(TmatsIndex, sCDLN, uChanID);
+  ssTMATS << formatter->TMATS(TmatsIndex, sCDLN);
 
   return ssTMATS.str();
 } // end TMATS()

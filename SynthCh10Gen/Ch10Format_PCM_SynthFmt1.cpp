@@ -139,7 +139,7 @@ void ClCh10Format_PCM_SynthFmt1::FormatMsg(ClSimState* pclSimState)
 #define PCM_FMT_1_NUM_MEASURANDS    45
 
 
-std::string ClCh10Format_PCM_SynthFmt1::TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN, int chanID)
+std::string ClCh10Format_PCM_SynthFmt1::TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN)
     {
     std::stringstream   ssTMATS;
     unsigned long       ulDataRate;

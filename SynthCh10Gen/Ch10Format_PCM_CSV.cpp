@@ -143,7 +143,7 @@ uint32_t ClCh10Format_PCM_CSV::WordSwap(uint32_t value) {
 
 // ----------------------------------------------------------------------------
 
-std::string ClCh10Format_PCM_CSV::TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN, int chanID)
+std::string ClCh10Format_PCM_CSV::TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN)
     {
     std::stringstream   ssTMATS;
     unsigned long       ulDataRate;

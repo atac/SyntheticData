@@ -75,7 +75,7 @@ public:
   // Methods
 
   void FormatMsg(ClSimState* pclSimState);
-  std::string TMATS(ClTmatsIndexes& TmatsIndex, std::string sCDLN, int chanID);
+  std::string TMATS(ClTmatsIndexes& TmatsIndex, std::string sCDLN);
 
 private:
   void InitStateFieldPrefixes(string prefix);

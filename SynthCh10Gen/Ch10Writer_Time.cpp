@@ -143,8 +143,21 @@ void ClCh10Writer_Time::SetRelTime(int64_t lSimClockTicks, double fSimClockTime)
   enI106_SetRelTime(iHandle, &suIrigTime, abyRelTime);
 }
 
-std::string ClCh10Writer_Time::TMATS(ClTmatsIndexes& tmatsIndex, std::string sCDLN) {
-  return formatter->TMATS(tmatsIndex, sCDLN, uChanID);
+std::string ClCh10Writer_Time::TMATS(ClTmatsIndexes& TmatsIndex, std::string sCDLN) {
+  std::stringstream   ssTMATS;
+
+  ssTMATS <<
+    "R-" << TmatsIndex.iRIndex << "\\DSI-" << TmatsIndex.iRSrcNum << ":" << sCDLN << ";\n"
+    "R-" << TmatsIndex.iRIndex << "\\TK1-" << TmatsIndex.iRSrcNum << ":" << uChanID << ";\n"
+    "R-" << TmatsIndex.iRIndex << "\\TK4-" << TmatsIndex.iRSrcNum << ":" << uChanID << ";\n"
+    "R-" << TmatsIndex.iRIndex << "\\CHE-" << TmatsIndex.iRSrcNum << ":T;\n"
+    "R-" << TmatsIndex.iRIndex << "\\CDT-" << TmatsIndex.iRSrcNum << ":TIMEIN;\n"
+    "R-" << TmatsIndex.iRIndex << "\\CDLN-" << TmatsIndex.iRSrcNum << ":" << sCDLN << ";\n"
+    "R-" << TmatsIndex.iRIndex << "\\TTF-" << TmatsIndex.iRSrcNum << ":1;\n"
+    "R-" << TmatsIndex.iRIndex << "\\TFMT-" << TmatsIndex.iRSrcNum << ":I;\n"
+    "R-" << TmatsIndex.iRIndex << "\\TSRC-" << TmatsIndex.iRSrcNum << ":I;\n";
+
+  return ssTMATS.str();
 }
 
 
