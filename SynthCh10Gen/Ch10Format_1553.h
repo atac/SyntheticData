@@ -25,31 +25,33 @@
 using namespace Irig106;
 
 
-class ClCh10Format_1553 : public Ch10Formatter
-    {
+class Ch10Formatter_1553 : public Ch10Formatter
+{
 public:
-    ClCh10Format_1553(unsigned uRT, unsigned bTR, unsigned uSubAddr, unsigned uWC);
-    ClCh10Format_1553(unsigned uRT_Send,unsigned uRT_Rcv, unsigned uSubAddr_Send, unsigned uSubAddr_Rcv, unsigned uWC);
-    ClCh10Format_1553(unsigned uRT, unsigned bTR, unsigned uModeCode);
+  Ch10Formatter_1553(unsigned uRT, unsigned bTR, unsigned uSubAddr, unsigned uWC);
+  Ch10Formatter_1553(unsigned uRT_Send, unsigned uRT_Rcv, unsigned uSubAddr_Send, unsigned uSubAddr_Rcv, unsigned uWC);
+  Ch10Formatter_1553(unsigned uRT, unsigned bTR, unsigned uModeCode);
 
-    virtual ~ClCh10Format_1553();
+  virtual ~Ch10Formatter_1553();
 
-    // Class variables
+  // Class variables
 public:
-    uint16_t            auData[32];
-    Su1553F1_Header     suIPH;
-    SuCmdWordU          suCmdWord1;
-    SuCmdWordU          suCmdWord2;
-    SuStatWordU         suStatWord1;
-    SuStatWordU         suStatWord2;
+  uint16_t            auData[32];
+  Su1553F1_Header     suIPH;
+  SuCmdWordU          suCmdWord1;
+  SuCmdWordU          suCmdWord2;
+  SuStatWordU         suStatWord1;
+  SuStatWordU         suStatWord2;
 
-    // Methods
+  // Methods
 public:
-    void SetRTC(int64_t * pullRelTime);
-    void SetWordCount(unsigned uWordCnt);
+  void SetRTC(int64_t* pullRelTime);
+  virtual void FormatMsg(ClSimState* pclSimState) = 0;
+  virtual std::string TMATS(ClTmatsIndexes& TmatsIndex, std::string sCDLN, int chanID) = 0;
 
-    virtual void MakeMsg(ClSimState * pclSimState) = 0;
-    virtual std::string TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN) = 0;
+private:
+  void SetWordCount(unsigned uWordCnt);
+  void InitStructs();
 
-    };
+};
 

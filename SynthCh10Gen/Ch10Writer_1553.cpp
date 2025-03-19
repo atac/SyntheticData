@@ -21,10 +21,11 @@ ClCh10Writer_1553::~ClCh10Writer_1553()
 // Methods
 // ----------------------------------------------------------------------------
 
-void ClCh10Writer_1553::Init(int iHandle, unsigned int uChanID)
+void ClCh10Writer_1553::Init(int iHandle, unsigned int uChanID, Ch10Formatter_1553* formatter)
     {
     this->iHandle = iHandle;
     this->uChanID = uChanID;
+    this->formatter = formatter;
 
     // Setup the Ch 10 header
     iHeaderInit(&(suWriteMsg1553.suCh10Header), uChanID, I106CH10_DTYPE_1553_FMT_1, I106CH10_PFLAGS_CHKSUM_32 | I106CH10_PFLAGS_TIMEFMT_IRIG106, 0);
@@ -54,19 +55,13 @@ void ClCh10Writer_1553::Init(int iHandle, unsigned int uChanID)
 
 // Return a string with the TMATS R section for this channel
 
-std::string ClCh10Writer_1553::TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN, std::string sDescription)
+std::string ClCh10Writer_1553::TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN)
     {
     std::stringstream   ssTMATS;
-    std::stringstream   ssDSI;
-
-    if (sDescription != "")
-        ssDSI << sDescription;
-    else
-        ssDSI << "1553InChan" << uChanID;
 
     // Define the data source R record
     ssTMATS <<
-        "R-" << TmatsIndex.iRIndex << "\\DSI-"  << TmatsIndex.iRSrcNum << ":" << ssDSI.str() << ";\n"
+        "R-" << TmatsIndex.iRIndex << "\\DSI-"  << TmatsIndex.iRSrcNum << ":" << sCDLN << ";\n"
         "R-" << TmatsIndex.iRIndex << "\\TK1-"  << TmatsIndex.iRSrcNum << ":" << uChanID << ";\n"
         "R-" << TmatsIndex.iRIndex << "\\TK4-"  << TmatsIndex.iRSrcNum << ":" << uChanID << ";\n"
         "R-" << TmatsIndex.iRIndex << "\\CHE-"  << TmatsIndex.iRSrcNum << ":T;\n"
@@ -74,13 +69,7 @@ std::string ClCh10Writer_1553::TMATS(ClTmatsIndexes & TmatsIndex, std::string sC
         "R-" << TmatsIndex.iRIndex << "\\CDT-"  << TmatsIndex.iRSrcNum << ":1553IN;\n"
         "R-" << TmatsIndex.iRIndex << "\\CDLN-" << TmatsIndex.iRSrcNum << ":" << sCDLN << ";\n";
 
-    // Define the one and only bus B record
-    ssTMATS <<
-        "B-" << TmatsIndex.iBIndex << "\\DLN:" << sCDLN << ";\n"    // Link from R-x\CDLN-n above
-        "B-" << TmatsIndex.iBIndex << "\\NBS\\N:1;\n"
-        "B-" << TmatsIndex.iBIndex << "\\BID-1:0000;\n"
-        "B-" << TmatsIndex.iBIndex << "\\BNA-1:" << sCDLN << ";\n"
-        "B-" << TmatsIndex.iBIndex << "\\BT-1:1553;\n";
+    ssTMATS << formatter->TMATS(TmatsIndex, sCDLN, uChanID);
 
     return ssTMATS.str();
     } // end TMATS()
@@ -91,205 +80,202 @@ std::string ClCh10Writer_1553::TMATS(ClTmatsIndexes & TmatsIndex, std::string sC
 // No status response is indicated by Status Word = -1
 // The message length value in the IPH needs to be correct, even for Mode Codes.
 
-void ClCh10Writer_1553::AppendMsg(ClCh10Format_1553 * psu1553Msg)
+void ClCh10Writer_1553::AppendMsg() {
+  Su1553F1_Header* psu1553IPH = &(formatter->suIPH);
+  uint16_t* auData = formatter->auData;
+
+  unsigned        uCurrBufferOffset;
+  unsigned        uDataBytes;
+
+  SuCmdWordU      suCmdWord1 = formatter->suCmdWord1;
+  SuCmdWordU      suCmdWord2 = formatter->suCmdWord2;
+  SuStatWordU     suStatWord1 = formatter->suStatWord1;
+  SuStatWordU     suStatWord2 = formatter->suStatWord2;
+  
+  int32_t iCmdWord1 = suCmdWord1.uValue;
+  int32_t iStatWord1 = suStatWord1.uValue;
+  int32_t iCmdWord2 = suCmdWord2.uValue;
+  int32_t iStatWord2 = suStatWord2.uValue;
+
+  // If this is the first message then the packet RTC is the first message RTC
+  if (suWriteMsg1553.psu1553CSDW->uMsgCnt == 0)
+  {
+    // This assumes intra-packet time is in RTC format
+    memcpy(suWriteMsg1553.suCh10Header.aubyRefTime, psu1553IPH->aubyIntPktTime, 6);
+  }
+
+  uCurrBufferOffset = suWriteMsg1553.suCh10Header.ulDataLen;
+  suWriteMsg1553.psu1553CSDW->uMsgCnt++;
+
+  // Expand the 1553 packet buffer if necessary
+  suWriteMsg1553.suCh10Header.ulDataLen += sizeof(Su1553F1_Header) + psu1553IPH->uMsgLen;
+  if (suWriteMsg1553.suCh10Header.ulDataLen > suWriteMsg1553.uBuffLen)
+  {
+    suWriteMsg1553.uBuffLen += 1000;
+    suWriteMsg1553.pchDataBuff = (unsigned char*)realloc(suWriteMsg1553.pchDataBuff, suWriteMsg1553.uBuffLen);
+    suWriteMsg1553.psu1553CSDW = (Su1553F1_ChanSpec*)suWriteMsg1553.pchDataBuff;
+  }
+
+  // Build one of the various packet layouts
+
+  // Regular message
+  if (psu1553IPH->bRT2RT == 0)
+    // Transmit command but no status response, so no data either
+    if ((suCmdWord1.suStruct.bTR == 1) && (iStatWord1 < 0))
     {
-    AppendMsg(&(psu1553Msg->suIPH), psu1553Msg->suCmdWord1.uValue, psu1553Msg->suStatWord1.uValue, psu1553Msg->suCmdWord2.uValue, psu1553Msg->suStatWord2.uValue, psu1553Msg->auData);
-    }
+      // Intrapacket header
+      memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, psu1553IPH, sizeof(Su1553F1_Header));
+      uCurrBufferOffset += sizeof(Su1553F1_Header);
 
+      // Command Word 1
+      memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, &suCmdWord1.uValue, 2);
+      uCurrBufferOffset += 2;
+    } // end if no transmit status or data
 
-void ClCh10Writer_1553::AppendMsg(Su1553F1_Header * psu1553IPH, int32_t iCmdWord1, int32_t iStatWord1, int32_t iCmdWord2, int32_t iStatWord2, uint16_t auData[])
+// Receive command but no status response
+    else if ((suCmdWord1.suStruct.bTR == 0) && (iStatWord1 < 0))
     {
-    unsigned        uCurrBufferOffset;
-    unsigned        uDataBytes;
-    SuCmdWordU      suCmdWord1;
-    SuCmdWordU      suCmdWord2;
-    SuStatWordU     suStatWord1;
-    SuStatWordU     suStatWord2;
+      // Intrapacket header
+      memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, psu1553IPH, sizeof(Su1553F1_Header));
+      uCurrBufferOffset += sizeof(Su1553F1_Header);
 
-    // If this is the first message then the packet RTC is the first message RTC
-    if (suWriteMsg1553.psu1553CSDW->uMsgCnt == 0)
-        {
-        // This assumes intra-packet time is in RTC format
-        memcpy(suWriteMsg1553.suCh10Header.aubyRefTime, psu1553IPH->aubyIntPktTime, 6);
-        }
+      // Command Word 1
+      memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, &suCmdWord1.uValue, 2);
+      uCurrBufferOffset += 2;
 
-    suCmdWord1.uValue  = (uint16_t)(iCmdWord1  & 0x0000ffff);
-    suCmdWord2.uValue  = (uint16_t)(iCmdWord2  & 0x0000ffff);
-    suStatWord1.uValue = (uint16_t)(iStatWord1 & 0x0000ffff);
-    suStatWord2.uValue = (uint16_t)(iStatWord2 & 0x0000ffff);
+      // Data
+      uDataBytes = psu1553IPH->uMsgLen - 2;
+      if (uDataBytes > 0)
+      {
+        memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, auData, uDataBytes);
+        uCurrBufferOffset += uDataBytes;
+      }
+    } // end if no receive status
 
-    uCurrBufferOffset = suWriteMsg1553.suCh10Header.ulDataLen;
-    suWriteMsg1553.psu1553CSDW->uMsgCnt++;
-
-    // Expand the 1553 packet buffer if necessary
-    suWriteMsg1553.suCh10Header.ulDataLen += sizeof(Su1553F1_Header) + psu1553IPH->uMsgLen;
-    if (suWriteMsg1553.suCh10Header.ulDataLen > suWriteMsg1553.uBuffLen)
-        {
-        suWriteMsg1553.uBuffLen += 1000;
-        suWriteMsg1553.pchDataBuff = (unsigned char *)realloc(suWriteMsg1553.pchDataBuff, suWriteMsg1553.uBuffLen);
-        suWriteMsg1553.psu1553CSDW = (Su1553F1_ChanSpec *)suWriteMsg1553.pchDataBuff;
-        }
-    
-    // Build one of the various packet layouts
-
-    // Regular message
-    if (psu1553IPH->bRT2RT == 0)
-        // Transmit command but no status response, so no data either
-        if ((suCmdWord1.suStruct.bTR == 1) && (iStatWord1 < 0))
-            {
-            // Intrapacket header
-            memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, psu1553IPH, sizeof(Su1553F1_Header));
-            uCurrBufferOffset += sizeof(Su1553F1_Header);
-
-            // Command Word 1
-            memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, &suCmdWord1.uValue, 2);
-            uCurrBufferOffset += 2;
-            } // end if no transmit status or data
-
-        // Receive command but no status response
-        else if ((suCmdWord1.suStruct.bTR == 0) && (iStatWord1 < 0))
-            {
-            // Intrapacket header
-            memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, psu1553IPH, sizeof(Su1553F1_Header));
-            uCurrBufferOffset += sizeof(Su1553F1_Header);
-
-            // Command Word 1
-            memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, &suCmdWord1.uValue, 2);
-            uCurrBufferOffset += 2;
-
-            // Data
-            uDataBytes = psu1553IPH->uMsgLen - 2;
-            if (uDataBytes > 0)
-                {
-                memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, auData, uDataBytes);
-                uCurrBufferOffset += uDataBytes;
-                }
-            } // end if no receive status
-
-        // Full message
-        else
-            {
-            // Intrapacket header
-            memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, psu1553IPH, sizeof(Su1553F1_Header));
-            uCurrBufferOffset += sizeof(Su1553F1_Header);
-
-            // Command Word 1
-            memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, &suCmdWord1.uValue, 2);
-            uCurrBufferOffset += 2;
-
-            // Transmit command
-            if (suCmdWord1.suStruct.bTR == 1)
-                {
-                // Status Word 1
-                memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, &suStatWord1.uValue, 2);
-                uCurrBufferOffset += 2;
-
-                // Data
-                uDataBytes = psu1553IPH->uMsgLen - 4;
-                if (uDataBytes > 0)
-                    {
-                    memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, auData, uDataBytes);
-                    uCurrBufferOffset += uDataBytes;
-                    }
-                }
-
-            // Receive command
-            else
-                {
-                // Data
-                uDataBytes = psu1553IPH->uMsgLen - 4;
-                if (uDataBytes > 0)
-                    {
-                    memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, auData, uDataBytes);
-                    uCurrBufferOffset += uDataBytes;
-                    }
-
-                // Status Word 1
-                memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, &suStatWord1.uValue, 2);
-                uCurrBufferOffset += 2;
-                }
-
-            } // end if full message
-
-    // RT to RT
+// Full message
     else
-        // No transmit status response so only command words
-        if (iStatWord2 < 0)
-            {
-            // Intrapacket header
-            memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, psu1553IPH, sizeof(Su1553F1_Header));
-            uCurrBufferOffset += sizeof(Su1553F1_Header);
+    {
+      // Intrapacket header
+      memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, psu1553IPH, sizeof(Su1553F1_Header));
+      uCurrBufferOffset += sizeof(Su1553F1_Header);
 
-            // Command Word 1
-            memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, &suCmdWord1.uValue, 2);
-            uCurrBufferOffset += 2;
+      // Command Word 1
+      memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, &suCmdWord1.uValue, 2);
+      uCurrBufferOffset += 2;
 
-            // Command Word 2
-            memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, &suCmdWord2.uValue, 2);
-            uCurrBufferOffset += 2;
-            } // end if RT to RT, no transmit status or data
+      // Transmit command
+      if (suCmdWord1.suStruct.bTR == 1)
+      {
+        // Status Word 1
+        memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, &suStatWord1.uValue, 2);
+        uCurrBufferOffset += 2;
 
-        // No receive status word so commands words, transmit status, and data
-        else if ((iStatWord2 >= 0) && (iStatWord1 < 0))
-            {
-            // Intrapacket header
-            memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, psu1553IPH, sizeof(Su1553F1_Header));
-            uCurrBufferOffset += sizeof(Su1553F1_Header);
+        // Data
+        uDataBytes = psu1553IPH->uMsgLen - 4;
+        if (uDataBytes > 0)
+        {
+          memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, auData, uDataBytes);
+          uCurrBufferOffset += uDataBytes;
+        }
+      }
 
-            // Command Word 1
-            memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, &suCmdWord1.uValue, 2);
-            uCurrBufferOffset += 2;
+      // Receive command
+      else
+      {
+        // Data
+        uDataBytes = psu1553IPH->uMsgLen - 4;
+        if (uDataBytes > 0)
+        {
+          memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, auData, uDataBytes);
+          uCurrBufferOffset += uDataBytes;
+        }
 
-            // Command Word 2
-            memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, &suCmdWord2.uValue, 2);
-            uCurrBufferOffset += 2;
+        // Status Word 1
+        memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, &suStatWord1.uValue, 2);
+        uCurrBufferOffset += 2;
+      }
 
-            // Status Word 2
-            memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, &suStatWord2.uValue, 2);
-            uCurrBufferOffset += 2;
+    } // end if full message
 
-            // Data
-            uDataBytes = psu1553IPH->uMsgLen - 6;
-            if (uDataBytes > 0)
-                {
-                memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, auData, uDataBytes);
-                uCurrBufferOffset += uDataBytes;
-                }
-            } // end if RT to RT, no receive status
+// RT to RT
+  else
+    // No transmit status response so only command words
+    if (iStatWord2 < 0)
+    {
+      // Intrapacket header
+      memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, psu1553IPH, sizeof(Su1553F1_Header));
+      uCurrBufferOffset += sizeof(Su1553F1_Header);
 
-        // Full RT to RT message
-        else
-            {
-            // Intrapacket header
-            memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, psu1553IPH, sizeof(Su1553F1_Header));
-            uCurrBufferOffset += sizeof(Su1553F1_Header);
+      // Command Word 1
+      memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, &suCmdWord1.uValue, 2);
+      uCurrBufferOffset += 2;
 
-            // Command Word 1
-            memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, &suCmdWord1.uValue, 2);
-            uCurrBufferOffset += 2;
+      // Command Word 2
+      memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, &suCmdWord2.uValue, 2);
+      uCurrBufferOffset += 2;
+    } // end if RT to RT, no transmit status or data
 
-            // Command Word 2
-            memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, &suCmdWord2.uValue, 2);
-            uCurrBufferOffset += 2;
+// No receive status word so commands words, transmit status, and data
+    else if ((iStatWord2 >= 0) && (iStatWord1 < 0))
+    {
+      // Intrapacket header
+      memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, psu1553IPH, sizeof(Su1553F1_Header));
+      uCurrBufferOffset += sizeof(Su1553F1_Header);
 
-            // Status Word 2
-            memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, &suStatWord2.uValue, 2);
-            uCurrBufferOffset += 2;
+      // Command Word 1
+      memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, &suCmdWord1.uValue, 2);
+      uCurrBufferOffset += 2;
 
-            // Data
-            uDataBytes = psu1553IPH->uMsgLen - 8;
-            if (uDataBytes > 0)
-                {
-                memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, auData, uDataBytes);
-                uCurrBufferOffset += uDataBytes;
-                }
+      // Command Word 2
+      memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, &suCmdWord2.uValue, 2);
+      uCurrBufferOffset += 2;
 
-            // Status Word 1
-            memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, &suStatWord1.uValue, 2);
-            uCurrBufferOffset += 2;
-            } // end if full RT to RT
+      // Status Word 2
+      memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, &suStatWord2.uValue, 2);
+      uCurrBufferOffset += 2;
 
-    } // end WriteMsg1553Append()
+      // Data
+      uDataBytes = psu1553IPH->uMsgLen - 6;
+      if (uDataBytes > 0)
+      {
+        memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, auData, uDataBytes);
+        uCurrBufferOffset += uDataBytes;
+      }
+    } // end if RT to RT, no receive status
+
+// Full RT to RT message
+    else
+    {
+      // Intrapacket header
+      memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, psu1553IPH, sizeof(Su1553F1_Header));
+      uCurrBufferOffset += sizeof(Su1553F1_Header);
+
+      // Command Word 1
+      memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, &suCmdWord1.uValue, 2);
+      uCurrBufferOffset += 2;
+
+      // Command Word 2
+      memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, &suCmdWord2.uValue, 2);
+      uCurrBufferOffset += 2;
+
+      // Status Word 2
+      memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, &suStatWord2.uValue, 2);
+      uCurrBufferOffset += 2;
+
+      // Data
+      uDataBytes = psu1553IPH->uMsgLen - 8;
+      if (uDataBytes > 0)
+      {
+        memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, auData, uDataBytes);
+        uCurrBufferOffset += uDataBytes;
+      }
+
+      // Status Word 1
+      memcpy(suWriteMsg1553.pchDataBuff + uCurrBufferOffset, &suStatWord1.uValue, 2);
+      uCurrBufferOffset += 2;
+    } // end if full RT to RT
+
+} // end WriteMsg1553Append()
 
 
 // ----------------------------------------------------------------------------

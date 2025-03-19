@@ -25,37 +25,39 @@
 using namespace Irig106;
 
 
-class ClCh10Writer_1553
-    {
-    public:
-        ClCh10Writer_1553();
-        ~ClCh10Writer_1553();
+class ClCh10Writer_1553 : public Ch10Writer
+{
+public:
+  ClCh10Writer_1553();
+  ~ClCh10Writer_1553();
 
-    // Structures
+  // Structures
 #pragma pack(push, 1)
     // 1553 write buffer info
-    struct SuWriteMsg1553
-        {
-        SuI106Ch10Header        suCh10Header;
-        Su1553F1_ChanSpec     * psu1553CSDW;
-        unsigned char         * pchDataBuff;    // Make this char * makes pointer math easier
-        uint32_t                uBuffLen;       // Size of the write buffer
-        } suWriteMsg1553;
+  struct SuWriteMsg1553
+  {
+    SuI106Ch10Header   suCh10Header;
+    Su1553F1_ChanSpec* psu1553CSDW;
+    unsigned char*     pchDataBuff;    // Make this char * makes pointer math easier
+    uint32_t           uBuffLen;       // Size of the write buffer
+  } suWriteMsg1553;
 #pragma pack(pop)
 
-    // Data
+  // Data
 public:
-    int                 iHandle;
-    unsigned int        uChanID;
-    std::string         sCDLN;                  // Linking Channel Data Link Name for TMATS
+  int                 iHandle;
+  unsigned int        uChanID;
+  std::string         sCDLN;                  // Linking Channel Data Link Name for TMATS
 
-    // Methods
+private:
+  Ch10Formatter_1553* formatter;
+
+  // Methods
 public:
-    void Init(int iHandle, unsigned int uChanID);
-    std::string TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN, std::string sDescription="");
-    void AppendMsg(Su1553F1_Header * psu1553IPH, int32_t iCmdWord1, int32_t iStatWord1, int32_t iCmdWord2, int32_t iStatWord2, uint16_t auData[]);
-    void AppendMsg(ClCh10Format_1553 * psu1553Msg);
-    void Commit();
+  void Init(int iHandle, unsigned int uChanID, Ch10Formatter_1553* formatter);
+  void AppendMsg();
+  void Commit();
 
-    };
+  std::string TMATS(ClTmatsIndexes& TmatsIndex, std::string sCDLN);
+};
 

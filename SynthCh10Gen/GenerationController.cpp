@@ -200,6 +200,17 @@ ControllerStatus GenerationController::AddDataChannel(ConfigChannel config) {  /
     writer = dynamic_cast<Ch10Writer*>(writerPcm);
     break;
   }
+  
+  case Ch10Channel::ChannelType::MS1553:
+  {
+    Ch10Formatter_1553* format1553 = Create1553Formatter(config.format);
+    ClCh10Writer_1553* writer1553 = new ClCh10Writer_1553();
+    writer1553->Init(i106OutFileHandle, config.id, format1553);
+
+    formatter = dynamic_cast<Ch10Formatter*>(format1553);
+    writer = dynamic_cast<Ch10Writer*>(writer1553);
+    break;
+  }
 
   default:
     break;
@@ -386,6 +397,32 @@ Ch10Formatter_PCM* GenerationController::CreatePcmFormatter(Ch10Channel::Channel
     ClCh10Format_PCM_SynthFmt1* formatSF1 =
       new ClCh10Format_PCM_SynthFmt1(framerate.value, src->sPrefix);
     formatter = dynamic_cast<Ch10Formatter_PCM*>(formatSF1);
+    break;
+  }
+
+  case Ch10Channel::ChannelDataFormat::CUSTOM:
+    break;
+
+  default:
+    break;
+  }
+
+  return formatter;
+}
+
+Ch10Formatter_1553* GenerationController::Create1553Formatter(Ch10Channel::ChannelDataFormat format)
+{
+  Ch10Formatter_1553* formatter = nullptr;
+
+  switch (format) {
+
+  case Ch10Channel::ChannelDataFormat::UNFORMATTED:
+    break;
+
+  case Ch10Channel::ChannelDataFormat::SYNTHFORMAT1:
+  {
+    ClCh10Format_1553_Nav* formatSF1 = new ClCh10Format_1553_Nav(6, 1, 29, 32);
+    formatter = dynamic_cast<Ch10Formatter_1553*>(formatSF1);
     break;
   }
 

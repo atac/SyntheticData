@@ -31,82 +31,69 @@ using namespace Irig106;
 // ----------------------------------------------------------------------------
 
 // Construct Transmit, Receive
-ClCh10Format_1553::ClCh10Format_1553(unsigned uRT, unsigned bTR, unsigned uSubAddr, unsigned uWC)
-    {
-    memset(&suIPH, 0, sizeof(Su1553F1_Header));
-    suIPH.uGapTime1              = 60;
-    suIPH.uGapTime2              =  0;
+Ch10Formatter_1553::Ch10Formatter_1553(unsigned uRT, unsigned bTR, unsigned uSubAddr, unsigned uWC)
+{
+  InitStructs();
 
-    suCmdWord1.suStruct.uRTAddr  = uRT;
-    suCmdWord1.suStruct.bTR      = bTR;
-    suCmdWord1.suStruct.uSubAddr = uSubAddr;
+  suIPH.uGapTime1 = 60;
+  suIPH.uGapTime2 = 0;
 
-    SetWordCount(uWC);
+  suCmdWord1.suStruct.uRTAddr = uRT;
+  suCmdWord1.suStruct.bTR = bTR;
+  suCmdWord1.suStruct.uSubAddr = uSubAddr;
 
-    memset(&suCmdWord2,  0, sizeof(SuCmdWordU));
+  SetWordCount(uWC);
 
-    memset(&suStatWord1, 0, sizeof(SuStatWordU));
-    suStatWord1.suStruct.uRTAddr = uRT;
-
-    memset(&suStatWord2, 0, sizeof(SuStatWordU));
-
-    }
+  suStatWord1.suStruct.uRTAddr = uRT;
+}
 
 // ----------------------------------------------------------------------------
 
 // Construct RT to RT message
-ClCh10Format_1553::ClCh10Format_1553(unsigned uRT_Send, unsigned uRT_Rcv, unsigned uSubAddr_Send, 
-        unsigned uSubAddr_Rcv, unsigned uWC)
-    {
-    memset(&suIPH, 0, sizeof(Su1553F1_Header));
-    suIPH.bRT2RT                 = 1;
-    suIPH.uGapTime1              = 60;
-    suIPH.uGapTime2              = 60;
+Ch10Formatter_1553::Ch10Formatter_1553(unsigned uRT_Send, unsigned uRT_Rcv, unsigned uSubAddr_Send,
+  unsigned uSubAddr_Rcv, unsigned uWC)
+{
+  InitStructs();
 
-    suCmdWord1.suStruct.uRTAddr  = uRT_Rcv;
-    suCmdWord1.suStruct.bTR      = 0;
-    suCmdWord1.suStruct.uSubAddr = uSubAddr_Rcv;
+  suIPH.bRT2RT = 1;
+  suIPH.uGapTime1 = 60;
+  suIPH.uGapTime2 = 60;
 
-    suCmdWord2.suStruct.uRTAddr  = uRT_Send;
-    suCmdWord2.suStruct.bTR      = 1;
-    suCmdWord2.suStruct.uSubAddr = uSubAddr_Send;
+  suCmdWord1.suStruct.uRTAddr = uRT_Rcv;
+  suCmdWord1.suStruct.bTR = 0;
+  suCmdWord1.suStruct.uSubAddr = uSubAddr_Rcv;
 
-    SetWordCount(uWC);
+  suCmdWord2.suStruct.uRTAddr = uRT_Send;
+  suCmdWord2.suStruct.bTR = 1;
+  suCmdWord2.suStruct.uSubAddr = uSubAddr_Send;
 
-    memset(&suStatWord1, 0, sizeof(SuStatWordU));
-    suStatWord1.suStruct.uRTAddr = uRT_Send;
+  SetWordCount(uWC);
 
-    memset(&suStatWord2, 0, sizeof(SuStatWordU));
-    suStatWord2.suStruct.uRTAddr = uRT_Rcv;
+  suStatWord1.suStruct.uRTAddr = uRT_Send;
 
-    }
+  suStatWord2.suStruct.uRTAddr = uRT_Rcv;
+}
 
 // ----------------------------------------------------------------------------
 
 // Construct Mode Code message
-ClCh10Format_1553::ClCh10Format_1553(unsigned uRT, unsigned bTR, unsigned uModeCode)
-    {
-    memset(&suIPH, 0, sizeof(Su1553F1_Header));
+Ch10Formatter_1553::Ch10Formatter_1553(unsigned uRT, unsigned bTR, unsigned uModeCode)
+{
+  InitStructs();
 
-    suCmdWord1.suStruct.uRTAddr  = uRT;
-    suCmdWord1.suStruct.bTR      = bTR;
-    suCmdWord1.suStruct.uSubAddr = 0;
+  suCmdWord1.suStruct.uRTAddr = uRT;
+  suCmdWord1.suStruct.bTR = bTR;
+  suCmdWord1.suStruct.uSubAddr = 0;
 
-    SetWordCount(uModeCode);
+  SetWordCount(uModeCode);
 
-    memset(&suCmdWord2,  0, sizeof(SuCmdWordU));
-
-    memset(&suStatWord1, 0, sizeof(SuStatWordU));
-    suStatWord1.suStruct.uRTAddr = uRT;
-
-    memset(&suStatWord2, 0, sizeof(SuStatWordU));
-
-    }
+  suStatWord1.suStruct.uRTAddr = uRT;
+}
 
 
 // ----------------------------------------------------------------------------
 
-ClCh10Format_1553::~ClCh10Format_1553()
+Ch10Formatter_1553::~Ch10Formatter_1553()
     {
     }
 
@@ -117,7 +104,7 @@ ClCh10Format_1553::~ClCh10Format_1553()
 
 // Set the relative time counter
 
-void ClCh10Format_1553::SetRTC(int64_t * pullRelTime)
+void Ch10Formatter_1553::SetRTC(int64_t * pullRelTime)
     {
     vLLInt2TimeArray(pullRelTime, suIPH.aubyIntPktTime);
     }
@@ -127,7 +114,7 @@ void ClCh10Format_1553::SetRTC(int64_t * pullRelTime)
 
 // Set the word count / mode code for the current message.
 
-void ClCh10Format_1553::SetWordCount(unsigned uWordCnt)
+void Ch10Formatter_1553::SetWordCount(unsigned uWordCnt)
     {
     if (uWordCnt >= 32)
         uWordCnt = 0;
@@ -147,4 +134,13 @@ void ClCh10Format_1553::SetWordCount(unsigned uWordCnt)
         }
     }
 
-
+// Zero instance data memory
+void Ch10Formatter_1553::InitStructs()
+{
+  memset(auData, 0, sizeof(auData));
+  memset(&suIPH, 0, sizeof(Su1553F1_Header));
+  memset(&suCmdWord1, 0, sizeof(SuCmdWordU));
+  memset(&suCmdWord2, 0, sizeof(SuCmdWordU));
+  memset(&suStatWord1, 0, sizeof(SuStatWordU));
+  memset(&suStatWord2, 0, sizeof(SuStatWordU));
+}

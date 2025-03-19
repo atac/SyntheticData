@@ -25,7 +25,7 @@ using namespace Irig106;
 
 
 class ClCh10Format_1553_Nav :
-    public ClCh10Format_1553
+    public Ch10Formatter_1553
     {
 public:
     ClCh10Format_1553_Nav(unsigned uRT, unsigned bTR, unsigned uSubAddr, unsigned uWC);
@@ -73,9 +73,8 @@ public:
 
     // Methods
 
-    void MakeMsg(ClSimState * pclSimState);
-    std::string TMATS(ClTmatsIndexes& TmatsIndex, std::string sCDLN) { return ""; };
-    std::string TMATS(ClTmatsIndexes& TmatsIndex);
+    void FormatMsg(ClSimState * pclSimState);
+    std::string TMATS(ClTmatsIndexes& TmatsIndex, std::string sCDLN, int chanID);
 
     };
 

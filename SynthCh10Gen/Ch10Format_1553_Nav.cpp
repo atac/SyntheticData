@@ -21,7 +21,7 @@ using namespace std;
 
 // Construct Transmit, Receive, and Mode Code message
 ClCh10Format_1553_Nav::ClCh10Format_1553_Nav(unsigned uRT, unsigned bTR, unsigned uSubAddr, unsigned uWC) :
-        ClCh10Format_1553(uRT, bTR, uSubAddr, uWC)
+  Ch10Formatter_1553(uRT, bTR, uSubAddr, uWC)
     {
     psuInsData = (SuINS_Data *)&auData;
     }
@@ -30,7 +30,7 @@ ClCh10Format_1553_Nav::ClCh10Format_1553_Nav(unsigned uRT, unsigned bTR, unsigne
 
 // Construct RT to RT message
 ClCh10Format_1553_Nav::ClCh10Format_1553_Nav(unsigned uRT_Send,unsigned uRT_Rcv, unsigned uSubAddr_Send, unsigned uSubAddr_Rcv, unsigned uWC) :
-        ClCh10Format_1553(uRT_Send, uRT_Rcv, uSubAddr_Send, uSubAddr_Rcv, uWC)
+  Ch10Formatter_1553(uRT_Send, uRT_Rcv, uSubAddr_Send, uSubAddr_Rcv, uWC)
     {
     psuInsData = (SuINS_Data *)&auData;
     }
@@ -45,7 +45,7 @@ ClCh10Format_1553_Nav::~ClCh10Format_1553_Nav()
 // Methods
 // ----------------------------------------------------------------------------
 
-void ClCh10Format_1553_Nav::MakeMsg(ClSimState * pclSimState)
+void ClCh10Format_1553_Nav::FormatMsg(ClSimState * pclSimState)
     {
     int32_t     lTempVel;
     uint32_t    ulTempLatLon;
@@ -96,11 +96,20 @@ void ClCh10Format_1553_Nav::MakeMsg(ClSimState * pclSimState)
 
 // Return a string with the TMATS B and C sections for this 1553 data message
 
-std::string ClCh10Format_1553_Nav::TMATS(ClTmatsIndexes & TmatsIndex)
+std::string ClCh10Format_1553_Nav::TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN, int chanID)
     {
     int                 iMessageIdx = 1;    // 1553 defined message number counter (only 1 message right now)
     int                 iMeasIdx    = 1;    // 1553 defined measurement number counter
     std::stringstream   ssTMATS;
+
+
+    // Define the one and only bus B record
+    ssTMATS <<
+      "B-" << TmatsIndex.iBIndex << "\\DLN:" << sCDLN << ";\n"    // Link from R-x\CDLN-n above
+      "B-" << TmatsIndex.iBIndex << "\\NBS\\N:1;\n"
+      "B-" << TmatsIndex.iBIndex << "\\BID-1:0000;\n"
+      "B-" << TmatsIndex.iBIndex << "\\BNA-1:" << sCDLN << ";\n"
+      "B-" << TmatsIndex.iBIndex << "\\BT-1:1553;\n";
 
     // Bus Message 1 - NAV
     // --------------------------
