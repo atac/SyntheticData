@@ -20,10 +20,12 @@ using namespace std;
 // ----------------------------------------------------------------------------
 
 // Construct Transmit, Receive, and Mode Code message
-ClCh10Format_1553_Nav::ClCh10Format_1553_Nav(unsigned uRT, unsigned bTR, unsigned uSubAddr, unsigned uWC) :
+ClCh10Format_1553_Nav::ClCh10Format_1553_Nav(unsigned uRT, unsigned bTR, unsigned uSubAddr, unsigned uWC, string stateFieldPrefix) :
   Ch10Formatter_1553(uRT, bTR, uSubAddr, uWC)
     {
     psuInsData = (SuINS_Data *)&auData;
+
+    InitStateFieldPrefixes(stateFieldPrefix);
     }
 
 // ----------------------------------------------------------------------------
@@ -50,39 +52,44 @@ void ClCh10Format_1553_Nav::FormatMsg(ClSimState * pclSimState)
     int32_t     lTempVel;
     uint32_t    ulTempLatLon;
 
+    int i = 0;
+
     // Zero everthing out
     memset(psuInsData, 0, sizeof(SuINS_Data));
 
     psuInsData->uStatus      = 0x0077;  // Acceleration data for the NASA set is hosed
     //psuInsData->uTimeTag
-    lTempVel = ( int32_t)(pclSimState->fState["AC_VEL_NORTH"] * 0x00040000);
+    lTempVel = ( int32_t)(pclSimState->fState[fields[i++]] * 0x00040000);
     psuInsData->sVelX_MSW    = ( int16_t)((lTempVel >> 16) & 0x0000ffff);
     psuInsData->uVelX_LSW    = (uint16_t)((lTempVel      ) & 0x0000ffff);
-    lTempVel = (int32_t)(pclSimState->fState["AC_VEL_EAST"] * 0x00040000);
+    lTempVel = (int32_t)(pclSimState->fState[fields[i++]] * 0x00040000);
     psuInsData->sVelY_MSW    = ( int16_t)((lTempVel >> 16) & 0x0000ffff);
     psuInsData->uVelY_LSW    = (uint16_t)((lTempVel      ) & 0x0000ffff);
-    lTempVel = (int32_t)(pclSimState->fState["AC_VEL_DOWN"] * 0x00040000);
+    lTempVel = (int32_t)(pclSimState->fState[fields[i++]] * 0x00040000);
     psuInsData->sVelZ_MSW    = ( int16_t)((lTempVel >> 16) & 0x0000ffff);
     psuInsData->uVelZ_LSW    = (uint16_t)((lTempVel      ) & 0x0000ffff);
-    psuInsData->uAz          = (uint16_t)(pclSimState->fState["AC_TRUE_HDG"]  / 180.0 * (double)0x7fff);
-    psuInsData->sRoll        = ( int16_t)(pclSimState->fState["AC_ROLL"]      / 180.0 * (double)0x7fff);
-    psuInsData->sPitch       = ( int16_t)(pclSimState->fState["AC_PITCH"]     / 180.0 * (double)0x7fff);
-    psuInsData->uTrueHeading = (uint16_t)(pclSimState->fState["AC_TRUE_HDG"]  / 180.0 * (double)0x7fff);
-    psuInsData->uMagHeading  = (uint16_t)(pclSimState->fState["AC_MAG_HDG"]   / 180.0 * (double)0x7fff);
-    psuInsData->sAccX        = ( int16_t)(pclSimState->fState["AC_ACCEL_NORTH"] * 32.0);
-    psuInsData->sAccY        = ( int16_t)(pclSimState->fState["AC_ACCEL_EAST"]  * 32.0);
-    psuInsData->sAccZ        = ( int16_t)(pclSimState->fState["AC_ACCEL_DOWN"]  * 32.0);
+
+    int hdgIdx = i;
+
+    psuInsData->uAz          = (uint16_t)(pclSimState->fState[fields[i++]]  / 180.0 * (double)0x7fff);
+    psuInsData->sRoll        = ( int16_t)(pclSimState->fState[fields[i++]]      / 180.0 * (double)0x7fff);
+    psuInsData->sPitch       = ( int16_t)(pclSimState->fState[fields[i++]]     / 180.0 * (double)0x7fff);
+    psuInsData->uTrueHeading = (uint16_t)(pclSimState->fState[fields[hdgIdx]]  / 180.0 * (double)0x7fff);
+    psuInsData->uMagHeading  = (uint16_t)(pclSimState->fState[fields[i++]]   / 180.0 * (double)0x7fff);
+    psuInsData->sAccX        = ( int16_t)(pclSimState->fState[fields[i++]] * 32.0);
+    psuInsData->sAccY        = ( int16_t)(pclSimState->fState[fields[i++]]  * 32.0);
+    psuInsData->sAccZ        = ( int16_t)(pclSimState->fState[fields[i++]]  * 32.0);
     //psuInsData->sCXX_MSW
     //psuInsData->uCXX_LSW
     //psuInsData->sCXY_MSW
     //psuInsData->uCXY_LSW
-    ulTempLatLon = (uint32_t)(pclSimState->fState["AC_LAT"] / 180.0 * (double)0x7fffffff);
+    ulTempLatLon = (uint32_t)(pclSimState->fState[fields[i++]] / 180.0 * (double)0x7fffffff);
     psuInsData->sLat_MSW     = ((ulTempLatLon >> 16) & 0x0000ffff);
     psuInsData->uLat_LSW     = ( ulTempLatLon        & 0x0000ffff);
-    ulTempLatLon = (uint32_t)(pclSimState->fState["AC_LON"] / 180.0 * (double)0x7fffffff);
+    ulTempLatLon = (uint32_t)(pclSimState->fState[fields[i++]] / 180.0 * (double)0x7fffffff);
     psuInsData->sLon_MSW     = ((ulTempLatLon >> 16) & 0x0000ffff);
     psuInsData->uLon_LSW     = ( ulTempLatLon        & 0x0000ffff);
-    psuInsData->sAlt         = (int16_t)(pclSimState->fState["AC_ALT"] / 4.0);
+    psuInsData->sAlt         = (int16_t)(pclSimState->fState[fields[i++]] / 4.0);
     //psuInsData->sSteeringError
     //psuInsData->sTiltX
     //psuInsData->sTiltY
@@ -179,3 +186,21 @@ std::string ClCh10Format_1553_Nav::TMATS(ClTmatsIndexes & TmatsIndex, std::strin
 
     return ssTMATS.str();
     } // end TMATS()
+
+
+void ClCh10Format_1553_Nav::InitStateFieldPrefixes(string prefix)
+{
+  fields.push_back(prefix + "AC_VEL_NORTH");
+  fields.push_back(prefix + "AC_VEL_EAST");
+  fields.push_back(prefix + "AC_VEL_DOWN");
+  fields.push_back(prefix + "AC_ROLL");
+  fields.push_back(prefix + "AC_PITCH");
+  fields.push_back(prefix + "AC_TRUE_HDG");
+  fields.push_back(prefix + "AC_MAG_HDG");
+  fields.push_back(prefix + "AC_ACCEL_NORTH");
+  fields.push_back(prefix + "AC_ACCEL_EAST");
+  fields.push_back(prefix + "AC_ACCEL_DOWN");
+  fields.push_back(prefix + "AC_LAT");
+  fields.push_back(prefix + "AC_LON");
+  fields.push_back(prefix + "AC_ALT");
+}

@@ -74,7 +74,7 @@ private:
   // TODO: this should eventually take (or use) a structure containing source setup data rather than a csv source
   Ch10Formatter_PCM* CreatePcmFormatter(Ch10Channel::ChannelDataFormat format, Rate framerate, ClSource_CsvTxt* src);
   // TODO: for general 1553 formatters, up to 6 parameters needed to define messages. None needed for hardcoded synthfmt1
-  Ch10Formatter_1553* Create1553Formatter(Ch10Channel::ChannelDataFormat format);
+  Ch10Formatter_1553* Create1553Formatter(Ch10Channel::ChannelDataFormat format, ClSource_CsvTxt* src);
   
   // =======================
 

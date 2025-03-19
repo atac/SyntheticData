@@ -203,7 +203,7 @@ ControllerStatus GenerationController::AddDataChannel(ConfigChannel config) {  /
   
   case Ch10Channel::ChannelType::MS1553:
   {
-    Ch10Formatter_1553* format1553 = Create1553Formatter(config.format);
+    Ch10Formatter_1553* format1553 = Create1553Formatter(config.format, csvSrc);
     ClCh10Writer_1553* writer1553 = new ClCh10Writer_1553();
     writer1553->Init(i106OutFileHandle, config.id, format1553);
 
@@ -410,7 +410,7 @@ Ch10Formatter_PCM* GenerationController::CreatePcmFormatter(Ch10Channel::Channel
   return formatter;
 }
 
-Ch10Formatter_1553* GenerationController::Create1553Formatter(Ch10Channel::ChannelDataFormat format)
+Ch10Formatter_1553* GenerationController::Create1553Formatter(Ch10Channel::ChannelDataFormat format, ClSource_CsvTxt* src)
 {
   Ch10Formatter_1553* formatter = nullptr;
 
@@ -421,7 +421,7 @@ Ch10Formatter_1553* GenerationController::Create1553Formatter(Ch10Channel::Chann
 
   case Ch10Channel::ChannelDataFormat::SYNTHFORMAT1:
   {
-    ClCh10Format_1553_Nav* formatSF1 = new ClCh10Format_1553_Nav(6, 1, 29, 32);
+    ClCh10Format_1553_Nav* formatSF1 = new ClCh10Format_1553_Nav(6, 1, 29, 32, src->sPrefix);
     formatter = dynamic_cast<Ch10Formatter_1553*>(formatSF1);
     break;
   }
