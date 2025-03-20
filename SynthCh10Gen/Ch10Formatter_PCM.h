@@ -59,8 +59,13 @@ public:
 
   // Methods
 public:
-  void        SetRTC(int64_t* pullRelTime) = 0;
   void        FormatMsg(ClSimState* simState) = 0;
   std::string TMATS(ClTmatsIndexes& tmatsIndex, std::string sCDLN) = 0;
+
+
+  void SetRTC(int64_t* pullRelTime) 
+  {
+    vLLInt2TimeArray(pullRelTime, suIPH.aubyIntPktTime);
+  }
 };
 

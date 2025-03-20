@@ -68,13 +68,6 @@ ClCh10Format_PCM_SynthFmt1::~ClCh10Format_PCM_SynthFmt1()
 // Methods
 // ----------------------------------------------------------------------------
 
-// Set the relative time counter
-
-void ClCh10Format_PCM_SynthFmt1::SetRTC(int64_t * pullRelTime)
-    {
-    vLLInt2TimeArray(pullRelTime, suIPH.aubyIntPktTime);
-    }
-
 
 // ----------------------------------------------------------------------------
 

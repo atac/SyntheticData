@@ -113,7 +113,6 @@ public:
 
   // Methods
 public:
-  void SetRTC(int64_t* pullRelTime);
   virtual void FormatMsg(ClSimState* pclSimState);
   virtual std::string TMATS(ClTmatsIndexes& TmatsIndex, std::string sCDLN);
 

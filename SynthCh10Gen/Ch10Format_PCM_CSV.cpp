@@ -66,13 +66,6 @@ ClCh10Format_PCM_CSV::~ClCh10Format_PCM_CSV()
 // Methods
 // ----------------------------------------------------------------------------
 
-// Set the relative time counter
-
-void ClCh10Format_PCM_CSV::SetRTC(int64_t* pullRelTime)
-{
-  vLLInt2TimeArray(pullRelTime, suIPH.aubyIntPktTime);
-}
-
 
 // ----------------------------------------------------------------------------
 

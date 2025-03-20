@@ -54,7 +54,6 @@ public:
 
   // Methods
 public:
-  void        SetRTC(int64_t* pullRelTime);
   void        FormatMsg(ClSimState* simState);
   std::string TMATS(ClTmatsIndexes& tmatsIndex, std::string sCDLN);
 
