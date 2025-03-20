@@ -19,6 +19,7 @@ Configuration files for SynthCh10Gen provide the application with datasource and
 | id | uint | | Channel ID, sets the R-x\TK1-n TMATS attribute | Starts at 2 and increments by 1 for each unspecified ID |
 | name | string | | Channel name, sets the R-x\DSI-n TMATS attribute | Auto generated name |
 | type | string | Yes | Channel Type, sets the R-x\CDT-n TMATS attribute | |
+| format | string | | Data packing format | Unformatted
 | sourceFile | string | Yes | Pathname of a data file used as the source for generation | |
 | pollRate | object | | Sets the rate at which the source data is polled | 50 Hz |
 | packetRate | | Sets the rate at which packets are published to the output stream | 10 Hz |
@@ -38,6 +39,13 @@ Configuration files for SynthCh10Gen provide the application with datasource and
 | VIDIN | vidin, video, vid |
 | 1553IN | 1553in, 1553, ms1553, mil_std_1553, mil-std-1553 |
 | 429IN | 429in, a429, arinc429, arinc-429, arinc_429 |
+
+### Channel Data Formats
+| Format | Allowed Values (case-insensitive) | Description |
+|-|-|-|
+| Unformatted | unformatted | Unformatted data does no special formatting or packing for packet data. (e.g. one PCM word per field value) |
+| ~~Custom~~ | ~~custom~~ | **Unimplemented**. Allows for a custom packing definition by defining start words, start bits, and lengths for each field. |
+| Synthetic Format 1 | synthformat1, synthfmt1 | The original packing format definied in the Synthetic Data Generator ICD |
 
 
 ### Rate Units
