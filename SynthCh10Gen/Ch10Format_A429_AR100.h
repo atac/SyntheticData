@@ -18,7 +18,7 @@ class Ch10Format_ARINC429_AR100 : public Ch10Formatter_ARINC429
 
 
 public:
-  Ch10Format_ARINC429_AR100(int iBusNum, int iBusSpeed, int iEngineNum);
+  Ch10Format_ARINC429_AR100(int iBusNum, int iBusSpeed, int iEngineNum, string stateFieldPrefix);
 //    ~ClCh10Format_ARINC429_AR100();
 
     int     iEngineNum;

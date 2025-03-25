@@ -458,7 +458,7 @@ Ch10Formatter_ARINC429* GenerationController::CreateA429Formatter(Ch10Channel::C
 
   case Ch10Channel::ChannelDataFormat::SYNTHFORMAT1:
   {
-    Ch10Format_ARINC429_AR100* formatA429 = new Ch10Format_ARINC429_AR100(0, busSpeed, engineNumber);
+    Ch10Format_ARINC429_AR100* formatA429 = new Ch10Format_ARINC429_AR100(0, busSpeed, engineNumber, src->sPrefix);
     formatter = dynamic_cast<Ch10Formatter_ARINC429*>(formatA429);
     break;
   }

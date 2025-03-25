@@ -8,6 +8,8 @@
 #include <sstream>      // std::stringstream
 #include <math.h>       // pow()
 
+#include <bitset>
+
 #include "Common.h"
 #include "Ch10Format_A429_AR100.h"
 
@@ -50,7 +52,7 @@ Subch   Data   Label Speed PErr FErr Gap Time  Computed IRIG Time
 // Ch10Format_ARINC429_AR100
 // ----------------------------------------------------------------------------
 
-Ch10Format_ARINC429_AR100::Ch10Format_ARINC429_AR100(int iBusNum, int iBusSpeed, int iEngineNum) :
+Ch10Format_ARINC429_AR100::Ch10Format_ARINC429_AR100(int iBusNum, int iBusSpeed, int iEngineNum, string stateFieldPrefix) :
         Ch10Formatter_ARINC429()
     {
 
@@ -90,15 +92,13 @@ Ch10Format_ARINC429_AR100::Ch10Format_ARINC429_AR100(int iBusNum, int iBusSpeed,
     aArinc429Msgs[6].suData.uLabel = ReverseLabel(0047);  // 47 octal reversed
 
     // Default hash labels to use
-#ifdef COMPILE_NASA
-    std::snprintf(szSimStateHash_EngineRpmN1Actual, 50, "N1_%d",  iEngineNum);
-    std::snprintf(szSimStateHash_EngineRpmN1Demand, 50, "N1C");
-    std::snprintf(szSimStateHash_EngineOilPres,     50, "OIP_%d", iEngineNum);
-    std::snprintf(szSimStateHash_EngineRpmN2,       50, "N2_%d",  iEngineNum);
-    std::snprintf(szSimStateHash_EngineEGT,         50, "EGT_%d", iEngineNum);
-    std::snprintf(szSimStateHash_EngineOilTemp,     50, "OIT_%d", iEngineNum);
-    std::snprintf(szSimStateHash_FuelFlow,          50, "FF_%d",  iEngineNum);
-#endif
+    std::snprintf(szSimStateHash_EngineRpmN1Actual, 50, "%sN1_%d", stateFieldPrefix.c_str(), iEngineNum);
+    std::snprintf(szSimStateHash_EngineRpmN1Demand, 50, "%sN1C", stateFieldPrefix.c_str());
+    std::snprintf(szSimStateHash_EngineOilPres,     50, "%sOIP_%d", stateFieldPrefix.c_str(), iEngineNum);
+    std::snprintf(szSimStateHash_EngineRpmN2,       50, "%sN2_%d", stateFieldPrefix.c_str(), iEngineNum);
+    std::snprintf(szSimStateHash_EngineEGT,         50, "%sEGT_%d", stateFieldPrefix.c_str(), iEngineNum);
+    std::snprintf(szSimStateHash_EngineOilTemp,     50, "%sOIT_%d", stateFieldPrefix.c_str(), iEngineNum);
+    std::snprintf(szSimStateHash_FuelFlow,          50, "%sFF_%d", stateFieldPrefix.c_str(), iEngineNum);
     }
 
 // ----------------------------------------------------------------------------
@@ -157,7 +157,7 @@ std::string Ch10Format_ARINC429_AR100::TMATS(ClTmatsIndexes& TmatsIndex, std::st
 
   // Define bus messages
   ssTMATS <<
-    "B-" << TmatsIndex.iBIndex << "\\NMS-1\\N:7;\n";   // 7 message definitions
+    "B-" << TmatsIndex.iBIndex << "\\NMS\\N-1:7;\n";   // 7 message definitions
 
 // Message - Engine Fan RPM N1 Actual
 // ----------------------------------
@@ -167,7 +167,7 @@ std::string Ch10Format_ARINC429_AR100::TMATS(ClTmatsIndexes& TmatsIndex, std::st
   ssTMATS <<
     "B-" << TmatsIndex.iBIndex << "\\MID-1-1:" << iMsgNum++ << ";\n"
     "B-" << TmatsIndex.iBIndex << "\\MNA-1-1:" << ssMessageName.str() << ";\n"
-    "B-" << TmatsIndex.iBIndex << "\\LBL-1-1:" << uLabel << ";\n"
+    "B-" << TmatsIndex.iBIndex << "\\LBL-1-1:" << std::bitset<8>(uLabel) << ";\n"
     "B-" << TmatsIndex.iBIndex << "\\SDI-1-1:ALL;\n"
     "B-" << TmatsIndex.iBIndex << "\\MN\\N-1-1:1;\n";
 
@@ -200,7 +200,7 @@ std::string Ch10Format_ARINC429_AR100::TMATS(ClTmatsIndexes& TmatsIndex, std::st
   ssTMATS <<
     "B-" << TmatsIndex.iBIndex << "\\MID-1-2:" << iMsgNum++ << ";\n"
     "B-" << TmatsIndex.iBIndex << "\\MNA-1-2:" << ssMessageName.str() << ";\n"
-    "B-" << TmatsIndex.iBIndex << "\\LBL-1-2:" << uLabel << ";\n"
+    "B-" << TmatsIndex.iBIndex << "\\LBL-1-2:" << std::bitset<8>(uLabel) << ";\n"
     "B-" << TmatsIndex.iBIndex << "\\SDI-1-2:ALL;\n"
     "B-" << TmatsIndex.iBIndex << "\\MN\\N-1-2:1;\n";
 
@@ -233,7 +233,7 @@ std::string Ch10Format_ARINC429_AR100::TMATS(ClTmatsIndexes& TmatsIndex, std::st
   ssTMATS <<
     "B-" << TmatsIndex.iBIndex << "\\MID-1-3:" << iMsgNum++ << ";\n"
     "B-" << TmatsIndex.iBIndex << "\\MNA-1-3:" << ssMessageName.str() << ";\n"
-    "B-" << TmatsIndex.iBIndex << "\\LBL-1-3:" << uLabel << ";\n"
+    "B-" << TmatsIndex.iBIndex << "\\LBL-1-3:" << std::bitset<8>(uLabel) << ";\n"
     "B-" << TmatsIndex.iBIndex << "\\SDI-1-3:ALL;\n"
     "B-" << TmatsIndex.iBIndex << "\\MN\\N-1-3:2;\n";
 
@@ -284,7 +284,7 @@ std::string Ch10Format_ARINC429_AR100::TMATS(ClTmatsIndexes& TmatsIndex, std::st
   ssTMATS <<
     "B-" << TmatsIndex.iBIndex << "\\MID-1-4:" << iMsgNum++ << ";\n"
     "B-" << TmatsIndex.iBIndex << "\\MNA-1-4:" << ssMessageName.str() << ";\n"
-    "B-" << TmatsIndex.iBIndex << "\\LBL-1-4:" << uLabel << ";\n"
+    "B-" << TmatsIndex.iBIndex << "\\LBL-1-4:" << std::bitset<8>(uLabel) << ";\n"
     "B-" << TmatsIndex.iBIndex << "\\SDI-1-4:ALL;\n"
     "B-" << TmatsIndex.iBIndex << "\\MN\\N-1-4:1;\n";
 
@@ -317,7 +317,7 @@ std::string Ch10Format_ARINC429_AR100::TMATS(ClTmatsIndexes& TmatsIndex, std::st
   ssTMATS <<
     "B-" << TmatsIndex.iBIndex << "\\MID-1-5:" << iMsgNum++ << ";\n"
     "B-" << TmatsIndex.iBIndex << "\\MNA-1-5:" << ssMessageName.str() << ";\n"
-    "B-" << TmatsIndex.iBIndex << "\\LBL-1-5:" << uLabel << ";\n"
+    "B-" << TmatsIndex.iBIndex << "\\LBL-1-5:" << std::bitset<8>(uLabel) << ";\n"
     "B-" << TmatsIndex.iBIndex << "\\SDI-1-5:ALL;\n"
     "B-" << TmatsIndex.iBIndex << "\\MN\\N-1-5:1;\n";
 
@@ -350,7 +350,7 @@ std::string Ch10Format_ARINC429_AR100::TMATS(ClTmatsIndexes& TmatsIndex, std::st
   ssTMATS <<
     "B-" << TmatsIndex.iBIndex << "\\MID-1-6:" << iMsgNum++ << ";\n"
     "B-" << TmatsIndex.iBIndex << "\\MNA-1-6:" << ssMessageName.str() << ";\n"
-    "B-" << TmatsIndex.iBIndex << "\\LBL-1-6:" << uLabel << ";\n"
+    "B-" << TmatsIndex.iBIndex << "\\LBL-1-6:" << std::bitset<8>(uLabel) << ";\n"
     "B-" << TmatsIndex.iBIndex << "\\SDI-1-6:ALL;\n"
     "B-" << TmatsIndex.iBIndex << "\\MN\\N-1-6:1;\n";
 
@@ -383,7 +383,7 @@ std::string Ch10Format_ARINC429_AR100::TMATS(ClTmatsIndexes& TmatsIndex, std::st
   ssTMATS <<
     "B-" << TmatsIndex.iBIndex << "\\MID-1-7:" << iMsgNum++ << ";\n"
     "B-" << TmatsIndex.iBIndex << "\\MNA-1-7:" << ssMessageName.str() << ";\n"
-    "B-" << TmatsIndex.iBIndex << "\\LBL-1-7:" << uLabel << ";\n"
+    "B-" << TmatsIndex.iBIndex << "\\LBL-1-7:" << std::bitset<8>(uLabel) << ";\n"
     "B-" << TmatsIndex.iBIndex << "\\SDI-1-7:ALL;\n"
     "B-" << TmatsIndex.iBIndex << "\\MN\\N-1-7:1;\n";
 
