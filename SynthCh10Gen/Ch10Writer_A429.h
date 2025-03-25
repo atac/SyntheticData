@@ -25,39 +25,45 @@
 using namespace Irig106;
 
 
-class ClCh10Writer_A429
-    {
-    public:
-        ClCh10Writer_A429();
-        ~ClCh10Writer_A429();
+class ClCh10Writer_A429 : public Ch10Writer
+{
+public:
+  ClCh10Writer_A429();
+  ClCh10Writer_A429(int totalBuses);
+  ~ClCh10Writer_A429();
 
-    // Structures
+  // Structures
 #pragma pack(push, 1)
     // 1553 write buffer info
-    struct SuWriteMsgA429
-        {
-        SuI106Ch10Header        suCh10Header;
-        SuArinc429F0_ChanSpec * psuA429CSDW;
-        unsigned char         * pchDataBuff;    // Make this char * makes pointer math easier
-        uint32_t                uBuffLen;       // Size of the write buffer
-        } suWriteMsgA429;
+  struct SuWriteMsgA429
+  {
+    SuI106Ch10Header        suCh10Header;
+    SuArinc429F0_ChanSpec* psuA429CSDW;
+    unsigned char* pchDataBuff;    // Make this char * makes pointer math easier
+    uint32_t                uBuffLen;       // Size of the write buffer
+  } suWriteMsgA429;
 #pragma pack(pop)
 
-    // Data
+  // Data
 public:
-    int                 iHandle;
-    unsigned int        uChanID;
-    std::string         sCDLN;                  // Linking Channel Data Link Name for TMATS
-    int64_t             lPrevMessageTime;       // RTC of the previous packet in the write buffer
-    uint32_t            uPrevGapSum;            // Sum of all the gap times in the previous packet
+  int                 iHandle;
+  unsigned int        uChanID;
+  std::string         sCDLN;                  // Linking Channel Data Link Name for TMATS
+  int64_t             lPrevMessageTime;       // RTC of the previous packet in the write buffer
+  uint32_t            uPrevGapSum;            // Sum of all the gap times in the previous packet
 
-    // Methods
+private:
+  Ch10Formatter_ARINC429* formatter;
+
+  int totalBuses;
+
+  // Methods
 public:
-    void Init(int iHandle, unsigned int uChanID);
-    std::string TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN, int iTotalBuses, std::string sDescription="");
-    void AppendMsg(ClCh10Format_ARINC429 * pA429Msg);
+  void Init(int iHandle, unsigned int uChanID, Ch10Formatter_ARINC429* formatter);
+  std::string TMATS(ClTmatsIndexes& TmatsIndex, std::string sCDLN);
+  void AppendMsg();
 
-    void Commit();
+  void Commit();
 
-    };
+};
 

@@ -7,14 +7,18 @@
 #include "Ch10Channel.h"
 
 #include "Source_CsvTxt.h"
-#include "Ch10Writer.h"
+
 #include "Ch10Format_PCM_CSV.h"
 #include "Ch10Format_PCM_SynthFmt1.h"
 #include "Ch10Format_1553_Nav.h"
+#include "Ch10Format_A429_AR100.h"
+
 #include "Ch10Writer_PCM.h"
 #include "Ch10Writer_1553.h"
+#include "Ch10Writer_A429.h"
 #include "Ch10Writer_Index.h"
 #include "Ch10Writer_Time.h"
+
 #include "SimTimer.h"
 
 #include "i106_stdint.h"
@@ -75,6 +79,8 @@ private:
   Ch10Formatter_PCM* CreatePcmFormatter(Ch10Channel::ChannelDataFormat format, Rate framerate, ClSource_CsvTxt* src);
   // TODO: for general 1553 formatters, up to 6 parameters needed to define messages. None needed for hardcoded synthfmt1
   Ch10Formatter_1553* Create1553Formatter(Ch10Channel::ChannelDataFormat format, ClSource_CsvTxt* src);
+  // TODO: this should eventually take (or use) a structure containing source setup data rather than a csv source
+  Ch10Formatter_ARINC429* CreateA429Formatter(Ch10Channel::ChannelDataFormat format, ClSource_CsvTxt* src, int busSpeed, int engineNumber);
   
   // =======================
 

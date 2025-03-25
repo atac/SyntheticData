@@ -212,6 +212,17 @@ ControllerStatus GenerationController::AddDataChannel(ConfigChannel config) {  /
     break;
   }
 
+  case Ch10Channel::ChannelType::A429:
+  {
+    Ch10Formatter_ARINC429* formatA429 = CreateA429Formatter(config.format, csvSrc, 0, 1);
+    ClCh10Writer_A429* writerA429 = new ClCh10Writer_A429();
+    writerA429->Init(i106OutFileHandle, config.id, formatA429);
+
+    formatter = dynamic_cast<Ch10Formatter*>(formatA429);
+    writer = dynamic_cast<Ch10Writer*>(writerA429);
+    break;
+  }
+
   default:
     break;
   }
@@ -423,6 +434,32 @@ Ch10Formatter_1553* GenerationController::Create1553Formatter(Ch10Channel::Chann
   {
     ClCh10Format_1553_Nav* formatSF1 = new ClCh10Format_1553_Nav(6, 1, 29, 32, src->sPrefix);
     formatter = dynamic_cast<Ch10Formatter_1553*>(formatSF1);
+    break;
+  }
+
+  case Ch10Channel::ChannelDataFormat::CUSTOM:
+    break;
+
+  default:
+    break;
+  }
+
+  return formatter;
+}
+
+Ch10Formatter_ARINC429* GenerationController::CreateA429Formatter(Ch10Channel::ChannelDataFormat format, ClSource_CsvTxt* src, int busSpeed, int engineNumber)
+{
+  Ch10Formatter_ARINC429* formatter = nullptr;
+
+  switch (format) {
+
+  case Ch10Channel::ChannelDataFormat::UNFORMATTED:
+    break;
+
+  case Ch10Channel::ChannelDataFormat::SYNTHFORMAT1:
+  {
+    Ch10Format_ARINC429_AR100* formatA429 = new Ch10Format_ARINC429_AR100(0, busSpeed, engineNumber);
+    formatter = dynamic_cast<Ch10Formatter_ARINC429*>(formatA429);
     break;
   }
 

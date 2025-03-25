@@ -29,7 +29,7 @@ using namespace Irig106;
 // ----------------------------------------------------------------------------
 
 // Constructor
-ClCh10Format_ARINC429::ClCh10Format_ARINC429()
+Ch10Formatter_ARINC429::Ch10Formatter_ARINC429()
     {
 //    iSubchannels = 0;
     }
@@ -37,7 +37,7 @@ ClCh10Format_ARINC429::ClCh10Format_ARINC429()
 // ----------------------------------------------------------------------------
 
 // Destructor
-ClCh10Format_ARINC429::~ClCh10Format_ARINC429()
+Ch10Formatter_ARINC429::~Ch10Formatter_ARINC429()
     {
 
     }
@@ -49,7 +49,7 @@ ClCh10Format_ARINC429::~ClCh10Format_ARINC429()
 
 // Set the relative time counter
 
-void ClCh10Format_ARINC429::SetRTC(int64_t * pllRefTime)
+void Ch10Formatter_ARINC429::SetRTC(int64_t * pllRefTime)
     {
     llRefTime = *pllRefTime;
     }
@@ -59,7 +59,7 @@ void ClCh10Format_ARINC429::SetRTC(int64_t * pllRefTime)
 
 // Calculate and return the correct value of the ARINC 429 parity bit
 
-int ClCh10Format_ARINC429::CalcParity(SuArinc429F0_Data * psuA429Data)
+int Ch10Formatter_ARINC429::CalcParity(SuArinc429F0_Data * psuA429Data)
     {
     int         iParityCalc;
     int         iBitIdx;
@@ -84,7 +84,7 @@ int ClCh10Format_ARINC429::CalcParity(SuArinc429F0_Data * psuA429Data)
 
 // ----------------------------------------------------------------------------
 
-unsigned char ClCh10Format_ARINC429::ReverseLabel(unsigned char uLabel)
+unsigned char Ch10Formatter_ARINC429::ReverseLabel(unsigned char uLabel)
     {
     unsigned char   uRLabel;
     int             iBitIdx;

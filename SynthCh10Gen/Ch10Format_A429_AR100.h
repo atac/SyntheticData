@@ -13,12 +13,12 @@
 // ClCh10Format_ARINC429_AR100
 // ----------------------------------------------------------------------------
 
-class ClCh10Format_ARINC429_AR100 : public ClCh10Format_ARINC429
+class Ch10Format_ARINC429_AR100 : public Ch10Formatter_ARINC429
     {
 
 
 public:
-    ClCh10Format_ARINC429_AR100(int iBusNum, int iBusSpeed, int iEngineNum);
+  Ch10Format_ARINC429_AR100(int iBusNum, int iBusSpeed, int iEngineNum);
 //    ~ClCh10Format_ARINC429_AR100();
 
     int     iEngineNum;
@@ -111,7 +111,7 @@ public:
 
     // Methods
 public:
-    void MakeMsg(ClSimState * pclSimState);
+    void FormatMsg(ClSimState * pclSimState);
     std::string TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN);
 
     };
