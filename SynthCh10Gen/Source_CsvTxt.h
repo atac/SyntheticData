@@ -47,6 +47,7 @@ public:
   virtual bool    ReadNextLine();
   virtual bool    UpdateSimState(double fSimElapsedTime);
   virtual bool    ConvertTime(std::string sTime, double* fDecodedTime);
+  virtual void    SetMapping(ConfigMapping map);
 
   CSV_FIELDS GetCsvFields();
   CSV_FIELDS GetCsvFieldTypes();
@@ -54,5 +55,6 @@ public:
 private:
   bool GetLine(char* buf, size_t bufLen);
   bool HasNumericData(CSV_FIELDS& values);
+  void ApplyMapping();
 };
 

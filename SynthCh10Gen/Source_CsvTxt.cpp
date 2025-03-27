@@ -112,6 +112,9 @@ bool ClSource_CsvTxt::Open(std::string sFilename)
     bCsvStatus = CsvParser.parse_line(szLine, CsvDataLabels);
     assert(bCsvStatus == true);
 
+    // Apply any field name mapping
+    ApplyMapping();
+
     // Add prefix to data labels
     for (auto i = CsvDataLabels.begin(); i != CsvDataLabels.end(); i++)
       (*i) = sPrefix + (*i);
@@ -294,6 +297,18 @@ bool ClSource_CsvTxt::ConvertTime(std::string sTime, double *fDecodedTime)
 
     return true;
     }
+
+void ClSource_CsvTxt::SetMapping(ConfigMapping map) {
+  this->mapping = map;
+}
+
+void ClSource_CsvTxt::ApplyMapping() {
+  for (auto& [from, to] : this->mapping) {
+    auto i = find(CsvDataLabels.begin(), CsvDataLabels.end(), from);
+    if (i != CsvDataLabels.end())
+      (*i) = to;
+  }
+}
 
 CSV_FIELDS ClSource_CsvTxt::GetCsvFields() {
   return this->CsvDataLabels;

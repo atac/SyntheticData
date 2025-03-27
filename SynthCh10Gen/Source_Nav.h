@@ -12,6 +12,7 @@ of time.
 
 #include "SimState.h"
 #include "SimTimer.h"
+#include "Config.h"
 
 // Here are some conversions useful for anyone doing nav math
 // ----------------------------------------------------------
@@ -38,6 +39,7 @@ class ClSource_Nav
 
     // Class variables
 protected:
+  ConfigMapping mapping;
 
 public:
     std::string         sPrefix;        // Simulation state data label prefix to make it unique
@@ -65,6 +67,6 @@ public:
     virtual void Close()                                = 0;
     virtual bool ReadNextLine()                         = 0;
     virtual bool UpdateSimState(double fSimElapsedTime) = 0;
-
+    virtual void SetMapping(ConfigMapping map)          = 0;
     };
 
