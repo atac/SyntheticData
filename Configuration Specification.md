@@ -11,6 +11,7 @@ Configuration files for SynthCh10Gen provide the application with datasource and
 | `timeSource` | `string` | | Name of the channel from which to derive simulation time | The first channel defined in the channels array |
 | `timeStart` | `string` | | ??? | ??? |
 | `channels` | `array` | Yes | Must contain at least one Channel Description object | |
+| `mappings` | `object` | | Name mappings used for associating source columns with fields in built-in output formats | |
 
 ### Channel Description
 
@@ -57,6 +58,29 @@ Configuration files for SynthCh10Gen provide the application with datasource and
 | rtc (ticks) | rtc |
 | nanoseconds | nanoseconds, nano, ns |
 | hertz | hertz, hz, frequency |
+
+### Mappings Description
+
+The mappings object contains one or more keys representing a mapping set object. Each mapping set object contains a set of field name mapping key/value pairs.
+
+| Key | Type | Required | Description |
+|-|-|-|-|
+| \<mapName> | object | | A set of field name mapping key/value pairs |
+
+```
+mappings : {
+	"navigationMap" : {
+		"LAT" : "AC_LAT",
+		"LON" : "AC_LON",
+		"ALT" : "AC_ALT"
+	},
+	"systemMap" : {
+		"RUDDER" : "RUDD",
+		"FLAPS" : "FLAP",
+		"GEAR" : "LGDN"
+	}
+}
+```
 
 ##  Example Configuration
 
