@@ -17,21 +17,21 @@ Configuration files for SynthCh10Gen provide the application with datasource and
 
 |  Key  | Type  | Required | Description  | Default |
 | ------------ | ------------ | ------------ | ------------ | ------------ |
-| id | uint | | Channel ID, sets the R-x\TK1-n TMATS attribute | Starts at 2 and increments by 1 for each unspecified ID |
-| name | string | | Channel name, sets the R-x\DSI-n TMATS attribute | Auto generated name |
-| type | string | Yes | Channel Type, sets the R-x\CDT-n TMATS attribute | |
-| format | string | | Data packing format | Unformatted
-| sourceFile | string | Yes | Pathname of a data file used as the source for generation | |
-| pollRate | object | | Sets the rate at which the source data is polled | 50 Hz |
-| packetRate | | Sets the rate at which packets are published to the output stream | 10 Hz |
-
+| `id` | `uint` | | Channel ID, sets the R-x\TK1-n TMATS attribute | Starts at 2 and increments by 1 for each unspecified ID |
+| `name` | `string` | | Channel name, sets the R-x\DSI-n TMATS attribute | Auto generated name |
+| `type` | `string` | Yes | Channel Type, sets the R-x\CDT-n TMATS attribute | |
+| `format` | `string` | | Data packing format | Unformatted
+| `sourceFile` | `string` | Yes | Pathname of a data file used as the source for generation | |
+| `mapping` | `string` | | Name of a field name mapping set from the mappings property |
+| `pollRate` | `object` | | Sets the rate at which the source data is polled | 50 Hz |
+| `packetRate` | `object` | | Sets the rate at which packets are published to the output stream | 10 Hz |
 
 ### Rate Description
 
 |  Key  | Type  | Required | Description  | Default |
 | ------------ | ------------ | ------------ | ------------ | ------------ |
-| value | uint | | Numerical rate value | 0, corresponds to unsampled or data-triggered |
-| unit | string | | Rate Units | default milliseconds |
+| `value` | `uint` | | Numerical rate value | 0, corresponds to unsampled or data-triggered |
+| `unit` | `string` | | Rate Units | default milliseconds |
 
 ### Channel Types
 | TMATS Channel Type | Allowed Values (case-insensitive) |
@@ -47,7 +47,6 @@ Configuration files for SynthCh10Gen provide the application with datasource and
 | Unformatted | unformatted | Unformatted data does no special formatting or packing for packet data. (e.g. one PCM word per field value) |
 | ~~Custom~~ | ~~custom~~ | **Unimplemented**. Allows for a custom packing definition by defining start words, start bits, and lengths for each field. |
 | Synthetic Format 1 | synthformat1, synthfmt1 | The original packing format definied in the Synthetic Data Generator ICD |
-
 
 ### Rate Units
 | Unit | Allowed Values (case-insensitive) |
@@ -65,7 +64,7 @@ The mappings object contains one or more keys representing a mapping set object.
 
 | Key | Type | Required | Description |
 |-|-|-|-|
-| \<mapName> | object | | A set of field name mapping key/value pairs |
+| `<mapName>` | `object` | | A set of field name mapping key/value pairs |
 
 ```
 mappings : {
@@ -98,6 +97,7 @@ mappings : {
 			"id" : 20,
 			"type" : "pcm",
 			"sourceFile" : "C:/data/sources/flight42.csv",
+			"mapping" : "navigationMap",
 			"pollRate" : {
 				"value" : 100,
 				"unit" : "hz"
@@ -107,7 +107,15 @@ mappings : {
 				"unit" : "hz"
 			}
 		}
-	]
+	],
+
+	mappings : {
+		"navigationMap" : {
+			"LAT" : "AC_LAT",
+			"LON" : "AC_LON",
+			"ALT" : "AC_ALT"
+		}
+	}
 }
 ```
 
