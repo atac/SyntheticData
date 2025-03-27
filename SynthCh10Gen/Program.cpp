@@ -32,7 +32,7 @@ int main(int iArgc, char* aszArgv[]) {
 
   GenerationController* controller = new GenerationController();
 
-  result = controller->Init("C:\\atac\\synthetic\\configs\\test_config_7.json");
+  result = controller->Init("C:\\atac\\synthetic\\configs\\test_config_8.json");
   if (!StatusOk(result))
     return 1;
 

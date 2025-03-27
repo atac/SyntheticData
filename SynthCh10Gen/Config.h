@@ -15,6 +15,7 @@ using namespace nlohmann;
 
 
 struct ConfigChannel;
+typedef map<string, string> ConfigMapping;
 
 
 class Config
@@ -37,6 +38,8 @@ private:
   ifstream* file;
   json config;
 
+  map<string, ConfigMapping> mappings;
+
   bool valid;
 
   string timeSourceChannel;
@@ -50,6 +53,8 @@ private:
   void ParseConfig();
 
   void ParseGeneralInfo();
+  void ParseMappings();
+  void ParseMapping(string name, json& map);
   void ParseChannels();
   void ParseChannel(json channel);
   Rate ParseRate(json rate);
@@ -58,6 +63,7 @@ private:
   Ch10Channel::ChannelDataFormat GetChannelDataFormatFromString(string formatStr);
   RateUnit GetRateUnitFromString(string unitStr);
   SourceFileType GetSourceFileTypeFromString(string pathname);
+  ConfigMapping GetMappingByName(string mapName);
 
   string GenerateProgramName();
   string GenerateOutputFilename();
@@ -82,4 +88,5 @@ struct ConfigChannel
   SourceFileType sourceType;
   Rate pollRate;
   Rate packetRate;
+  ConfigMapping mapping;
 };

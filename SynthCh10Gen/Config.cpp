@@ -30,6 +30,7 @@ void Config::ParseConfig() {
       return;
 
     ParseGeneralInfo();
+    ParseMappings();
     ParseChannels();
   }
   catch (json::exception e) {
@@ -147,6 +148,34 @@ void Config::ParseGeneralInfo() {
     timeSourceChannel = "";
 }
 
+void Config::ParseMappings() {
+  if (config.contains("mappings"))
+  {
+    json maps = config["mappings"];
+    
+    for (auto& [name, map] : maps.items()) {
+      if (map.is_object())
+        ParseMapping(name, map);
+    }
+  }
+}
+
+void Config::ParseMapping(string name, json& map) {
+  ConfigMapping mapping;
+
+  for (auto& [targetValue, inputValue] : map.items()) {
+    if (inputValue.is_string()) {
+      string inputString = inputValue.get<string>();
+
+      if (!inputString.empty())
+        mapping.insert(pair<string, string>(inputString, targetValue));
+    }
+  }
+
+  if (!mapping.empty())
+    mappings.insert(pair<string, ConfigMapping>(name, mapping));
+}
+
 void Config::ParseChannels() {
   json chanList = config["channels"];
 
@@ -192,6 +221,9 @@ void Config::ParseChannel(json channel) {
     c.packetRate = ParseRate(channel["packetRate"]);
   else
     c.packetRate = Rate(10, RateUnit::HERTZ);
+
+  if (channel.contains("mapping") && channel["mapping"].is_string())
+    c.mapping = GetMappingByName(channel["mapping"].get<string>());
 
   CheckForTimeSource(c);
 
@@ -279,6 +311,14 @@ SourceFileType Config::GetSourceFileTypeFromString(string pathname) {
     sft = SourceFileType::CSV;
 
   return sft;
+}
+
+ConfigMapping Config::GetMappingByName(string mapName) {
+  auto m = mappings.find(mapName);
+  if (m != mappings.end())
+    return (m->second);
+  
+  return ConfigMapping();
 }
 
 string Config::GenerateProgramName() {
