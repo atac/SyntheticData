@@ -171,8 +171,8 @@ ControllerStatus GenerationController::AddDataChannel(ConfigChannel config) {  /
   ClSource_CsvTxt* csvSrc = new ClSource_CsvTxt(simState, sourcePrefix);
   ClSource_Nav* navSrc = dynamic_cast<ClSource_Nav*>(csvSrc);
   if (navSrc != nullptr) {
-    navSrc->SetMapping(config.mapping);
-    if (!navSrc->Open(config.sourcePathname)) {
+    navSrc->SetMapping(config.dataSource.mapping);
+    if (!navSrc->Open(config.dataSource.pathname)) {
       fprintf(stderr, "Failed to open source");
       return ControllerStatus::OPEN_SOURCE_FILE_FAILED;
     }

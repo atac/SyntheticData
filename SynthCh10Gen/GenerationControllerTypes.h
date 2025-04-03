@@ -4,7 +4,8 @@
 
 enum class SourceFileType {
   INVALID = 0,
-  CSV
+  CSV,
+  SQLITE
 };
 
 enum class ControllerStatus {

@@ -14,6 +14,7 @@ using namespace std;
 using namespace nlohmann;
 
 
+struct ConfigDataSource;
 struct ConfigChannel;
 typedef map<string, string> ConfigMapping;
 
@@ -49,6 +50,7 @@ private:
 
   bool ConfigIsValid();
   bool ChannelIsValid(json channel);
+  bool SourceIsValid(json source);
 
   void ParseConfig();
 
@@ -57,6 +59,7 @@ private:
   void ParseMapping(string name, json& map);
   void ParseChannels();
   void ParseChannel(json channel);
+  ConfigDataSource ParseDataSource(json source);
   Rate ParseRate(json rate);
 
   Ch10Channel::ChannelType GetChannelTypeFromString(string typeStr);
@@ -75,6 +78,14 @@ private:
   void CheckForTimeSource(ConfigChannel channel);
 };
 
+struct ConfigDataSource
+{
+  string pathname;
+  SourceFileType type;
+  ConfigMapping mapping;
+  map<string, string> properties;
+};
+
 struct ConfigChannel 
 {
   ConfigChannel(Ch10Channel::ChannelType type, int id) : type(type), id(id) { };
@@ -84,9 +95,7 @@ struct ConfigChannel
   Ch10Channel::ChannelType type;
   Ch10Channel::ChannelDataFormat format;
   string name;
-  string sourcePathname;
-  SourceFileType sourceType;
+  ConfigDataSource dataSource;
   Rate pollRate;
   Rate packetRate;
-  ConfigMapping mapping;
 };

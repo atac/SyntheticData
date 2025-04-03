@@ -94,15 +94,41 @@ bool Config::ChannelIsValid(json channel) {
     )
     return false;
 
-  auto sf = channel.find("sourceFile");
-  if (sf == channel.end() || !sf->is_string())
+  auto s = channel.find("source");
+  if (s == channel.end() || !s->is_object())
     return false;
 
-  SourceFileType sft = GetSourceFileTypeFromString(sf->get<string>());
+  if (!SourceIsValid(*s))
+    return false;
+
+  return true;
+}
+
+bool Config::SourceIsValid(json source) {
+  auto n = source.find("name");
+  if (n == source.end()
+    || !n->is_string())
+    return false;
+
+  SourceFileType sft = GetSourceFileTypeFromString(n->get<string>());
   if (sft == SourceFileType::INVALID)
     return false;
 
-  if (!filesystem::exists(sf->get<string>()))
+  switch (sft)
+  {
+  case SourceFileType::SQLITE:
+  {
+    auto t = source.find("table");
+    if (n == source.end()
+      || !n->is_string())
+      return false;
+    break;
+  }
+  default:
+    break;
+  }
+
+  if (!filesystem::exists(n->get<string>()))
     return false;
 
   return true;
@@ -199,8 +225,8 @@ void Config::ParseChannel(json channel) {
 
   ConfigChannel c(t, id);
 
-  c.sourcePathname = channel["sourceFile"].get<string>();
-  c.sourceType = GetSourceFileTypeFromString(c.sourcePathname);
+  c.dataSource = ParseDataSource(channel["source"]);
+
 
   if (channel.contains("format") && channel["format"].is_string())
     c.format = GetChannelDataFormatFromString(channel["format"].get<string>());
@@ -222,12 +248,21 @@ void Config::ParseChannel(json channel) {
   else
     c.packetRate = Rate(10, RateUnit::HERTZ);
 
-  if (channel.contains("mapping") && channel["mapping"].is_string())
-    c.mapping = GetMappingByName(channel["mapping"].get<string>());
-
   CheckForTimeSource(c);
 
   channels.push_back(c);
+}
+
+ConfigDataSource Config::ParseDataSource(json source) {
+  ConfigDataSource ds;
+
+  ds.pathname = source["name"].get<string>();
+  ds.type = GetSourceFileTypeFromString(ds.pathname);
+   
+  if (source.contains("mapping") && source["mapping"].is_string())
+    ds.mapping = GetMappingByName(source["mapping"].get<string>());
+
+  return ds;
 }
 
 Rate Config::ParseRate(json rate) {
@@ -309,6 +344,8 @@ SourceFileType Config::GetSourceFileTypeFromString(string pathname) {
 
   if (ext == "csv")
     sft = SourceFileType::CSV;
+  else if (ext == "sql")
+    sft = SourceFileType::SQLITE;
 
   return sft;
 }
