@@ -1,4 +1,4 @@
-Configuration files for SynthCh10Gen provide the application with datasource and channel setup information for a single generation run. These files are in JSON format and have the following requirements.
+Configuration files for SynthCh10Gen provide the application with datasource and channel setup information for a single generation run. These files (see [examples](#example-configuration)) are in JSON format and have the following requirements.
 
 
 ## Configuration File Description
@@ -10,7 +10,7 @@ Configuration files for SynthCh10Gen provide the application with datasource and
 | `outputFilename` | `string` | | Name of the generated Chapter 10 data file | "synthetic_data_yyyymmdd_hhmmss.ch10" |
 | `timeSource` | `string` | | Name of the channel from which to derive simulation time | The first channel defined in the channels array |
 | `timeStart` | `string` | | ??? | ??? |
-| `channels` | `array` | Yes | Must contain at least one Channel Description object | |
+| `channels` | `array` | Yes | Contains one or more [Channel](#channel-description) objects | |
 | `mappings` | `object` | | Name mappings used for associating source columns with fields in built-in output formats | |
 
 ### Channel Description
@@ -19,12 +19,22 @@ Configuration files for SynthCh10Gen provide the application with datasource and
 | ------------ | ------------ | ------------ | ------------ | ------------ |
 | `id` | `uint` | | Channel ID, sets the R-x\TK1-n TMATS attribute | Starts at 2 and increments by 1 for each unspecified ID |
 | `name` | `string` | | Channel name, sets the R-x\DSI-n TMATS attribute | Auto generated name |
-| `type` | `string` | Yes | Channel Type, sets the R-x\CDT-n TMATS attribute | |
-| `format` | `string` | | Data packing format | Unformatted
-| `sourceFile` | `string` | Yes | Pathname of a data file used as the source for generation | |
-| `mapping` | `string` | | Name of a field name mapping set from the mappings property |
-| `pollRate` | `object` | | Sets the rate at which the source data is polled | 50 Hz |
-| `packetRate` | `object` | | Sets the rate at which packets are published to the output stream | 10 Hz |
+| `type` | `string` | Yes | Channel [Type](#channel-types), sets the R-x\CDT-n TMATS attribute | |
+| `format` | `string` | | Data packing [format](#channel-data-formats) | Unformatted
+| `source` | `object` | Yes | Sets the properties for the data [source](#source-description) which feeds this channel |
+| `pollRate` | `object` | | Sets the [rate](#rate-description) at which the source data is polled | 50 Hz |
+| `packetRate` | `object` | | Sets the [rate](#rate-description) at which packets are published to the output stream | 10 Hz |
+
+### Source Description
+
+|  Key  | Type  | Required | Description  | Default |
+| ------------ | ------------ | ------------ | ------------ | ------------ |
+| `name` | `string` | Yes | Pathname of a data file used as the source for packet generation. Depending on the source file type other properties may be required. (See below) | |
+| `mapping` | `string` | | Name of a field name mapping set from the [mappings](#mappings-description) property | No mapping |
+
+**.sql**
+
+| `table` | `string` | Yes | Name of the DB table containing the desired source data columns |
 
 ### Rate Description
 
