@@ -108,16 +108,15 @@ bool ClSource_CsvTxt::Open(std::string sFilename)
       return false;
 
     // Parse the header line
-    CsvDataLabels.clear();
-    bCsvStatus = CsvParser.parse_line(szLine, CsvDataLabels);
+    DataLabels.clear();
+    bCsvStatus = CsvParser.parse_line(szLine, DataLabels);
     assert(bCsvStatus == true);
 
     // Apply any field name mapping
     ApplyMapping();
 
     // Add prefix to data labels
-    for (auto i = CsvDataLabels.begin(); i != CsvDataLabels.end(); i++)
-      (*i) = sPrefix + (*i);
+    ApplyPrefix();
 
     // Look for column types within the next two lines
     CSV_FIELDS tmpFields;
@@ -136,7 +135,7 @@ bool ClSource_CsvTxt::Open(std::string sFilename)
         break;
       }
       else
-        CsvDataTypes = tmpFields;
+        DataTypes = tmpFields;
     }
 
 
@@ -158,7 +157,7 @@ bool ClSource_CsvTxt::Open(std::string sFilename)
 void ClSource_CsvTxt::Init()
     {
     // Step through all the header labels found
-    for (VECTOR_ITR itLabel = CsvDataLabels.begin(); itLabel != CsvDataLabels.end(); ++itLabel)
+    for (VECTOR_ITR itLabel = DataLabels.begin(); itLabel != DataLabels.end(); ++itLabel)
         {
         // Insert an initial placeholder into SimState map
         // Note that it is assumed the data can be represented with a floating point. If this
@@ -210,7 +209,7 @@ bool ClSource_CsvTxt::ReadNextLine()
 
     // Parse the input data line
     CsvMap.clear();
-    bCsvStatus = CsvParser.parse_line(szLine, CsvDataLabels, CsvMap);
+    bCsvStatus = CsvParser.parse_line(szLine, DataLabels, CsvMap);
     assert(bCsvStatus == true);
 
 //    display_map_contents(szLine, CsvMap);
@@ -304,16 +303,21 @@ void ClSource_CsvTxt::SetMapping(ConfigMapping map) {
 
 void ClSource_CsvTxt::ApplyMapping() {
   for (auto& [from, to] : this->mapping) {
-    auto i = find(CsvDataLabels.begin(), CsvDataLabels.end(), from);
-    if (i != CsvDataLabels.end())
+    auto i = find(DataLabels.begin(), DataLabels.end(), from);
+    if (i != DataLabels.end())
       (*i) = to;
   }
 }
 
+void ClSource_CsvTxt::ApplyPrefix() {
+  for (auto i = DataLabels.begin(); i != DataLabels.end(); i++)
+    (*i) = sPrefix + (*i);
+}
+
 CSV_FIELDS ClSource_CsvTxt::GetCsvFields() {
-  return this->CsvDataLabels;
+  return this->DataLabels;
 }
 
 CSV_FIELDS ClSource_CsvTxt::GetCsvFieldTypes() {
-  return this->CsvDataTypes;
+  return this->DataTypes;
 }

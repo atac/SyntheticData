@@ -44,10 +44,7 @@ void ClSource_SQLiteDB::Config(string tableName)
 
 bool ClSource_SQLiteDB::Open(std::string sFilename)
     {
-    std::string         sSQLCols;
     int                 iStatus;
-
-    asColLabel.clear();
 
     assert(!tableName.empty());
 
@@ -55,41 +52,7 @@ bool ClSource_SQLiteDB::Open(std::string sFilename)
     if (iStatus != SQLITE_OK)
         return false;
 
-    // Get the list of columns
-    sSQLCols.clear();
-    sSQL = "pragma table_info('" + this->tableName + "')";
-    iStatus = sqlite3_prepare_v2(pDB, sSQL.c_str(), -1, &pSqlStmt, NULL);
-    if (iStatus == SQLITE_OK)
-        {
-        while(sqlite3_step(pSqlStmt) == SQLITE_ROW)
-            {
-            // Make sure state variables exist for each column found
-            std::string sDataLabel;
-            sDataLabel = sPrefix + (char *)sqlite3_column_text(pSqlStmt, 1);
-            if      (strcmp((char *)sqlite3_column_text(pSqlStmt, 2), "INT") == 0)
-                pclSimState->insert(sDataLabel, (long)0);
-            else if (strcmp((char *)sqlite3_column_text(pSqlStmt, 2), "REAL") == 0)
-                pclSimState->insert(sDataLabel, 0.0);
-
-            // Make a list of columns for a later SELECT statement
-            if (sSQLCols.length() != 0)
-                sSQLCols += ", ";
-            asColLabel.insert(asColLabel.end(), (char *)sqlite3_column_text(pSqlStmt, 1));
-            sSQLCols += (char *)sqlite3_column_text(pSqlStmt, 1);
-            }
-        }
-    sqlite3_finalize(pSqlStmt);
-
-    // Select all the data from the BlueMax table and get ready to iterate through it.
-    sSQL  = "SELECT ";
-    sSQL += sSQLCols;
-    sSQL += " from " + this->tableName + ";";
-    iStatus = sqlite3_prepare_v2(pDB, sSQL.c_str(), -1, &pSqlStmt, NULL);
-    if (iStatus != SQLITE_OK)
-        {
-        printf("SQLite SELECT error - %s\n", sqlite3_errmsg(pDB));
-        pSqlStmt = NULL;
-        }
+    Init();
 
     return true;
 
@@ -112,6 +75,63 @@ void ClSource_SQLiteDB::Close()
 
     return;
     } // end Close()
+
+void ClSource_SQLiteDB::Init() 
+{
+  // Get the list of columns
+  sSQL = "pragma table_info('" + this->tableName + "')";
+  iStatus = sqlite3_prepare_v2(pDB, sSQL.c_str(), -1, &pSqlStmt, NULL);
+  if (iStatus == SQLITE_OK)
+  {
+    // Read column labels and types from DB
+    while (sqlite3_step(pSqlStmt) == SQLITE_ROW)
+    {
+      this->DataLabels.push_back((char*)sqlite3_column_text(pSqlStmt, 1));
+      this->DataTypes.push_back((char*)sqlite3_column_text(pSqlStmt, 2));
+    }
+
+    ApplyMapping();
+    ApplyPrefix();
+    InitSimStateFields();
+  }
+  sqlite3_finalize(pSqlStmt);
+
+
+  // Select all the data from the BlueMax table and get ready to iterate through it.
+  std::string sSQLCols = "";
+
+  for (auto i = DataLabels.begin(); i != DataLabels.end(); i++)
+  {
+    if (!sSQLCols.empty())
+      sSQLCols.append(", ");
+    sSQLCols.append(*i);
+  }
+
+  sSQL = "SELECT ";
+  sSQL += sSQLCols;
+  sSQL += " from " + this->tableName + ";";
+  iStatus = sqlite3_prepare_v2(pDB, sSQL.c_str(), -1, &pSqlStmt, NULL);
+  if (iStatus != SQLITE_OK)
+  {
+    printf("SQLite SELECT error - %s\n", sqlite3_errmsg(pDB));
+    pSqlStmt = NULL;
+  }
+}
+
+void ClSource_SQLiteDB::InitSimStateFields() 
+{
+  assert(DataLabels.size() == DataTypes.size());
+
+  for (int i = 0; i < DataLabels.size(); i++)
+  {
+    string type = DataTypes[i];
+    
+    if (type == "INT")
+      pclSimState->insert(DataLabels[i], (long)0);
+    else if (type == "REAL")
+      pclSimState->insert(DataLabels[i], 0.0);
+  }
+}
 
 // ----------------------------------------------------------------------------
 
@@ -145,16 +165,16 @@ bool ClSource_SQLiteDB::UpdateSimState(double fSimElapsedTime)
         return true;
 
     // Get the individual column values
-    for (uColIdx = 0; uColIdx < asColLabel.size(); uColIdx++)
+    for (uColIdx = 0; uColIdx < DataLabels.size(); uColIdx++)
         {
         // Read column based on column type
         switch (sqlite3_column_type(pSqlStmt, uColIdx))
             {
             case SQLITE_INTEGER :
-                pclSimState->update(sPrefix + asColLabel[uColIdx], (long)sqlite3_column_int64(pSqlStmt, uColIdx));
+                pclSimState->update(DataLabels[uColIdx], (long)sqlite3_column_int64(pSqlStmt, uColIdx));
                 break;
             case SQLITE_FLOAT :
-                pclSimState->update(sPrefix + asColLabel[uColIdx], sqlite3_column_double(pSqlStmt, uColIdx));
+                pclSimState->update(DataLabels[uColIdx], sqlite3_column_double(pSqlStmt, uColIdx));
                 break;
             default :
                 break;
@@ -166,3 +186,21 @@ bool ClSource_SQLiteDB::UpdateSimState(double fSimElapsedTime)
 
     return bStatus;
     } // end UpdateSimState()
+
+
+void ClSource_SQLiteDB::SetMapping(ConfigMapping map) {
+  this->mapping = map;
+}
+
+void ClSource_SQLiteDB::ApplyMapping() {
+  for (auto& [from, to] : this->mapping) {
+    auto i = find(DataLabels.begin(), DataLabels.end(), from);
+    if (i != DataLabels.end())
+      (*i) = to;
+  }
+}
+
+void ClSource_SQLiteDB::ApplyPrefix() {
+  for (auto i = DataLabels.begin(); i != DataLabels.end(); i++)
+    (*i) = sPrefix + (*i);
+}

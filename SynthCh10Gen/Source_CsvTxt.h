@@ -17,9 +17,6 @@ can be used as-is but some important assumptions are made when using this class.
 // https://github.com/ben-strasser/fast-cpp-csv-parser
 //#include "csv.h"
 
-// https://github.com/rakeshgk/csv-parser
-#include "csv_parser.hpp"
-
 #include "Source_Nav.h"
 #include "SimState.h"
 
@@ -33,8 +30,6 @@ public:
 protected:
   FILE* hCsvInput;
   CSV_Parser                                  CsvParser;
-  CSV_FIELDS                                  CsvDataLabels;
-  CSV_FIELDS                                  CsvDataTypes;
   KEY_VAL_FIELDS                              CsvMap;
 
 public:
@@ -42,19 +37,22 @@ public:
   // Methods
 public:
   virtual bool    Open(std::string sFilename);
-  virtual void    Init();
   virtual void    Close();
   virtual bool    ReadNextLine();
   virtual bool    UpdateSimState(double fSimElapsedTime);
-  virtual bool    ConvertTime(std::string sTime, double* fDecodedTime);
   virtual void    SetMapping(ConfigMapping map);
 
   CSV_FIELDS GetCsvFields();
   CSV_FIELDS GetCsvFieldTypes();
 
-private:
+protected:
+  void Init();
+  bool ConvertTime(std::string sTime, double* fDecodedTime);
+
   bool GetLine(char* buf, size_t bufLen);
   bool HasNumericData(CSV_FIELDS& values);
-  void ApplyMapping();
+
+  virtual void ApplyMapping();
+  virtual void ApplyPrefix();
 };
 

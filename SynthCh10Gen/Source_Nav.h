@@ -14,6 +14,9 @@ of time.
 #include "SimTimer.h"
 #include "Config.h"
 
+// https://github.com/rakeshgk/csv-parser
+#include "csv_parser.hpp"
+
 // Here are some conversions useful for anyone doing nav math
 // ----------------------------------------------------------
 
@@ -40,6 +43,8 @@ class ClSource_Nav
     // Class variables
 protected:
   ConfigMapping mapping;
+  CSV_FIELDS DataLabels;
+  CSV_FIELDS DataTypes;
 
 public:
     std::string         sPrefix;        // Simulation state data label prefix to make it unique
@@ -68,5 +73,10 @@ public:
     virtual bool ReadNextLine()                         = 0;
     virtual bool UpdateSimState(double fSimElapsedTime) = 0;
     virtual void SetMapping(ConfigMapping map)          = 0;
+
+protected:
+    virtual void ApplyMapping()                         = 0;
+    virtual void ApplyPrefix()                          = 0;
+
     };
 

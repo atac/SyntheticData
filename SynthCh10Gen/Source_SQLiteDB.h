@@ -23,19 +23,23 @@ public:
   std::string                 sSQL;
   sqlite3_stmt* pSqlStmt;
 
-  std::vector<std::string>    asColLabel;
-
   // Methods
 public:
-  bool    Open(std::string sFilename);
-  void    Close();
-  bool    ReadNextLine();
-  bool    UpdateSimState(double fSimElapsedTime);
-  void    SetMapping(ConfigMapping map);
+  virtual bool    Open(std::string sFilename);
+  virtual void    Close();
+  virtual bool    ReadNextLine();
+  virtual bool    UpdateSimState(double fSimElapsedTime);
+  virtual void    SetMapping(ConfigMapping map);
 
   void Config(string tableName);
 
 private:
+  virtual void ApplyMapping();
+  virtual void ApplyPrefix();
+
+  void InitSimStateFields();
+  void Init();
+
   string tableName;
 };
 

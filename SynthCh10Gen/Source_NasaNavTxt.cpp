@@ -267,7 +267,7 @@ void ClSource_NasaNavTxt::Init()
 
     // Step through all the header labels found
     // ONLY DO THIS FOR PRIMARY NAV SOURCES
-    for (VECTOR_ITR itLabel = CsvDataLabels.begin(); itLabel != CsvDataLabels.end(); ++itLabel)
+    for (VECTOR_ITR itLabel = DataLabels.begin(); itLabel != DataLabels.end(); ++itLabel)
         {
         // Replace known standard data fields (latitude, longitude, etc.) with their standard data labels
         if      (*itLabel == "LATP") *itLabel = "AC_LAT";
