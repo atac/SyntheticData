@@ -78,6 +78,8 @@ void ClSource_SQLiteDB::Close()
 
 void ClSource_SQLiteDB::Init() 
 {
+  std::string sSQLCols = "";
+
   // Get the list of columns
   sSQL = "pragma table_info('" + this->tableName + "')";
   iStatus = sqlite3_prepare_v2(pDB, sSQL.c_str(), -1, &pSqlStmt, NULL);
@@ -90,6 +92,14 @@ void ClSource_SQLiteDB::Init()
       this->DataTypes.push_back((char*)sqlite3_column_text(pSqlStmt, 2));
     }
 
+    // Make column list for SELECT statement
+    for (auto i = DataLabels.begin(); i != DataLabels.end(); i++)
+    {
+      if (!sSQLCols.empty())
+        sSQLCols.append(", ");
+      sSQLCols.append(*i);
+    }
+
     ApplyMapping();
     ApplyPrefix();
     InitSimStateFields();
@@ -98,15 +108,6 @@ void ClSource_SQLiteDB::Init()
 
 
   // Select all the data from the BlueMax table and get ready to iterate through it.
-  std::string sSQLCols = "";
-
-  for (auto i = DataLabels.begin(); i != DataLabels.end(); i++)
-  {
-    if (!sSQLCols.empty())
-      sSQLCols.append(", ");
-    sSQLCols.append(*i);
-  }
-
   sSQL = "SELECT ";
   sSQL += sSQLCols;
   sSQL += " from " + this->tableName + ";";
