@@ -313,11 +313,3 @@ void ClSource_CsvTxt::ApplyPrefix() {
   for (auto i = DataLabels.begin(); i != DataLabels.end(); i++)
     (*i) = sPrefix + (*i);
 }
-
-CSV_FIELDS ClSource_CsvTxt::GetCsvFields() {
-  return this->DataLabels;
-}
-
-CSV_FIELDS ClSource_CsvTxt::GetCsvFieldTypes() {
-  return this->DataTypes;
-}

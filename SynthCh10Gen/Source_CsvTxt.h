@@ -42,9 +42,6 @@ public:
   virtual bool    UpdateSimState(double fSimElapsedTime);
   virtual void    SetMapping(ConfigMapping map);
 
-  CSV_FIELDS GetCsvFields();
-  CSV_FIELDS GetCsvFieldTypes();
-
 protected:
   void Init();
   bool ConvertTime(std::string sTime, double* fDecodedTime);

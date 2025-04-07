@@ -35,48 +35,48 @@ of time.
 // ----------------------------------------------------------------------------
 
 class ClSource_Nav
-    {
-    public:
-        ClSource_Nav() {};
-        ~ClSource_Nav() {};
+{
+public:
+  ClSource_Nav() {};
+  ~ClSource_Nav() {};
 
-    // Class variables
+  // Class variables
 protected:
   ConfigMapping mapping;
+
+public:
+  std::string         sPrefix;        // Simulation state data label prefix to make it unique
+  ClSimState*         pclSimState;    // Pointer to the simulation state 
+  double              fStartTime;     // Data start clock time (time_t)
+  double              fRelTime;       // Current data time offset (seconds) since fStartTime
+
   CSV_FIELDS DataLabels;
   CSV_FIELDS DataTypes;
 
+  enum EnInputType { InputUnknown, InputBMSqlite, InputBMText, InputNasaCsv, InputNasaSqlite };
+
+  EnInputType         enInputType;
+  bool                bHavePosition;
+  bool                bHaveAltitude;
+  bool                bHaveAirspeed;
+  bool                bHaveVelocity;
+  bool                bHaveAcceleration;
+  bool                bHaveTrueHeading;
+  bool                bHaveMagHeading;
+  bool                bHavePitchRoll;
+  bool                bHaveAOA;
+  bool                bHaveThrottle;
+
+  // Methods
 public:
-    std::string         sPrefix;        // Simulation state data label prefix to make it unique
-    ClSimState        * pclSimState;    // Pointer to the simulation state 
-    double              fStartTime;     // Data start clock time (time_t)
-    double              fRelTime;       // Current data time offset (seconds) since fStartTime
-
-    enum EnInputType  { InputUnknown,  InputBMSqlite,  InputBMText, InputNasaCsv, InputNasaSqlite } ;
-
-    EnInputType         enInputType;
-    bool                bHavePosition;
-    bool                bHaveAltitude;
-    bool                bHaveAirspeed;
-    bool                bHaveVelocity;
-    bool                bHaveAcceleration;
-    bool                bHaveTrueHeading;
-    bool                bHaveMagHeading;
-    bool                bHavePitchRoll;
-    bool                bHaveAOA;
-    bool                bHaveThrottle;
-
-    // Methods
-public:
-    virtual bool Open(std::string sFilename)            = 0;
-    virtual void Close()                                = 0;
-    virtual bool ReadNextLine()                         = 0;
-    virtual bool UpdateSimState(double fSimElapsedTime) = 0;
-    virtual void SetMapping(ConfigMapping map)          = 0;
+  virtual bool Open(std::string sFilename)            = 0;
+  virtual void Close()                                = 0;
+  virtual bool ReadNextLine()                         = 0;
+  virtual bool UpdateSimState(double fSimElapsedTime) = 0;
+  virtual void SetMapping(ConfigMapping map)          = 0;
 
 protected:
-    virtual void ApplyMapping()                         = 0;
-    virtual void ApplyPrefix()                          = 0;
-
-    };
+  virtual void ApplyMapping()                         = 0;
+  virtual void ApplyPrefix()                          = 0;
+};
 
