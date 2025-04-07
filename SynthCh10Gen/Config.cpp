@@ -105,7 +105,7 @@ bool Config::ChannelIsValid(json channel) {
 }
 
 bool Config::SourceIsValid(json source) {
-  auto n = source.find("name");
+  auto n = source.find("pathname");
   if (n == source.end()
     || !n->is_string())
     return false;
@@ -256,11 +256,21 @@ void Config::ParseChannel(json channel) {
 ConfigDataSource Config::ParseDataSource(json source) {
   ConfigDataSource ds;
 
-  ds.pathname = source["name"].get<string>();
+  ds.pathname = source["pathname"].get<string>();
   ds.type = GetSourceFileTypeFromString(ds.pathname);
    
   if (source.contains("mapping") && source["mapping"].is_string())
     ds.mapping = GetMappingByName(source["mapping"].get<string>());
+
+  switch (ds.type) {
+
+  case SourceFileType::SQLITE:
+    ds.properties.insert(pair("tableName", source["table"].get<string>()));
+    break;
+
+  default:
+    break;
+  }
 
   return ds;
 }

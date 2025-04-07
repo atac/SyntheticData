@@ -29,7 +29,7 @@ Configuration files for SynthCh10Gen provide the application with datasource and
 
 |  Key  | Type  | Required | Description  | Default |
 | ------------ | ------------ | ------------ | ------------ | ------------ |
-| `name` | `string` | Yes | Pathname of a data file used as the source for packet generation. Depending on the source file type other properties may be required. (See below) | |
+| `pathname` | `string` | Yes | Pathname of a data file used as the source for packet generation. Depending on the source file type other properties may be required. (See below) | |
 | `mapping` | `string` | | Name of a field name mapping set from the [mappings](#mappings-description) property | No mapping |
 
 **.sql**
