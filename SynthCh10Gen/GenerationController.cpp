@@ -163,24 +163,16 @@ int GenerationController::InitOutputFile(string directory, string filename) {
 }
 
 ControllerStatus GenerationController::AddDataChannel(ConfigChannel config) {  // FOREACH SOURCE
-  //
-  // if (configLine.type == CSV)
 
-  // open source file
-  string sourcePrefix = "src" + to_string(config.id);
-  ClSource_CsvTxt* csvSrc = new ClSource_CsvTxt(simState, sourcePrefix);
-  ClSource_Nav* navSrc = dynamic_cast<ClSource_Nav*>(csvSrc);
-  if (navSrc != nullptr) {
-    navSrc->SetMapping(config.dataSource.mapping);
-    if (!navSrc->Open(config.dataSource.pathname)) {
-      fprintf(stderr, "Failed to open source");
-      return ControllerStatus::OPEN_SOURCE_FILE_FAILED;
-    }
-    sources->push_back(navSrc);
+  ClSource_Nav* source = CreateSource(config.dataSource, config.id);
+
+  if (source == nullptr) {
+    fprintf(stderr, "Failed to open source");
+    return ControllerStatus::OPEN_SOURCE_FILE_FAILED;
   }
 
   // get start time from source
-  time.startSimClockTime = csvSrc->fStartTime;
+  time.startSimClockTime = source->fStartTime;
 
   Rate framerate = config.pollRate;
   framerate.ConvertUnits(RateUnit::HERTZ);
@@ -193,7 +185,7 @@ ControllerStatus GenerationController::AddDataChannel(ConfigChannel config) {  /
 
   case Ch10Channel::ChannelType::PCM: 
   {
-    Ch10Formatter_PCM* formatPcm = CreatePcmFormatter(config.format, framerate, csvSrc);
+    Ch10Formatter_PCM* formatPcm = CreatePcmFormatter(config.format, framerate, source);
     ClCh10Writer_PCM* writerPcm = new ClCh10Writer_PCM();
     writerPcm->Init(i106OutFileHandle, config.id, formatPcm);
 
@@ -204,7 +196,7 @@ ControllerStatus GenerationController::AddDataChannel(ConfigChannel config) {  /
   
   case Ch10Channel::ChannelType::MS1553:
   {
-    Ch10Formatter_1553* format1553 = Create1553Formatter(config.format, csvSrc);
+    Ch10Formatter_1553* format1553 = Create1553Formatter(config.format, source);
     ClCh10Writer_1553* writer1553 = new ClCh10Writer_1553();
     writer1553->Init(i106OutFileHandle, config.id, format1553);
 
@@ -215,7 +207,7 @@ ControllerStatus GenerationController::AddDataChannel(ConfigChannel config) {  /
 
   case Ch10Channel::ChannelType::A429:
   {
-    Ch10Formatter_ARINC429* formatA429 = CreateA429Formatter(config.format, csvSrc, 0, 1);
+    Ch10Formatter_ARINC429* formatA429 = CreateA429Formatter(config.format, source, 0, 1);
     ClCh10Writer_A429* writerA429 = new ClCh10Writer_A429();
     writerA429->Init(i106OutFileHandle, config.id, formatA429);
 
@@ -387,7 +379,49 @@ Ch10Channel* GenerationController::CreateChannel(
   return channel;
 }
 
-Ch10Formatter_PCM* GenerationController::CreatePcmFormatter(Ch10Channel::ChannelDataFormat format, Rate framerate, ClSource_CsvTxt* src) {
+ClSource_Nav* GenerationController::CreateSource(ConfigDataSource config, int channelID) 
+{
+  ClSource_Nav* src = nullptr;
+
+  string sourcePrefix = "src" + to_string(channelID);
+
+  switch (config.type) {
+
+  case SourceFileType::CSV:
+  {
+    ClSource_CsvTxt* csvSrc = new ClSource_CsvTxt(simState, sourcePrefix);
+    src = dynamic_cast<ClSource_Nav*>(csvSrc);
+    break;
+  }
+
+  case SourceFileType::SQLITE:
+  {
+    ClSource_SQLiteDB* dbSrc = new ClSource_SQLiteDB(simState, sourcePrefix);
+    dbSrc->Config(config.properties["tableName"]);
+    src = dynamic_cast<ClSource_Nav*>(dbSrc);
+    break;
+  }
+         
+  case SourceFileType::INVALID:
+  default:
+    break;
+
+  }
+
+  if (src != nullptr) {
+    src->SetMapping(config.mapping);
+    if (!src->Open(config.pathname)) {
+      delete src;
+      src = nullptr;
+    }
+    else
+      sources->push_back(src);
+  }
+
+  return src;
+}
+
+Ch10Formatter_PCM* GenerationController::CreatePcmFormatter(Ch10Channel::ChannelDataFormat format, Rate framerate, ClSource_Nav* src) {
   Ch10Formatter_PCM* formatter = nullptr;
 
   switch (format) {
@@ -397,8 +431,8 @@ Ch10Formatter_PCM* GenerationController::CreatePcmFormatter(Ch10Channel::Channel
     ClCh10Format_PCM_CSV* formatCsv =
       new ClCh10Format_PCM_CSV(
         framerate.value,
-        src->GetCsvFields(),
-        src->GetCsvFieldTypes()
+        src->DataLabels,
+        src->DataTypes
       );
     formatter = dynamic_cast<Ch10Formatter_PCM*>(formatCsv);
     break;
@@ -422,7 +456,7 @@ Ch10Formatter_PCM* GenerationController::CreatePcmFormatter(Ch10Channel::Channel
   return formatter;
 }
 
-Ch10Formatter_1553* GenerationController::Create1553Formatter(Ch10Channel::ChannelDataFormat format, ClSource_CsvTxt* src)
+Ch10Formatter_1553* GenerationController::Create1553Formatter(Ch10Channel::ChannelDataFormat format, ClSource_Nav* src)
 {
   Ch10Formatter_1553* formatter = nullptr;
 
@@ -448,7 +482,7 @@ Ch10Formatter_1553* GenerationController::Create1553Formatter(Ch10Channel::Chann
   return formatter;
 }
 
-Ch10Formatter_ARINC429* GenerationController::CreateA429Formatter(Ch10Channel::ChannelDataFormat format, ClSource_CsvTxt* src, int busSpeed, int engineNumber)
+Ch10Formatter_ARINC429* GenerationController::CreateA429Formatter(Ch10Channel::ChannelDataFormat format, ClSource_Nav* src, int busSpeed, int engineNumber)
 {
   Ch10Formatter_ARINC429* formatter = nullptr;
 
