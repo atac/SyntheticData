@@ -46,6 +46,7 @@
     <ClCompile Include="Ch10Format_PCM_CSV.cpp" />
     <ClCompile Include="Ch10Format_PCM_SynthFmt1.cpp" />
     <ClCompile Include="Ch10Format_Time.cpp" />
+    <ClCompile Include="Ch10Format_Video.cpp" />
     <ClCompile Include="Ch10Writer_1553.cpp" />
     <ClCompile Include="Ch10Writer_A429.cpp" />
     <ClCompile Include="Ch10Writer_Index.cpp" />
@@ -85,6 +86,7 @@
     <ClInclude Include="Ch10Formatter.h" />
     <ClInclude Include="Ch10Formatter_1553.h" />
     <ClInclude Include="Ch10Formatter_PCM.h" />
+    <ClInclude Include="Ch10Formatter_Video.h" />
     <ClInclude Include="Ch10Format_1553_Nav.h" />
     <ClInclude Include="Ch10Format_A429.h" />
     <ClInclude Include="Ch10Format_A429_AR100.h" />
@@ -92,12 +94,14 @@
     <ClInclude Include="Ch10Format_PCM_CSV.h" />
     <ClInclude Include="Ch10Format_PCM_SynthFmt1.h" />
     <ClInclude Include="Ch10Format_Time.h" />
+    <ClInclude Include="Ch10Format_Video.h" />
     <ClInclude Include="Ch10Writer.h" />
     <ClInclude Include="Ch10Writer_1553.h" />
     <ClInclude Include="Ch10Writer_A429.h" />
     <ClInclude Include="Ch10Writer_Index.h" />
     <ClInclude Include="Ch10Writer_PCM.h" />
     <ClInclude Include="Ch10Writer_Time.h" />
+    <ClInclude Include="Ch10Writer_Video.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="Source_SQLiteDB.h" />
     <ClInclude Include="TmatsFormatter.h" />

@@ -25,9 +25,9 @@ ClSource_SQLiteDB::ClSource_SQLiteDB(ClSimState* pclSimState, std::string sPrefi
 // ----------------------------------------------------------------------------
 
 ClSource_SQLiteDB::~ClSource_SQLiteDB()
-    {
-    Close();
-    }
+{
+  Close();
+}
 
 
 // ----------------------------------------------------------------------------
@@ -131,6 +131,8 @@ void ClSource_SQLiteDB::InitSimStateFields()
       pclSimState->insert(DataLabels[i], (long)0);
     else if (type == "REAL")
       pclSimState->insert(DataLabels[i], 0.0);
+    else if (type == "BLOB")
+      pclSimState->insert(DataLabels[i], nullptr);
   }
 }
 
@@ -157,36 +159,51 @@ bool ClSource_SQLiteDB::ReadNextLine()
 // ----------------------------------------------------------------------------
 
 bool ClSource_SQLiteDB::UpdateSimState(double fSimElapsedTime)
+{
+  unsigned    uColIdx;
+  bool        bStatus;
+
+  // Return if simulation time is less than current data time from this source
+  if (fSimElapsedTime < fRelTime)
+    return true;
+
+  // Get the individual column values
+  for (uColIdx = 0; uColIdx < DataLabels.size(); uColIdx++)
+  {
+    // Read column based on column type
+    switch (sqlite3_column_type(pSqlStmt, uColIdx))
     {
-    unsigned    uColIdx;
-    bool        bStatus;
+    case SQLITE_INTEGER:
+      pclSimState->update(DataLabels[uColIdx], (long)sqlite3_column_int64(pSqlStmt, uColIdx));
+      break;
+    case SQLITE_FLOAT:
+      pclSimState->update(DataLabels[uColIdx], sqlite3_column_double(pSqlStmt, uColIdx));
+      break;
+    case SQLITE_BLOB:
+    {
+      const uint8_t* blob = (uint8_t*)sqlite3_column_blob(pSqlStmt, uColIdx);
+      uint32_t size = sqlite3_column_bytes(pSqlStmt, uColIdx);
 
-    // Return if simulation time is less than current data time from this source
-    if (fSimElapsedTime < fRelTime)
-        return true;
+      vector<uint8_t>* data;
 
-    // Get the individual column values
-    for (uColIdx = 0; uColIdx < DataLabels.size(); uColIdx++)
-        {
-        // Read column based on column type
-        switch (sqlite3_column_type(pSqlStmt, uColIdx))
-            {
-            case SQLITE_INTEGER :
-                pclSimState->update(DataLabels[uColIdx], (long)sqlite3_column_int64(pSqlStmt, uColIdx));
-                break;
-            case SQLITE_FLOAT :
-                pclSimState->update(DataLabels[uColIdx], sqlite3_column_double(pSqlStmt, uColIdx));
-                break;
-            default :
-                break;
-            } // end switch on column type
-        } // end for all columns
+      if (size == 0)
+        data = new vector<uint8_t>();
+      else
+        data = new vector<uint8_t>(blob, blob + size);
 
-    // Get the next line of data
-    bStatus = ReadNextLine();
+      pclSimState->update(DataLabels[uColIdx], data);
+      break;
+    }
+    default:
+      break;
+    } // end switch on column type
+  } // end for all columns
 
-    return bStatus;
-    } // end UpdateSimState()
+  // Get the next line of data
+  bStatus = ReadNextLine();
+
+  return bStatus;
+} // end UpdateSimState()
 
 
 void ClSource_SQLiteDB::SetMapping(ConfigMapping map) {

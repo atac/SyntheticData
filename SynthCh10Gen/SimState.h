@@ -7,13 +7,21 @@ class ClSimState
 {
 public:
   ClSimState() {};
-  ~ClSimState() {};
+  ~ClSimState() 
+  {
+    for (auto i = blobState.begin(); i != blobState.end(); i++)
+      if (i->second != nullptr) {
+        delete i->second;
+        i->second = nullptr;
+      }
+  };
 
   // Data
 public:
   std::unordered_map<std::string, double>     fState;
   std::unordered_map<std::string, bool>       bState;
   std::unordered_map<std::string, long>       lState;
+  std::unordered_map<std::string, std::vector<uint8_t>*> blobState;
 
   // Methods
 public:
@@ -24,6 +32,8 @@ public:
   void update(std::string sKey, bool   bValue);
   void insert(std::string sKey, long   lValue);
   void update(std::string sKey, long   lValue);
+  void insert(std::string sKey, std::vector<uint8_t>* blob);
+  void update(std::string sKey, std::vector<uint8_t>* blob);
 
   void SetSimClockTime(double* currTime);
   double GetCurrSimClockTime();
@@ -82,4 +92,19 @@ inline void ClSimState::update(std::string sKey, long lValue)
     { 
     lState[sKey] = lValue; 
     }
+
+inline void ClSimState::insert(std::string sKey, std::vector<uint8_t>* blob)
+{
+  blobState.insert(std::pair<std::string, std::vector<uint8_t>*>(sKey, blob));
+}
+
+inline void ClSimState::update(std::string sKey, std::vector<uint8_t>* blob)
+{
+  std::vector<uint8_t>* tmp = blobState[sKey];
+  blobState[sKey] = blob;
+  if (tmp != nullptr) {
+    delete tmp;
+    tmp = nullptr;
+  }
+}
 

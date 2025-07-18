@@ -4,6 +4,7 @@
 // TODO:
 // Need more time conversions
 // Decide if we need a case for poll and packet rate being "on demand"
+// Should we find a way to combine sources for channels that use the same source?
 
 
 GenerationController::GenerationController() {
@@ -213,6 +214,17 @@ ControllerStatus GenerationController::AddDataChannel(ConfigChannel config) {  /
 
     formatter = dynamic_cast<Ch10Formatter*>(formatA429);
     writer = dynamic_cast<Ch10Writer*>(writerA429);
+    break;
+  }
+
+  case Ch10Channel::ChannelType::VIDEO:
+  {
+    Ch10Formatter_Video* formatVideo = CreateVideoFormatter(config.format, source);
+    Ch10Writer_Video* writerVideo = new Ch10Writer_Video();
+    writerVideo->Init(i106OutFileHandle, config.id, formatVideo);
+
+    formatter = dynamic_cast<Ch10Formatter*>(formatVideo);
+    writer = dynamic_cast<Ch10Writer*>(writerVideo);
     break;
   }
 
@@ -428,6 +440,7 @@ Ch10Formatter_PCM* GenerationController::CreatePcmFormatter(Ch10Channel::Channel
 
   case Ch10Channel::ChannelDataFormat::UNFORMATTED:
   {
+    // for unformatted channels, get field labels and types directly from source
     ClCh10Format_PCM_CSV* formatCsv =
       new ClCh10Format_PCM_CSV(
         framerate.value,
@@ -440,6 +453,7 @@ Ch10Formatter_PCM* GenerationController::CreatePcmFormatter(Ch10Channel::Channel
 
   case Ch10Channel::ChannelDataFormat::SYNTHFORMAT1:
   {
+    // for formats with fixed fields, pass in a prefix to match the correct source fields
     ClCh10Format_PCM_SynthFmt1* formatSF1 =
       new ClCh10Format_PCM_SynthFmt1(framerate.value, src->sPrefix);
     formatter = dynamic_cast<Ch10Formatter_PCM*>(formatSF1);
@@ -503,6 +517,32 @@ Ch10Formatter_ARINC429* GenerationController::CreateA429Formatter(Ch10Channel::C
 
   default:
     break;
+  }
+
+  return formatter;
+}
+
+Ch10Formatter_Video* GenerationController::CreateVideoFormatter(Ch10Channel::ChannelDataFormat format, ClSource_Nav* src)
+{
+  Ch10Formatter_Video* formatter = nullptr;
+
+  switch (format) {
+
+  case Ch10Channel::ChannelDataFormat::UNFORMATTED:
+    break;
+
+  case Ch10Channel::ChannelDataFormat::SYNTHFORMAT1:
+    break;
+
+  case Ch10Channel::ChannelDataFormat::CUSTOM:
+    break;
+
+  default:
+  {
+    Ch10Format_Video* formatVideo = new Ch10Format_Video(src->DataLabels, src->DataTypes);
+    formatter = dynamic_cast<Ch10Formatter_Video*>(formatVideo);
+    break;
+  }
   }
 
   return formatter;

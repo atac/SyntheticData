@@ -13,10 +13,12 @@
 #include "Ch10Format_PCM_SynthFmt1.h"
 #include "Ch10Format_1553_Nav.h"
 #include "Ch10Format_A429_AR100.h"
+#include "Ch10Format_Video.h"
 
 #include "Ch10Writer_PCM.h"
 #include "Ch10Writer_1553.h"
 #include "Ch10Writer_A429.h"
+#include "Ch10Writer_Video.h"
 #include "Ch10Writer_Index.h"
 #include "Ch10Writer_Time.h"
 
@@ -83,6 +85,8 @@ private:
   Ch10Formatter_1553* Create1553Formatter(Ch10Channel::ChannelDataFormat format, ClSource_Nav* src);
   // TODO: this should eventually take (or use) a structure containing source setup data rather than a csv source
   Ch10Formatter_ARINC429* CreateA429Formatter(Ch10Channel::ChannelDataFormat format, ClSource_Nav* src, int busSpeed, int engineNumber);
+  // TODO: this should eventually take (or use) a structure containing source setup data rather than a csv source
+  Ch10Formatter_Video* CreateVideoFormatter(Ch10Channel::ChannelDataFormat format, ClSource_Nav* src);
   
   // =======================
 

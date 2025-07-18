@@ -19,25 +19,40 @@
 #include "i106_decode_video.h"
 //#include "i106_decode_tmats.h"
 
+#include "Common.h"
+#include "Ch10Formatter_Video.h"
+
 using namespace Irig106;
 
-class ClCh10Writer_VideoF0
-    {
-    public:
-        ClCh10Writer_VideoF0();
-        ~ClCh10Writer_VideoF0();
-
-    // Data
+class Ch10Writer_Video : public Ch10Writer
+{
 public:
-    int                 iHandle;
-    unsigned int        uChanID;
-    SuI106Ch10Header    suCh10Header;
-    SuVideoF0_ChanSpec  suVideoF0CSDW;
+  Ch10Writer_Video();
+  ~Ch10Writer_Video();
 
-    // Methods
-    void        Init(int iHandle, unsigned int uChanID);
-    std::string TMATS(ClTmatsIndexes & TmatsIndex, std::string sCDLN, std::string sDescription="");
-    void        Write(int64_t * pullRelTime, uint8_t * pBuffer, int iBufferLen);
+  // Data
+public:
+  SuI106Ch10Header    suCh10Header;
+  SuVideoF0_ChanSpec* suVideoF0CSDW;
 
-    };
+  uint8_t* dataBuf;
+  uint32_t bufLen;
+  uint32_t currBufOffset;
+
+private:
+  Ch10Formatter_Video* formatter;
+
+public:
+  // Methods
+  void Init(int iHandle, unsigned int uChanID, Ch10Formatter_Video* formatter);
+  void AppendMsg();
+  void Commit();
+
+
+  //void        Write(int64_t* pullRelTime, uint8_t* pBuffer, int iBufferLen);
+
+
+  std::string TMATS(ClTmatsIndexes& TmatsIndex, std::string sCDLN);
+
+};
 

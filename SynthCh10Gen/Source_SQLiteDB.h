@@ -7,6 +7,7 @@
 #include "sqlite3.h"
 
 #include "Source_Nav.h"
+#include "Source_VideoDB.h"
 #include "SimState.h"
 
 class ClSource_SQLiteDB :
@@ -18,10 +19,10 @@ public:
 
 public:
   // Class variables
-  int                         iStatus;
-  sqlite3* pDB;
-  std::string                 sSQL;
-  sqlite3_stmt* pSqlStmt;
+  int             iStatus;
+  sqlite3*        pDB;
+  std::string     sSQL;
+  sqlite3_stmt*   pSqlStmt;
 
   // Methods
 public:
@@ -42,4 +43,3 @@ private:
 
   string tableName;
 };
-
