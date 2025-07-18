@@ -46,7 +46,6 @@ public:
 
   // Data
 public:
-  int                           iHandle;
 
 private:
   Ch10Formatter_PCM* formatter;
