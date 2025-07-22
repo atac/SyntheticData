@@ -31,6 +31,30 @@
 #define METERS_TO_FT(meters)  ((meters)/0.3048)
 
 #pragma pack(push,1)
+struct SuPREL
+{
+  char    szCmd[5];       // PREL
+  int     type_start;
+  int     p;              // The index of the airplace you want to control
+  char    szApt_ID[8];
+  int     apt_rwy_idx;
+  int     apt_rwy_dir;
+  double  dat_lat;        // latitude, in degrees
+  double  dat_lon;        // longitude, in degrees
+  double  dat_ele;        // elevation above sea level, in meters
+  double  veh_psi_true;   // heading, degrees true
+  double  speed;
+};
+
+struct SuACFN
+{
+  char    szCmd[5];       // ACFN
+  int p; // aircraft index
+  char path[150];
+  char pad[2];
+  int liveryIndex;
+};
+
     struct SuVEHX
         {
         char    szCmd[5];       // VEHX
@@ -99,24 +123,59 @@ ClXPlaneControl::~ClXPlaneControl()
     {
     }
 
+void ClXPlaneControl::SendACFN(int aircraftIndex) {
+  SuACFN  suACFN;
+  memset(suACFN.path, 0, 150);
+  memset(suACFN.pad, 0, 2);
 
-void ClXPlaneControl::SendVEHX(SuPosition suACPosition)
-    {
-    SuVEHX  suVEHX;
+  memcpy(suACFN.szCmd, "ACFN", 5);
+  suACFN.p = aircraftIndex;
+  memcpy(suACFN.path, "Aircraft\\Laminar Research\\McDonnell Douglas F-4 Phantom II\\F-4.acf", 66);
+  suACFN.liveryIndex = 0;
 
-    memcpy(suVEHX.szCmd, "VEHX", 5);
-    suVEHX.p            = 0;
-    suVEHX.dat_lat      = suACPosition.fLat;
-    suVEHX.dat_lon      = suACPosition.fLon;
-    suVEHX.dat_ele      = FT_TO_METERS(suACPosition.fElevFt);
-    suVEHX.veh_psi_true = suACPosition.fHeading;
-    suVEHX.veh_phi      = suACPosition.fRoll;
-    suVEHX.veh_the      = suACPosition.fPitch;
+  int iStatus = sendto(hXPlaneSocket, (char*)&suACFN, sizeof(SuACFN), 0, (struct sockaddr*)&suXPlaneAddr, sizeof(suXPlaneAddr));
+  if (iStatus == -1)
+    printf("sendto() error - %d\n", WSAGetLastError());
+}
 
-    int iStatus = sendto(hXPlaneSocket, (char *)&suVEHX, sizeof(SuVEHX), 0, (struct sockaddr*)&suXPlaneAddr, sizeof(suXPlaneAddr));
-    if (iStatus == -1)
-        printf("sendto() error - %d\n",WSAGetLastError());
-    }
+void ClXPlaneControl::SendPREL(SuPosition suACPosition, int aircraftIndex) {
+  SuPREL  suPREL;
+  memset(suPREL.szCmd, 0, 5);
+  memset(suPREL.szApt_ID, 0, 8);
+
+  memcpy(suPREL.szCmd, "PREL", 5);
+  suPREL.p = aircraftIndex;
+  suPREL.apt_rwy_dir = 0;
+  suPREL.apt_rwy_idx = 0;
+  suPREL.type_start = 6;
+  suPREL.dat_lat = suACPosition.fLat;
+  suPREL.dat_lon = suACPosition.fLon;
+  suPREL.dat_ele = FT_TO_METERS(suACPosition.fElevFt);
+  suPREL.veh_psi_true = suACPosition.fHeading;
+  suPREL.speed = 0;
+
+  int iStatus = sendto(hXPlaneSocket, (char*)&suPREL, sizeof(SuPREL), 0, (struct sockaddr*)&suXPlaneAddr, sizeof(suXPlaneAddr));
+  if (iStatus == -1)
+    printf("sendto() error - %d\n", WSAGetLastError());
+}
+
+void ClXPlaneControl::SendVEHX(SuPosition suACPosition, int aircraftIndex)
+{
+  SuVEHX  suVEHX;
+
+  memcpy(suVEHX.szCmd, "VEHX", 5);
+  suVEHX.p = aircraftIndex;
+  suVEHX.dat_lat = suACPosition.fLat;
+  suVEHX.dat_lon = suACPosition.fLon;
+  suVEHX.dat_ele = FT_TO_METERS(suACPosition.fElevFt);
+  suVEHX.veh_psi_true = suACPosition.fHeading;
+  suVEHX.veh_the = suACPosition.fPitch;
+  suVEHX.veh_phi = suACPosition.fRoll;
+
+  int iStatus = sendto(hXPlaneSocket, (char*)&suVEHX, sizeof(SuVEHX), 0, (struct sockaddr*)&suXPlaneAddr, sizeof(suXPlaneAddr));
+  if (iStatus == -1)
+    printf("sendto() error - %d\n", WSAGetLastError());
+}
 
 
 void ClXPlaneControl::SendCMND(const char * szCmd)
