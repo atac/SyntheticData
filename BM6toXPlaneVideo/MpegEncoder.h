@@ -41,7 +41,7 @@ private:
     AVIOContext       * pAVIOContext       = nullptr;
     AVFormatContext   * pFormatContext     = nullptr;
     AVCodecContext    * pVideoCodecContext = nullptr;
-    const AVCodec     * pVideoCodec        = nullptr;
+    const AVCodec           * pVideoCodec        = nullptr;
     AVStream          * pVideoStream       = nullptr;
     AVPacket          * pAVPacket          = nullptr;
     struct SwsContext * psuScalingContext  = nullptr;

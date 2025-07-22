@@ -82,7 +82,7 @@
 enum EnInputType  { InputUnknown,  InputSqlite,  InputText  } ;
 enum EnOutputType { OutputNone,    OutputSqlite, OutputMpeg } ;
 
-//#define REDIRECT_SQL
+bool redirectSql = false;
 
 /*
  * Data structures
@@ -108,6 +108,11 @@ std::string             sTableName;
 
 int                     iOutFile;
 
+std::vector<ClSource_BMNavTxt *> txtSources;
+std::vector<std::string> inputFiles;
+
+EnInputType         enInputType = InputUnknown;
+
 /*
  * Function prototypes
  * -------------------
@@ -115,6 +120,8 @@ int                     iOutFile;
 
 void XPlaneInit(ClSimState * pclSimState);
 void XPlaneUpdate(ClSimState * pclSimState);
+void XPlaneSendAircraftPosition(ClSimState* pclSimState, std::string prefix, int aircraftIndex);
+void XPlaneInitAdditionalPlane(ClSimState* pclSimState, std::string prefix, int aircraftIndex);
 uint32_t mkgmtime(struct tm * psuTmTime);
 void FfmpegOpen(char * szOutFile);
 void FfmpegClose();
@@ -123,309 +130,332 @@ void vUsage(void);
 
 // ============================================================================
 
-int main(int iArgc, char * aszArgv[])
+int main(int iArgc, char* aszArgv[])
 {
-    char                szInFile[256];      // Input file name
-    char                szOutFile[256];     // Output file name
-    EnInputType         enInputType  = InputUnknown;
-    EnOutputType        enOutputType = OutputNone;
-    bool                bStatus;
+  char                szInFile[256];      // Input file name
+  char                szOutFile[256];     // Output file name
+  EnOutputType        enOutputType = OutputNone;
+  bool                bStatus;
 
-    // Screen capture and ffmpeg stuff
-    DXGIManager   * pclDXGIManager = nullptr; // = new DXGIManager();
-	size_t          iFrameBuffSize = 0;
-	uint8_t       * ubyFrameBuff   = NULL;
-    ClMpegEncoder   clMpegEncoder;
-    unsigned int    ret;
-    unsigned int    iFrameHeight, iFrameWidth;
-    int64_t         iFrameCounter = 0;
+  // Screen capture and ffmpeg stuff
+  DXGIManager* pclDXGIManager = nullptr; // = new DXGIManager();
+  size_t          iFrameBuffSize = 0;
+  uint8_t* ubyFrameBuff = NULL;
+  ClMpegEncoder   clMpegEncoder;
+  unsigned int    ret;
+  unsigned int    iFrameHeight, iFrameWidth;
+  int64_t         iFrameCounter = 0;
 
-    // Data Sources
-    ClSource_BMNavTxt * pSource_BMNavTxt = nullptr;
-    ClSource_BMNavDB  * pSource_BMNavDB  = nullptr;
+  // Data Sources
+  ClSource_BMNavDB* pSource_BMNavDB = nullptr;
 
-    // Various simulation clocks and time
-    ClSimTimer::lSimClockTicks  =        0;
-    ClSimTimer::lTicksPerSecond = 10000000;
-    ClSimTimer::lTicksPerStep   =   400000;     // 40 msec / 25 Hz
-    ClSimTimer::fSimElapsedTime =      0.0;
-    ClSimTimer      clSimTimer_40ms(400000);    // 40 msec / 25 Hz
-    ClSimTimer      clSimTimer_100ms(1000000);  // 100 msec / 10 Hz
-    ClSimTimer      clSimTimer_1S(10000000);    // 1 sec
+  // Various simulation clocks and time
+  ClSimTimer::lSimClockTicks = 0;
+  ClSimTimer::lTicksPerSecond = 10000000;
+  ClSimTimer::lTicksPerStep = 400000;     // 40 msec / 25 Hz
+  ClSimTimer::fSimElapsedTime = 0.0;
+  ClSimTimer      clSimTimer_40ms(400000);    // 40 msec / 25 Hz
+  ClSimTimer      clSimTimer_100ms(1000000);  // 100 msec / 10 Hz
+  ClSimTimer      clSimTimer_1S(10000000);    // 1 sec
 
-    ClSimState      clSimState;
-    double          fBluemaxTime;           // Bluemax data time (seconds)
+  ClSimState      clSimState;
+  double          fBluemaxTime;           // Bluemax data time (seconds)
 
-    // Init some stuff
-    szInFile[0]         = '\0';
-    szOutFile[0]        = '\0';
-    bStatus             = false;
+  // Init some stuff
+  szInFile[0] = '\0';
+  szOutFile[0] = '\0';
+  bStatus = false;
 
-    fBluemaxTime        = 0.0;
-    clSimState.clear();
+  fBluemaxTime = 0.0;
+  clSimState.clear();
 
-    // Process command line
-    // --------------------
+  // Process command line
+  // --------------------
 
-  for (int iArgIdx=1; iArgIdx<iArgc; iArgIdx++) {
+  for (int iArgIdx = 1; iArgIdx < iArgc; iArgIdx++) {
 
     switch (aszArgv[iArgIdx][0]) {
 
-      case '-' :
-        switch (aszArgv[iArgIdx][1]) {
+    case '-':
+      switch (aszArgv[iArgIdx][1]) {
 
-          case 'd' :                   // Input database file
-            if (enInputType != InputUnknown)
-                {
-                vUsage();
-                return 1;
-                }
-            iArgIdx++;
-            strcpy(szInFile, aszArgv[iArgIdx]);
-            enInputType = InputSqlite;
-            break;
-
-          case 't' :                   // Input text file
-            if (enInputType != InputUnknown)
-                {
-                vUsage();
-                return 1;
-                }
-            iArgIdx++;
-            strcpy(szInFile, aszArgv[iArgIdx]);
-            enInputType = InputText;
-            break;
-
-          case 'D' :                    // Output database file
-            if (enOutputType != OutputNone)
-                {
-                vUsage();
-                return 1;
-                }
-            enOutputType = OutputSqlite;
-            iArgIdx++;
-            strcpy(szOutFile, aszArgv[iArgIdx]);
-            break;
-
-          case 'T' :                    // Output database table name
-            iArgIdx++;
-            sTableName = aszArgv[iArgIdx];
-//            strcpy(szTableName, aszArgv[iArgIdx]);
-            break;
-
-          case 'M' :                    // Output MPEG file
-            if (enOutputType != OutputNone)
-                {
-                vUsage();
-                return 1;
-                }
-            enOutputType = OutputMpeg;
-            iArgIdx++;
-            strcpy(szOutFile, aszArgv[iArgIdx]);
-            break;
-
-          default :
-            break;
-          } /* end flag switch */
+      case 'd':                   // Input database file
+        if (enInputType != InputUnknown)
+        {
+          vUsage();
+          return 1;
+        }
+        iArgIdx++;
+        strcpy(szInFile, aszArgv[iArgIdx]);
+        enInputType = InputSqlite;
         break;
 
-      } // end command line arg switch
-    } // end for all arguments
-
-    if (strlen(szInFile)==0)
+      case 't':                   // Input text file
+        if (enInputType != InputUnknown && enInputType != InputText)
         {
+          vUsage();
+          return 1;
+        }
+        iArgIdx++;
+        strcpy(szInFile, aszArgv[iArgIdx]);
+        enInputType = InputText;
+        inputFiles.push_back(szInFile);
+        break;
+
+      case 'D':                    // Output database file
+        if (enOutputType != OutputNone)
+        {
+          vUsage();
+          return 1;
+        }
+        enOutputType = OutputSqlite;
+        iArgIdx++;
+        strcpy(szOutFile, aszArgv[iArgIdx]);
+        break;
+
+      case 'T':                    // Output database table name
+        iArgIdx++;
+        sTableName = aszArgv[iArgIdx];
+        //            strcpy(szTableName, aszArgv[iArgIdx]);
+        break;
+
+      case 'M':                    // Output MPEG file
+        if (enOutputType != OutputNone)
+        {
+          vUsage();
+          return 1;
+        }
+        redirectSql = true;
+        enOutputType = OutputMpeg;
+        iArgIdx++;
+        strcpy(szOutFile, aszArgv[iArgIdx]);
+        break;
+
+      default:
         vUsage();
+        break;
+      } /* end flag switch */
+      break;
+
+    } // end command line arg switch
+  } // end for all arguments
+
+  if (strlen(szInFile) == 0)
+  {
+    vUsage();
+    return 1;
+  }
+
+  if (enOutputType != OutputNone)
+  {
+    // Initialize screen capture and ffmpeg
+    CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
+    pclDXGIManager = new DXGIManager();
+    pclDXGIManager->setup();
+
+    RECT Dimensions = ((DXGIManager*)pclDXGIManager)->get_output_rect();
+    iFrameHeight = Dimensions.bottom - Dimensions.top;
+    iFrameWidth = Dimensions.right - Dimensions.left;
+
+    clMpegEncoder.Open(&FfmpegWrite, &clSimState, iFrameHeight, iFrameWidth, FRAME_RATE);
+  }
+
+  // Init some more stuff
+  clSimTimer_40ms.FromNow();
+  clSimTimer_100ms.FromNow();
+  clSimTimer_1S.FromNow();
+
+  // Prepare inputs and outputs
+  // --------------------------
+
+  // Make data sources and open input files
+  switch (enInputType)
+  {
+  case InputSqlite:
+    pSource_BMNavDB = new ClSource_BMNavDB(&clSimState, "BM.");
+    bStatus = pSource_BMNavDB->Open(szInFile);
+    if (bStatus == false)
+      return 1;
+    pSource_BMNavDB->ReadNextLine();
+    break;
+  case InputText:
+    for (int i = 0; i < inputFiles.size(); i++) {
+      ClSource_BMNavTxt* txtsrc = new ClSource_BMNavTxt(&clSimState, "BM", i);
+      txtSources.push_back(txtsrc);
+      bStatus = txtsrc->Open(inputFiles[i]);
+      if (bStatus == false)
         return 1;
+      if (!txtsrc->ReadNextLine())
+        return 1;
+      if (!txtsrc->UpdateSimState(ClSimTimer::fSimElapsedTime))
+        return 1;
+    }
+    break;
+  } // end switch on input type
+
+// Open output file
+  switch (enOutputType)
+  {
+    //        int iStatus;
+  case OutputSqlite:
+    FfmpegOpen(szOutFile);
+    break;
+
+  case OutputMpeg:
+    iOutFile = _open(szOutFile, _O_WRONLY | _O_CREAT | _O_BINARY, _S_IREAD | _S_IWRITE);
+    break;
+
+  default:
+    break;
+  } // end switch on output type
+
+// Setup messages that will be written
+// -----------------------------------
+
+  XPlaneInit(&clSimState);
+  Sleep(2000);
+
+  // Start writing
+  // -------------
+
+  // Loop until an input is exhausted. Along the way various simulation
+  // components check their notion of time against the current simulation
+  // time and take appropriate action for this instant of time.
+
+  bStatus = true;
+  while (bStatus == true)
+  {
+
+    // Update input(s)
+    // ---------------
+
+    // Bluemax XLS input data
+    while (clSimState.fState["BM.0.AC_TIME"] < fBluemaxTime)
+    {
+
+      switch (enInputType)
+      {
+      case InputSqlite: bStatus = pSource_BMNavDB->UpdateSimState(ClSimTimer::fSimElapsedTime);  break;
+      case InputText:
+      {
+        bStatus = false;
+
+        for (auto i = txtSources.begin(); i != txtSources.end(); i++) {
+          if ((*i)->UpdateSimState(ClSimTimer::fSimElapsedTime)) {
+            if (i == txtSources.begin())
+              bStatus = true;
+          }
         }
+        break;
+      }
+      } // end switch on input type
 
-    if (enOutputType != OutputNone)
-        {
-        // Initialize screen capture and ffmpeg
-        CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
-        pclDXGIManager = new DXGIManager();
-	    pclDXGIManager->setup();
+  // Break out if input is exhausted
+      if (bStatus == false)
+        break;
 
-        RECT Dimensions = ((DXGIManager*)pclDXGIManager)->get_output_rect();
-        iFrameHeight = Dimensions.bottom - Dimensions.top;
-        iFrameWidth  = Dimensions.right  - Dimensions.left;
-
-        clMpegEncoder.Open(&FfmpegWrite, &clSimState, iFrameHeight, iFrameWidth, FRAME_RATE);
-        }
-
-    // Init some more stuff
-    clSimTimer_40ms.FromNow();
-    clSimTimer_100ms.FromNow();
-    clSimTimer_1S.FromNow();
-
-    // Prepare inputs and outputs
-    // --------------------------
-
-    // Make data sources and open input files
-    switch (enInputType)
-        {
-        case InputSqlite : 
-            pSource_BMNavDB  = new ClSource_BMNavDB (&clSimState, "BM."); 
-            bStatus = pSource_BMNavDB->Open(szInFile);
-            if (bStatus == false)
-                return 1;
-            pSource_BMNavDB->ReadNextLine();
-            break;
-        case InputText   : 
-            pSource_BMNavTxt = new ClSource_BMNavTxt(&clSimState, "BM."); 
-            bStatus = pSource_BMNavTxt->Open(szInFile);
-            if (bStatus == false)
-                return 1;
-            pSource_BMNavTxt->ReadNextLine();
-            break;
-        } // end switch on input type
-
-    // Open output file
-    switch (enOutputType)
-        {
-//        int iStatus;
-        case OutputSqlite :
-            FfmpegOpen(szOutFile);
-            break;
-
-        case OutputMpeg   :
-            iOutFile = _open(szOutFile, _O_WRONLY | _O_CREAT | _O_BINARY, _S_IREAD | _S_IWRITE );
-            break;
-
-        default :
-            break;
-        } // end switch on output type
-
-    // Setup messages that will be written
-    // -----------------------------------
-
-    XPlaneInit(&clSimState);
-    Sleep(1000);
-
-    // Start writing
-    // -------------
-
-    // Loop until an input is exhausted. Along the way various simulation
-    // components check their notion of time against the current simulation
-    // time and take appropriate action for this instant of time.
-
-    bStatus = true;
-    while (bStatus == true)
-        {
-
-        // Update input(s)
-        // ---------------
-
-        // Bluemax XLS input data
-        while (clSimState.fState["BM.actime"] < fBluemaxTime)
-            {
-
-            switch (enInputType)
-                {
-                case InputSqlite : bStatus = pSource_BMNavDB->ReadNextLine();  break;
-                case InputText   : bStatus = pSource_BMNavTxt->ReadNextLine(); break;
-                } // end switch on input type
-
-            // Break out if input is exhausted
-            if (bStatus == false)
-                break;
-
-            // Update XPlane state
-            XPlaneUpdate(&clSimState);
-            printf("%.2f %.3f %.3f %.1f %3.0f %5.1f %5.1f\n", clSimState.fState["BM.actime"], clSimState.fState["BM.aclatd"], clSimState.fState["BM.aclond"], clSimState.fState["BM.acaltf"], clSimState.fState["BM.acktas"], clSimState.fState["BM.acthtad"], clSimState.fState["BM.acphid"]);
+      // Update XPlane state
+      XPlaneUpdate(&clSimState);
+      //printf("%.2f %.3f %.3f %.1f %3.0f %5.1f %5.1f\n", clSimState.fState["BM.0.actime"], clSimState.fState["BM.0.aclatd"], clSimState.fState["BM.0.aclond"], clSimState.fState["BM.0.acaltf"], clSimState.fState["BM.0.acktas"], clSimState.fState["BM.0.acthtad"], clSimState.fState["BM.0.acphid"]);
+      printf("%.2f %.3f %.3f %.1f %3.0f %5.1f %5.1f\n", clSimState.fState["BM.0.AC_TIME"], clSimState.fState["BM.0.AC_LAT"], clSimState.fState["BM.0.AC_LON"], clSimState.fState["BM.0.AC_ALT"], clSimState.fState["BM.0.AC_TAS"], clSimState.fState["BM.0.AC_PITCH"], clSimState.fState["BM.0.AC_ROLL"]);
 //Sleep(20);
 
-            } // end while reading Bluemax XLS data
+    } // end while reading Bluemax XLS data
 
-        // Break out if input is exhausted
-        if (bStatus == false)
-            break;
+// Break out if input is exhausted
+    if (bStatus == false)
+      break;
 
-        // 40 msec / 25 Hz events
-        // ----------------------
-        if (clSimTimer_40ms.Expired())
-            {
-            clSimTimer_40ms.FromPrev();
-            } // end 40 msec / 25 Hz events
+    // 40 msec / 25 Hz events
+    // ----------------------
+    if (clSimTimer_40ms.Expired())
+    {
+      clSimTimer_40ms.FromPrev();
+    } // end 40 msec / 25 Hz events
 
-        // 100 msec events
-        // ---------------
-        if (clSimTimer_100ms.Expired())
-            {
-            clSimTimer_100ms.FromPrev();
-            } // end 100 msec / 10 Hz events
+// 100 msec events
+// ---------------
+    if (clSimTimer_100ms.Expired())
+    {
+      clSimTimer_100ms.FromPrev();
+    } // end 100 msec / 10 Hz events
 
-        // 1 Hz events
-        // -----------
-        if (clSimTimer_1S.Expired())
-            {
-            clSimTimer_1S.FromPrev();
+// 1 Hz events
+// -----------
+    if (clSimTimer_1S.Expired())
+    {
+      clSimTimer_1S.FromPrev();
 
-//            printf("%f %f %f %f %f\n", clSimState.fState["BM.actime"], clSimState.fState["BM.aclatd"], clSimState.fState["BM.aclond"], clSimState.fState["BM.acaltf"], clSimState.fState["BM.acktas"]);
-            } // end 1 Hz events
+      //            printf("%f %f %f %f %f\n", clSimState.fState["BM.actime"], clSimState.fState["BM.aclatd"], clSimState.fState["BM.aclond"], clSimState.fState["BM.acaltf"], clSimState.fState["BM.acktas"]);
+    } // end 1 Hz events
 
-        // Do a screen capture
-        // -------------------
+// Do a screen capture
+// -------------------
 
-        if (enOutputType != OutputNone)
-            {
+    if (enOutputType != OutputNone)
+    {
 
-            /* make sure the frame data is writable */
-            ret = av_frame_make_writable(clMpegEncoder.pAVFrame);
-            if (ret < 0)
-                exit(1);
+      /* make sure the frame data is writable */
+      ret = av_frame_make_writable(clMpegEncoder.pAVFrame);
+      if (ret < 0)
+        exit(1);
 
-            // Get screen image
-            pclDXGIManager->get_output_data(&ubyFrameBuff, &iFrameBuffSize);
-            //pclDXGIManager->save_to_bmp(ubyFrameBuff, iFrameBuffSize, iFrameWidth, iFrameHeight);
+      // Get screen image
+      pclDXGIManager->get_output_data(&ubyFrameBuff, &iFrameBuffSize);
+      //pclDXGIManager->save_to_bmp(ubyFrameBuff, iFrameBuffSize, iFrameWidth, iFrameHeight);
 
-            /* Input screen frame buffer format is DXGI_FORMAT_B8G8R8A8_UNORM
-               A four-component, 32-bit unsigned-normalized-integer format that supports 
-               8 bits for each color channel and 8-bit alpha.
-            */
+      /* Input screen frame buffer format is DXGI_FORMAT_B8G8R8A8_UNORM
+         A four-component, 32-bit unsigned-normalized-integer format that supports
+         8 bits for each color channel and 8-bit alpha.
+      */
 #if 0
-            // Use with AV_PIX_FMT_RGB24
-            int iSrcPitch = iFrameWidth * 4;
-            int iDstPitch = clMpegEncoder.aiSrcLineSizes[0];    // Frame width * 3
-            for (y = 0; y < iFrameHeight; y++) 
-                {
-                for (x = 0; x < iFrameWidth; x++) 
-                    {
-                    clMpegEncoder.pSrcData[0][(y * iDstPitch) + (x * 3) + 2] = ubyFrameBuff[(y * iSrcPitch) + (x * 4)];
-                    clMpegEncoder.pSrcData[0][(y * iDstPitch) + (x * 3) + 1] = ubyFrameBuff[(y * iSrcPitch) + (x * 4) + 1];
-                    clMpegEncoder.pSrcData[0][(y * iDstPitch) + (x * 3)    ] = ubyFrameBuff[(y * iSrcPitch) + (x * 4) + 2];
-                    }
-                }
+      // Use with AV_PIX_FMT_RGB24
+      int iSrcPitch = iFrameWidth * 4;
+      int iDstPitch = clMpegEncoder.aiSrcLineSizes[0];    // Frame width * 3
+      for (y = 0; y < iFrameHeight; y++)
+      {
+        for (x = 0; x < iFrameWidth; x++)
+        {
+          clMpegEncoder.pSrcData[0][(y * iDstPitch) + (x * 3) + 2] = ubyFrameBuff[(y * iSrcPitch) + (x * 4)];
+          clMpegEncoder.pSrcData[0][(y * iDstPitch) + (x * 3) + 1] = ubyFrameBuff[(y * iSrcPitch) + (x * 4) + 1];
+          clMpegEncoder.pSrcData[0][(y * iDstPitch) + (x * 3)    ] = ubyFrameBuff[(y * iSrcPitch) + (x * 4) + 2];
+        }
+      }
 #else
-            // Use with AV_PIX_FMT_BGR0
-            if (ubyFrameBuff != NULL)
-                memcpy(clMpegEncoder.pSrcData[0], ubyFrameBuff, iFrameBuffSize);
+      // Use with AV_PIX_FMT_BGR0
+      if (ubyFrameBuff != NULL)
+        memcpy(clMpegEncoder.pSrcData[0], ubyFrameBuff, iFrameBuffSize);
 #endif
 
-            clMpegEncoder.pAVFrame->pts = iFrameCounter;
-            iFrameCounter++;
+      clSimState.lState["BM.RowNum"] = iFrameCounter;
+      clMpegEncoder.pAVFrame->pts = iFrameCounter;
+      iFrameCounter++;
 
-            /* encode the image */
-            clMpegEncoder.Encode();
-            } // end if recording video
+      /* encode the image */
+      clMpegEncoder.Encode();
+    } // end if recording video
 
-        // Update the various clocks
-        // -------------------------
+// Update the various clocks
+// -------------------------
 
-        ClSimTimer::Tick();
-        fBluemaxTime        = ClSimTimer::fSimElapsedTime;
-        } // end while reading until done
+    ClSimTimer::Tick();
+    fBluemaxTime = ClSimTimer::fSimElapsedTime;
+  } // end while reading until done
 
-    // Close files
-    switch (enInputType)
-        {
-        case InputSqlite : pSource_BMNavDB->Close();  break;
-        case InputText   : pSource_BMNavTxt->Close(); break;
-        } // end switch on input type
+// Close files
+  switch (enInputType)
+  {
+  case InputSqlite: pSource_BMNavDB->Close();  break;
+  case InputText: 
+    for (auto i = txtSources.begin(); i != txtSources.end(); i++)
+      (*i)->Close();
+    break;
+  } // end switch on input type
 
-    FfmpegClose();
-    sqlite3_close(pDB);
+  FfmpegClose();
+  sqlite3_close(pDB);
 
-    return 0;
+  return 0;
 }
 
 
@@ -472,22 +502,28 @@ sim/flight_controls/landing_gear_up
 sim/flight_controls/landing_gear_down
 
 */
-#define ALT_FUDGE       38.0
+#define ALT_FUDGE       0
 
 void XPlaneInit(ClSimState * pclSimState)
     {
-    ClXPlaneControl::SuPosition  suPos;
     float                        afValue[8];
 
     for (int i=0; i<8; i++) afValue[i] = -999.0;
 
-    suPos.fLat      =        pclSimState->fState["BM.aclatd"];
-    suPos.fLon      =        pclSimState->fState["BM.aclond"];
-    suPos.fElevFt   =        pclSimState->fState["BM.acaltf"] + ALT_FUDGE;
-    suPos.fHeading  = (float)pclSimState->fState["BM.acpsid"];
-    suPos.fPitch    = (float)pclSimState->fState["BM.acthtad"];
-    suPos.fRoll     = (float)pclSimState->fState["BM.acphid"];
-    XPlaneControl.SendVEHX(suPos);
+    switch (enInputType)
+    {
+    case InputSqlite:
+      assert(1 == 0);
+      break;
+    case InputText:
+      for (int i = 0; i < txtSources.size(); i++) {
+        if (i == 0)
+          XPlaneSendAircraftPosition(pclSimState, txtSources[i]->sPrefix, txtSources[i]->aircraftIndex);
+        else
+          XPlaneInitAdditionalPlane(pclSimState, txtSources[i]->sPrefix, txtSources[i]->aircraftIndex);
+      }
+      break;
+    }
 
     XPlaneControl.SendDREF("sim/cockpit/electrical/HUD_brightness",        1.0);
     XPlaneControl.SendDREF("sim/cockpit/electrical/instrument_brightness", 1.0);
@@ -501,75 +537,107 @@ void XPlaneInit(ClSimState * pclSimState)
     XPlaneControl.SendDREF("sim/flightmodel/failures/onground_any", 0.0);
     pclSimState->insert("AC_geardown", true);
     XPlaneControl.SendCMND("sim/flight_controls/landing_gear_down");
+
 #endif
     }
 
 
-void XPlaneUpdate(ClSimState * pclSimState)
-    {
-    ClXPlaneControl::SuPosition  suPos;
-    float                        afValue[8];
+void XPlaneUpdate(ClSimState* pclSimState)
+{
+  std::string prefix;
+  float                        afValue[8];
 
-    for (int i=0; i<8; i++) afValue[i] = -999.0;
+  for (int i = 0; i < 8; i++) afValue[i] = -999.0;
 
-    suPos.fLat      =        pclSimState->fState["BM.aclatd"];
-    suPos.fLon      =        pclSimState->fState["BM.aclond"];
-    suPos.fElevFt   =        pclSimState->fState["BM.acaltf"] + ALT_FUDGE;
-    suPos.fHeading  = (float)pclSimState->fState["BM.acpsid"];
-    suPos.fPitch    = (float)pclSimState->fState["BM.acthtad"];
-    suPos.fRoll     = (float)pclSimState->fState["BM.acphid"];
-    XPlaneControl.SendVEHX(suPos);
+  switch (enInputType)
+  {
+  case InputSqlite:
+    assert(1 == 0);
+    break;
+  case InputText:
+    prefix = txtSources[0]->sPrefix;
+    for (auto i = txtSources.begin(); i != txtSources.end(); i++)
+      XPlaneSendAircraftPosition(pclSimState, (*i)->sPrefix, (*i)->aircraftIndex);
+    break;
+  }
 
-    // Altimeter / Airspeed / Mag compass
-    XPlaneControl.SendDREF("sim/flightmodel/position/vh_ind_fpm",        -(float)(pclSimState->fState["BM.acvzi"] * 60.0));
-    XPlaneControl.SendDREF("sim/cockpit/misc/compass_indicated",          (float)pclSimState->fState["BM.acmagd"]);
-    XPlaneControl.SendDREF("sim/flightmodel/misc/h_ind",                  (float)(pclSimState->fState["BM.acaltf"]));
-    XPlaneControl.SendDREF("sim/flightmodel/position/indicated_airspeed", (float)pclSimState->fState["BM.acktas"]);
+  // Altimeter / Airspeed / Mag compass
+  XPlaneControl.SendDREF("sim/flightmodel/position/vh_ind_fpm", -(float)(pclSimState->fState[prefix + "AC_VEL_DOWN"] * 60.0));
+  XPlaneControl.SendDREF("sim/cockpit/misc/compass_indicated", (float)pclSimState->fState[prefix + "AC_MAG_HDG"]);
+  XPlaneControl.SendDREF("sim/flightmodel/misc/h_ind", (float)(pclSimState->fState[prefix + "AC_ALT"]));
+  XPlaneControl.SendDREF("sim/flightmodel/position/indicated_airspeed", (float)pclSimState->fState[prefix + "AC_TAS"]);
 
-    // Main AI and HSI
-    XPlaneControl.SendDREF("sim/cockpit/gyros/psi_ind_elec_pilot_degm",   (float)pclSimState->fState["BM.acpsid"]);  // Heading
-    XPlaneControl.SendDREF("sim/cockpit/gyros/phi_ind_elec_pilot_deg",    (float)pclSimState->fState["BM.acphid"]);  // Roll
-    XPlaneControl.SendDREF("sim/cockpit/gyros/the_ind_elec_pilot_deg",    (float)pclSimState->fState["BM.acthtad"]); // Pitch
+  // Main AI and HSI
+  XPlaneControl.SendDREF("sim/cockpit/gyros/psi_ind_elec_pilot_degm", (float)pclSimState->fState[prefix + "AC_TRUE_HDG"]);  // Heading
+  XPlaneControl.SendDREF("sim/cockpit/gyros/phi_ind_elec_pilot_deg", (float)pclSimState->fState[prefix + "AC_ROLL"]);  // Roll
+  XPlaneControl.SendDREF("sim/cockpit/gyros/the_ind_elec_pilot_deg", (float)pclSimState->fState[prefix + "AC_PITCH"]); // Pitch
 
-    // Backup AI
-    XPlaneControl.SendDREF("sim/cockpit/gyros/phi_vac_ind_deg",           (float)pclSimState->fState["BM.acphid"]);  // Roll
-    XPlaneControl.SendDREF("sim/cockpit/gyros/the_vac_ind_deg",           (float)pclSimState->fState["BM.acthtad"]); // Pitch
+  // Backup AI
+  XPlaneControl.SendDREF("sim/cockpit/gyros/phi_vac_ind_deg", (float)pclSimState->fState[prefix + "AC_ROLL"]);  // Roll
+  XPlaneControl.SendDREF("sim/cockpit/gyros/the_vac_ind_deg", (float)pclSimState->fState[prefix + "AC_PITCH"]); // Pitch
 
-    // Angle of Attack
-    afValue[0] = (float)pclSimState->fState["BM.acaoad"];
-    XPlaneControl.SendDATA(18, afValue);
+  // Angle of Attack
+  afValue[0] = (float)pclSimState->fState[prefix + "AC_AOA"];
+  XPlaneControl.SendDATA(18, afValue);
 
-    // G meter
-    afValue[0] = -999.0;
-    afValue[4] = (float)pclSimState->fState["BM.acnzb"];
-    XPlaneControl.SendDATA(4, afValue);
+  // G meter
+  afValue[0] = -999.0;
+  afValue[4] = (float)pclSimState->fState[prefix + "GS"];
+  XPlaneControl.SendDATA(4, afValue);
 
-    // Throttle
-    afValue[0] = (float)(pclSimState->fState["BM.acthro"] / 100.0);
-    afValue[1] = (float)(pclSimState->fState["BM.acthro"] / 100.0);
-    XPlaneControl.SendDATA(25, afValue);
+  // Throttle
+  afValue[0] = (float)(pclSimState->fState[prefix + "AC_THROTTLE"] / 100.0);
+  afValue[1] = (float)(pclSimState->fState[prefix + "AC_THROTTLE"] / 100.0);
+  XPlaneControl.SendDATA(25, afValue);
 
-    // External HUD
-    XPlaneControl.SendDREF("sim/cockpit/gyros/psi_ind_ahars_pilot_degm",  (float)pclSimState->fState["BM.acpsid"]);  // Heading
-    XPlaneControl.SendDREF("sim/cockpit/gyros/phi_ind_ahars_pilot_deg",   (float)pclSimState->fState["BM.acphid"]);  // Roll
-    XPlaneControl.SendDREF("sim/cockpit/gyros/the_ind_ahars_pilot_deg",   (float)pclSimState->fState["BM.acthtad"]); // Pitch
+  // External HUD
+  XPlaneControl.SendDREF("sim/cockpit/gyros/psi_ind_ahars_pilot_degm", (float)pclSimState->fState[prefix + "AC_TRUE_HDG"]);  // Heading
+  XPlaneControl.SendDREF("sim/cockpit/gyros/phi_ind_ahars_pilot_deg", (float)pclSimState->fState[prefix + "AC_ROLL"]);  // Roll
+  XPlaneControl.SendDREF("sim/cockpit/gyros/the_ind_ahars_pilot_deg", (float)pclSimState->fState[prefix + "AC_PITCH"]); // Pitch
 
-    // Landing gear
-    if      ((pclSimState->bState["AC_geardown"] == true) && (pclSimState->fState["BM.acgear"] < 40.0))
-        {
-        pclSimState->update("AC_geardown", false);
-        XPlaneControl.SendCMND("sim/flight_controls/landing_gear_up");
-printf("CMD Gear Up\n");
-        }
-    else if ((pclSimState->bState["AC_geardown"] == false) && (pclSimState->fState["BM.acgear"] > 60.0))
-        {
-        pclSimState->update("AC_geardown", true);
-        XPlaneControl.SendCMND("sim/flight_controls/landing_gear_down");
-printf("CMD Gear Down\n");
-        }
+  // Landing gear
+  if ((pclSimState->bState["AC_geardown"] == true) && (pclSimState->fState[prefix + "acgear"] < 40.0))
+  {
+    pclSimState->update("AC_geardown", false);
+    XPlaneControl.SendCMND("sim/flight_controls/landing_gear_up");
+    printf("CMD Gear Up\n");
+  }
+  else if ((pclSimState->bState["AC_geardown"] == false) && (pclSimState->fState[prefix + "acgear"] > 60.0))
+  {
+    pclSimState->update("AC_geardown", true);
+    XPlaneControl.SendCMND("sim/flight_controls/landing_gear_down");
+    printf("CMD Gear Down\n");
+  }
 
-    //XPlaneControl.SendDREF("", (float)pclSimState->fState[""]);
-    }
+  //XPlaneControl.SendDREF("", (float)pclSimState->fState[""]);
+}
+
+void XPlaneSendAircraftPosition(ClSimState* pclSimState, std::string prefix, int aircraftIndex) {
+  ClXPlaneControl::SuPosition  suPos;
+
+  suPos.fLat = pclSimState->fState[prefix + "AC_LAT"];
+  suPos.fLon = pclSimState->fState[prefix + "AC_LON"];
+  suPos.fElevFt = pclSimState->fState[prefix + "AC_ALT"] + ALT_FUDGE;
+  suPos.fHeading = (float)pclSimState->fState[prefix + "AC_TRUE_HDG"];
+  suPos.fPitch = (float)pclSimState->fState[prefix + "AC_PITCH"];
+  suPos.fRoll = (float)pclSimState->fState[prefix + "AC_ROLL"];
+
+  XPlaneControl.SendVEHX(suPos, aircraftIndex);
+}
+
+void XPlaneInitAdditionalPlane(ClSimState* pclSimState, std::string prefix, int aircraftIndex) {
+  ClXPlaneControl::SuPosition  suPos;
+
+  suPos.fLat = pclSimState->fState[prefix + "AC_LAT"];
+  suPos.fLon = pclSimState->fState[prefix + "AC_LON"];
+  suPos.fElevFt = pclSimState->fState[prefix + "AC_ALT"] + ALT_FUDGE;
+  suPos.fHeading = (float)pclSimState->fState[prefix + "AC_TRUE_HDG"];
+  suPos.fPitch = (float)pclSimState->fState[prefix + "AC_PITCH"];
+  suPos.fRoll = (float)pclSimState->fState[prefix + "AC_ROLL"]; 
+
+  XPlaneControl.SendACFN(aircraftIndex);
+  XPlaneControl.SendPREL(suPos, aircraftIndex);
+}
 
 
 // ----------------------------------------------------------------------------
@@ -686,9 +754,9 @@ uint32_t mkgmtime(struct tm * psuTmTime)
 
 // ----------------------------------------------------------------------------
 
-void FfmpegOpen(char * szOutFile)
-    {
-#ifndef REDIRECT_SQL
+void FfmpegOpen(char* szOutFile)
+{
+  if (!redirectSql) {
     int     iStatus;
 
     // Open SQL database
@@ -696,7 +764,7 @@ void FfmpegOpen(char * szOutFile)
     assert(iStatus == SQLITE_OK);
 
     // Drop existing video table
-    sSQL  = "DROP TABLE IF EXISTS ";
+    sSQL = "DROP TABLE IF EXISTS ";
     sSQL += sTableName;
     sSQL += ";";
     iStatus = sqlite3_exec(pDB, sSQL.c_str(), NULL, NULL, NULL);
@@ -708,73 +776,71 @@ void FfmpegOpen(char * szOutFile)
     sSQL += "(RowNum INT, VideoData BLOB);";
     iStatus = sqlite3_exec(pDB, sSQL.c_str(), NULL, NULL, NULL);
     assert(iStatus == SQLITE_OK);
-
-#else
-    iOutFile = _open("..\\OutputData\\test.ts", _O_WRONLY | _O_CREAT | _O_BINARY, _S_IREAD | _S_IWRITE );
-#endif
-    }
+  }
+  else
+    iOutFile = _open("..\\OutputData\\test.ts", _O_WRONLY | _O_CREAT | _O_BINARY, _S_IREAD | _S_IWRITE);
+}
 
 
 
 void FfmpegClose()
-    {
-#ifndef REDIRECT_SQL
+{
+  if (!redirectSql) {
     int     iStatus;
 
     iStatus = sqlite3_close(pDB);
-    assert(iStatus==SQLITE_OK);
-#else
+    assert(iStatus == SQLITE_OK);
+  }
+  else
     _close(iOutFile);
-#endif
-    }
+}
 
 
 
 int FfmpegWrite(void* pUserData, uint8_t* pvDataBuffer, int iDataBufferSize)
-    {
-
-#ifndef REDIRECT_SQL
+{
+  if (!redirectSql) {
     int             iStatus;
     std::string     sSQL;
-    sqlite3_stmt  * pSqlInsStmt;
+    sqlite3_stmt* pSqlInsStmt;
 
-    long            lNavRowNum = ((ClSimState *)pUserData)->lState["BM.RowNum"];
+    long            lNavRowNum = ((ClSimState*)pUserData)->lState["BM.RowNum"];
 
-    sSQL  = "INSERT INTO ";
+    sSQL = "INSERT INTO ";
     sSQL += sTableName;
     sSQL += " VALUES(?, ?);";
 
     iStatus = sqlite3_prepare_v2(pDB, sSQL.c_str(), sSQL.size(), &pSqlInsStmt, nullptr);
-    assert(iStatus==SQLITE_OK);
+    assert(iStatus == SQLITE_OK);
     iStatus = sqlite3_bind_int(pSqlInsStmt, 1, lNavRowNum);
-    assert(iStatus==SQLITE_OK);
+    assert(iStatus == SQLITE_OK);
     iStatus = sqlite3_bind_blob(pSqlInsStmt, 2, pvDataBuffer, iDataBufferSize, SQLITE_TRANSIENT);
- //   iStatus = sqlite3_bind_blob(pSqlInsStmt, 2, pvDataBuffer, iDataBufferSize, SQLITE_STATIC);
-    assert(iStatus==SQLITE_OK);
+    //   iStatus = sqlite3_bind_blob(pSqlInsStmt, 2, pvDataBuffer, iDataBufferSize, SQLITE_STATIC);
+    assert(iStatus == SQLITE_OK);
     iStatus = sqlite3_step(pSqlInsStmt);
-    assert(iStatus==SQLITE_DONE);
+    assert(iStatus == SQLITE_DONE);
     iStatus = sqlite3_finalize(pSqlInsStmt);
-    assert(iStatus==SQLITE_OK);
-#else
+    assert(iStatus == SQLITE_OK);
+  }
+  else
     _write(iOutFile, pvDataBuffer, iDataBufferSize);
-#endif
 
-    printf ("FfmpegWrite wrote %6d bytes  ", iDataBufferSize);
-    assert((iDataBufferSize % 188) == 0);
-    return iDataBufferSize;
-    }
+  printf("FfmpegWrite wrote %6d bytes  ", iDataBufferSize);
+  assert((iDataBufferSize % 188) == 0);
+  return iDataBufferSize;
+}
     
 
 // ----------------------------------------------------------------------------
 
 void vUsage(void)
-    {
-    printf("\nBM6toXPlaneVideo  " __DATE__ " " __TIME__ "\n");
-    printf("Drive XPlane with BlueMax nav data and record a video\n");
-    printf("Usage: BM6toXPlaneVideo [flags]\n");
-    printf("   -d filename  Input database file name    \n");
-    printf("   -t filename  Input text file name        \n");
-    printf("   -D filename  Output database file name   \n");
-    printf("   -T tablename Output database table name  \n");
-    printf("   -M filename  Output MPEG file name       \n");
-    }
+{
+  printf("\nBM6toXPlaneVideo  " __DATE__ " " __TIME__ "\n");
+  printf("Drive XPlane with BlueMax nav data and record a video\n");
+  printf("Usage: BM6toXPlaneVideo [flags]\n");
+  printf("   -d filename  Input database file name    \n");
+  printf("   -t filename  Input text file name        \n");
+  printf("   -D filename  Output database file name   \n");
+  printf("   -T tablename Output database table name  \n");
+  printf("   -M filename  Output MPEG file name       \n");
+}

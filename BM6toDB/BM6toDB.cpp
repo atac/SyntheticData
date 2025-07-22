@@ -26,174 +26,184 @@ void vUsage(void);
 
 // ----------------------------------------------------------------------------
 
-int main(int iArgc, char * aszArgv[])
-    {
-    char                szInFile[256];     // Input file name
-    char                szOutFile[256];    // Output file name
-    bool                bStatus;
+int main(int iArgc, char* aszArgv[])
+{
+  double elapsedTime = 0.0;
 
-    // Data Sources
-    ClSimState          clSimState;
-    ClSource_BMNavTxt * pSource_BMNav;
+  char                szInFile[256];     // Input file name
+  char                szOutFile[256];    // Output file name
+  bool                bStatus;
 
-    std::vector<std::string>::iterator itDataLabel;
+  // Data Sources
+  ClSimState          clSimState;
+  ClSource_BMNavTxt* pSource_BMNav;
 
-    // Database
+  std::vector<std::string>::iterator itDataLabel;
+
+  // Database
 #ifdef SQLITE
-    int                 iStatus;
-    sqlite3           * pDB;
-    std::string         sSQL;
+  int                 iStatus;
+  sqlite3*            pDB;
+  std::string         sSQL;
 #endif
 #ifdef HDF5
-      hid_t       hdfFileId;
-      herr_t      hdfStatus;
+  hid_t       hdfFileId;
+  herr_t      hdfStatus;
 #endif
 
-    // Make data sources. No data name prefix in database.
-    pSource_BMNav = new ClSource_BMNavTxt(&clSimState, "");
+  // Make data sources. No data name prefix in database.
+  pSource_BMNav = new ClSource_BMNavTxt(&clSimState, "");
 
-    // Process command line
-    // --------------------
-    szInFile[0]  = '\0';
-    szOutFile[0] = '\0';
+  // Process command line
+  // --------------------
+  szInFile[0] = '\0';
+  szOutFile[0] = '\0';
 
-    if (iArgc < 2)
-        {
-        vUsage();
-        return 1;
-        }
+  if (iArgc < 2)
+  {
+    vUsage();
+    return 1;
+  }
 
 
-    for (int iArgIdx=1; iArgIdx<iArgc; iArgIdx++) 
-        {
-        if (szInFile[0] == '\0') strcpy(szInFile, aszArgv[iArgIdx]);
-        else                     strcpy(szOutFile,aszArgv[iArgIdx]);
-        } // end for all arguments
+  for (int iArgIdx = 1; iArgIdx < iArgc; iArgIdx++)
+  {
+    if (szInFile[0] == '\0') strcpy(szInFile, aszArgv[iArgIdx]);
+    else                     strcpy(szOutFile, aszArgv[iArgIdx]);
+  } // end for all arguments
 
-    // Open input and output files
-    // ---------------------------
+// Open input and output files
+// ---------------------------
 
-    // Open Bluemax XLS file
-    bStatus = pSource_BMNav->Open(szInFile);
-    if (bStatus == false)
-        return 1;
+// Open Bluemax XLS file
+  bStatus = pSource_BMNav->Open(szInFile);
+  if (bStatus == false)
+    return 1;
+
+  bStatus = pSource_BMNav->ReadNextLine();
+  if (bStatus == false)
+    return 1;
+
+  elapsedTime = pSource_BMNav->fRelTime;
 
 #if 0
-    // Get the list of available data items
-    // BM/actime BM/aclatd BM/aclond BM/acaltf BM/acktas BM/acvifps BM/acvxi 
-    // BM/acvyi BM/acvzi BM/acaxi BM/acayi BM/acazi BM/acphid BM/acthtad BM/acpsid 
-    // BM/acmagd BM/acaoad BM/acthro BM/acnzb BM/acvzi BM/acazb BM/acgear
-    auto    itDataLabel = std::begin(pSource_BMNav->DataLabel);
-    while (itDataLabel != std::end(pSource_BMNav->DataLabel))
-        {
-        std::cout << *itDataLabel << " ";
-        itDataLabel++;
-        } // end while listing data labels
-    std::cout << "\n";
+  // Get the list of available data items
+  // BM/actime BM/aclatd BM/aclond BM/acaltf BM/acktas BM/acvifps BM/acvxi 
+  // BM/acvyi BM/acvzi BM/acaxi BM/acayi BM/acazi BM/acphid BM/acthtad BM/acpsid 
+  // BM/acmagd BM/acaoad BM/acthro BM/acnzb BM/acvzi BM/acazb BM/acgear
+  auto    itDataLabel = std::begin(pSource_BMNav->DataLabel);
+  while (itDataLabel != std::end(pSource_BMNav->DataLabel))
+  {
+    std::cout << *itDataLabel << " ";
+    itDataLabel++;
+  } // end while listing data labels
+  std::cout << "\n";
 #endif
 
-    // Open the output database file and init it
+  // Open the output database file and init it
 #ifdef SQLITE
 //    strcpy(&(szOutFile[strlen(szOutFile)]), ".db");
-    iStatus = sqlite3_open(szOutFile, &pDB);
+  iStatus = sqlite3_open(szOutFile, &pDB);
 
-    // Drop the data table if it already exists
-    sSQL = "DROP TABLE IF EXISTS " TABLE_NAME_BLUEMAX ";";
-    iStatus = sqlite3_exec(pDB, sSQL.c_str(), NULL, NULL, NULL);
-    if (iStatus != SQLITE_OK)
-        printf("SQLite DROP TABLE error - %s\n", sqlite3_errmsg(pDB));
+  // Drop the data table if it already exists
+  sSQL = "DROP TABLE IF EXISTS " TABLE_NAME_BLUEMAX ";";
+  iStatus = sqlite3_exec(pDB, sSQL.c_str(), NULL, NULL, NULL);
+  if (iStatus != SQLITE_OK)
+    printf("SQLite DROP TABLE error - %s\n", sqlite3_errmsg(pDB));
 
-    // Create the data table and index for BlueMax data
-    std::string     sColumnNames;
+  // Create the data table and index for BlueMax data
+  std::string     sColumnNames;
 
-    sSQL = "CREATE TABLE " TABLE_NAME_BLUEMAX "(RowNum INT PRIMARY KEY ASC, ";
-    itDataLabel = std::begin(pSource_BMNav->DataLabel);
-    while (itDataLabel != std::end(pSource_BMNav->DataLabel))
-        {
-        sSQL += *itDataLabel + " REAL";
-        itDataLabel++;
-        if (itDataLabel != std::end(pSource_BMNav->DataLabel))
-            sSQL += ", ";
-        else
-            sSQL += ");";
-        } // end while listing data labels
+  sSQL = "CREATE TABLE " TABLE_NAME_BLUEMAX "(RowNum INT PRIMARY KEY ASC, ";
+  itDataLabel = std::begin(pSource_BMNav->CsvDataLabels);
+  while (itDataLabel != std::end(pSource_BMNav->CsvDataLabels))
+  {
+    sSQL += *itDataLabel + " REAL";
+    itDataLabel++;
+    if (itDataLabel != std::end(pSource_BMNav->CsvDataLabels))
+      sSQL += ", ";
+    else
+      sSQL += ");";
+  } // end while listing data labels
 
-    std::cout << sSQL << "\n";
+  std::cout << sSQL << "\n";
 
-    iStatus = sqlite3_exec(pDB, sSQL.c_str(), NULL, NULL, NULL);
-    if (iStatus != SQLITE_OK)
-        printf("SQLite CREATE TABLE error - %s\n", sqlite3_errmsg(pDB));
+  iStatus = sqlite3_exec(pDB, sSQL.c_str(), NULL, NULL, NULL);
+  if (iStatus != SQLITE_OK)
+    printf("SQLite CREATE TABLE error - %s\n", sqlite3_errmsg(pDB));
 
 #if 0
-    sSQL = "CREATE INDEX MissionTimeOffset ON BlueMax(IDX, BM_actime);";
-    iStatus = sqlite3_exec(pDB, sSQL.c_str(), NULL, NULL, NULL);
-    if (iStatus != SQLITE_OK)
-        printf("SQLite CREATE INDEX error - %s\n", sqlite3_errmsg(pDB));
+  sSQL = "CREATE INDEX MissionTimeOffset ON BlueMax(IDX, BM_actime);";
+  iStatus = sqlite3_exec(pDB, sSQL.c_str(), NULL, NULL, NULL);
+  if (iStatus != SQLITE_OK)
+    printf("SQLite CREATE INDEX error - %s\n", sqlite3_errmsg(pDB));
 #endif
 #endif
 #ifdef HDF5
-    strcpy(&(szOutFile[strlen(szOutFile)]), ".h5");
-    hdfFileId = H5Fcreate(szOutFile, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+  strcpy(&(szOutFile[strlen(szOutFile)]), ".h5");
+  hdfFileId = H5Fcreate(szOutFile, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
 
 #endif
 
-    // Read data and write to database file
-    // ------------------------------------
+  // Read data and write to database file
+  // ------------------------------------
 
 #ifdef SQLITE
     // Set pragmas for performance
-    sSQL = "PRAGMA synchronous = OFF;";
+  sSQL = "PRAGMA synchronous = OFF;";
+  iStatus = sqlite3_exec(pDB, sSQL.c_str(), NULL, NULL, NULL);
+  if (iStatus != SQLITE_OK)
+    printf("SQLite PRAGMA error - %s\n", sqlite3_errmsg(pDB));
+
+  sSQL = "PRAGMA journal_mode = WAL;";
+  iStatus = sqlite3_exec(pDB, sSQL.c_str(), NULL, NULL, NULL);
+  if (iStatus != SQLITE_OK)
+    printf("SQLite PRAGMA error - %s\n", sqlite3_errmsg(pDB));
+#endif
+
+  // Loop on reading BlueMax data
+  long            lRowIdx = 0;
+  while (pSource_BMNav->UpdateSimState(elapsedTime) != false)
+  {
+    // Loop on individual data labels
+    itDataLabel = std::begin(pSource_BMNav->CsvDataLabels);
+#ifdef SQLITE
+    sSQL = "INSERT INTO " TABLE_NAME_BLUEMAX " VALUES(" + std::to_string(lRowIdx) + ", ";
+#endif
+    while (itDataLabel != std::end(pSource_BMNav->CsvDataLabels))
+    {
+#ifdef SQLITE
+      sSQL += std::to_string(clSimState.fState[*itDataLabel]);
+      itDataLabel++;
+      if (itDataLabel != std::end(pSource_BMNav->CsvDataLabels))
+        sSQL += ", ";
+      else
+        sSQL += ");";
+#endif
+    } // end while listing data labels
+    std::cout << lRowIdx << std::endl;
+#ifdef SQLITE
     iStatus = sqlite3_exec(pDB, sSQL.c_str(), NULL, NULL, NULL);
     if (iStatus != SQLITE_OK)
-        printf("SQLite PRAGMA error - %s\n", sqlite3_errmsg(pDB));
-
-    sSQL = "PRAGMA journal_mode = WAL;";
-    iStatus = sqlite3_exec(pDB, sSQL.c_str(), NULL, NULL, NULL);
-    if (iStatus != SQLITE_OK)
-        printf("SQLite PRAGMA error - %s\n", sqlite3_errmsg(pDB));
+      printf("SQLite INSERT error - %s\n", sqlite3_errmsg(pDB));
 #endif
 
-    // Loop on reading BlueMax data
-    long            lRowIdx = 0;
-    while (pSource_BMNav->ReadNextLine() != false)
-        {
-        // Loop on individual data labels
-        itDataLabel = std::begin(pSource_BMNav->DataLabel);
-#ifdef SQLITE
-        sSQL = "INSERT INTO " TABLE_NAME_BLUEMAX " VALUES(" + std::to_string(lRowIdx) + ", ";
-#endif
-        while (itDataLabel != std::end(pSource_BMNav->DataLabel))
-            {
-#ifdef SQLITE
-            sSQL += std::to_string(clSimState.fState[*itDataLabel]);
-            itDataLabel++;
-            if (itDataLabel != std::end(pSource_BMNav->DataLabel))
-                sSQL += ", ";
-            else
-                sSQL += ");";
-#endif
-            } // end while listing data labels
-        std::cout << lRowIdx << std::endl;
-#ifdef SQLITE
-        iStatus = sqlite3_exec(pDB, sSQL.c_str(), NULL, NULL, NULL);
-        if (iStatus != SQLITE_OK)
-            printf("SQLite INSERT error - %s\n", sqlite3_errmsg(pDB));
-#endif
+    lRowIdx++;
 
-        lRowIdx++;
-        } // end while reading BlueMax
+    elapsedTime = pSource_BMNav->fRelTime;
+  } // end while reading BlueMax
 
-    // Close data files and clean up
-    // -----------------------------
+// Close data files and clean up
+// -----------------------------
 
 #ifdef SQLITE
-    sqlite3_close(pDB);
+  sqlite3_close(pDB);
 #endif
 
-    pSource_BMNav->Close();
+  pSource_BMNav->Close();
 
-    return 0;
-    } // end main()
+  return 0;
+} // end main()
 
 
 // ----------------------------------------------------------------------------
