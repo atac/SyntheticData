@@ -25,6 +25,9 @@
     <Filter Include="SQLite3">
       <UniqueIdentifier>{fa5898c2-8087-48b7-8eb0-2c757524d3de}</UniqueIdentifier>
     </Filter>
+    <Filter Include="CSV Parser">
+      <UniqueIdentifier>{0b48736c-4333-4af6-8bf1-fe025774932e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BM6toXPlaneVideo.cpp">
@@ -39,14 +42,17 @@
     <ClCompile Include="MpegEncoder.cpp">
       <Filter>Source Files\MpegEncoder</Filter>
     </ClCompile>
-    <ClCompile Include="..\SynthCh10Gen\Source_BMNavDB.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\SynthCh10Gen\Source_BMNavTxt.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\3rdParty\SQLite\sqlite3.c">
       <Filter>SQLite3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SynthCh10Gen\Source_CsvTxt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SynthCh10Gen\Source_SQLiteDB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\csv-parser\csv_parser.cpp">
+      <Filter>CSV Parser</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -62,14 +68,20 @@
     <ClInclude Include="..\SynthCh10Gen\SimState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\SynthCh10Gen\Source_BMNavDB.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\SynthCh10Gen\Source_BMNavTxt.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\3rdParty\SQLite\sqlite3.h">
       <Filter>SQLite3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SynthCh10Gen\Source_CsvTxt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SynthCh10Gen\Source_SQLiteDB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SynthCh10Gen\Source_Nav.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\csv-parser\csv_parser.hpp">
+      <Filter>CSV Parser</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

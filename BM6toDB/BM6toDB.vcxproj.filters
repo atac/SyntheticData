@@ -13,36 +13,42 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source_BMNav">
-      <UniqueIdentifier>{b388660f-29bf-4492-972f-3aa67a008e4f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="SimState">
       <UniqueIdentifier>{6db0c6ce-fbd0-46b8-bf33-b83f89bdea47}</UniqueIdentifier>
     </Filter>
     <Filter Include="SQLite3">
       <UniqueIdentifier>{2f429e0f-99ed-49ae-8da7-b9275cb8bbec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="CSV Parser">
+      <UniqueIdentifier>{ec637569-cc54-4a81-819a-dd4b8e2f3969}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\SynthCh10Gen\SimState.h">
       <Filter>SimState</Filter>
     </ClInclude>
-    <ClInclude Include="..\SynthCh10Gen\Source_BMNavTxt.h">
-      <Filter>Source_BMNav</Filter>
-    </ClInclude>
     <ClInclude Include="..\3rdParty\SQLite\sqlite3.h">
       <Filter>SQLite3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SynthCh10Gen\Source_CsvTxt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\csv-parser\csv_parser.hpp">
+      <Filter>CSV Parser</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BM6toDB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\SynthCh10Gen\Source_BMNavTxt.cpp">
-      <Filter>Source_BMNav</Filter>
-    </ClCompile>
     <ClCompile Include="..\3rdParty\SQLite\sqlite3.c">
       <Filter>SQLite3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SynthCh10Gen\Source_CsvTxt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\csv-parser\csv_parser.cpp">
+      <Filter>CSV Parser</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -6,7 +6,7 @@
 #include <unordered_map>
 
 #include "SimState.h"
-#include "Source_BMNavTxt.h"
+#include "Source_CsvTxt.h"
 
 #define SQLITE
 //#define HDF5
@@ -36,7 +36,7 @@ int main(int iArgc, char* aszArgv[])
 
   // Data Sources
   ClSimState          clSimState;
-  ClSource_BMNavTxt* pSource_BMNav;
+  ClSource_CsvTxt*    pSource_BMNav;
 
   std::vector<std::string>::iterator itDataLabel;
 
@@ -52,7 +52,7 @@ int main(int iArgc, char* aszArgv[])
 #endif
 
   // Make data sources. No data name prefix in database.
-  pSource_BMNav = new ClSource_BMNavTxt(&clSimState, "");
+  pSource_BMNav = new ClSource_CsvTxt(&clSimState, "");
 
   // Process command line
   // --------------------
@@ -115,12 +115,12 @@ int main(int iArgc, char* aszArgv[])
   std::string     sColumnNames;
 
   sSQL = "CREATE TABLE " TABLE_NAME_BLUEMAX "(RowNum INT PRIMARY KEY ASC, ";
-  itDataLabel = std::begin(pSource_BMNav->CsvDataLabels);
-  while (itDataLabel != std::end(pSource_BMNav->CsvDataLabels))
+  itDataLabel = std::begin(pSource_BMNav->DataLabels);
+  while (itDataLabel != std::end(pSource_BMNav->DataLabels))
   {
     sSQL += *itDataLabel + " REAL";
     itDataLabel++;
-    if (itDataLabel != std::end(pSource_BMNav->CsvDataLabels))
+    if (itDataLabel != std::end(pSource_BMNav->DataLabels))
       sSQL += ", ";
     else
       sSQL += ");";
@@ -166,16 +166,16 @@ int main(int iArgc, char* aszArgv[])
   while (pSource_BMNav->UpdateSimState(elapsedTime) != false)
   {
     // Loop on individual data labels
-    itDataLabel = std::begin(pSource_BMNav->CsvDataLabels);
+    itDataLabel = std::begin(pSource_BMNav->DataLabels);
 #ifdef SQLITE
     sSQL = "INSERT INTO " TABLE_NAME_BLUEMAX " VALUES(" + std::to_string(lRowIdx) + ", ";
 #endif
-    while (itDataLabel != std::end(pSource_BMNav->CsvDataLabels))
+    while (itDataLabel != std::end(pSource_BMNav->DataLabels))
     {
 #ifdef SQLITE
       sSQL += std::to_string(clSimState.fState[*itDataLabel]);
       itDataLabel++;
-      if (itDataLabel != std::end(pSource_BMNav->CsvDataLabels))
+      if (itDataLabel != std::end(pSource_BMNav->DataLabels))
         sSQL += ", ";
       else
         sSQL += ");";

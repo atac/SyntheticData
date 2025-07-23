@@ -52,9 +52,11 @@
 #include "MpegEncoder.h"
 
 #include "SimState.h"
-#include "Source_BMNavTxt.h"
-#include "Source_BMNavDB.h"
+#include "Source_CsvTxt.h"
+#include "Source_SQLiteDB.h"
 #include "SimTimer.h"
+
+#include "Config.h"
 
 /*
  * Macros and definitions
@@ -89,6 +91,16 @@ bool redirectSql = false;
  * ---------------
  */
 
+// Decorator class for ClSource_CsvTxt
+class ClSource_CsvTxt_Aircraft : public ClSource_CsvTxt
+{
+public:
+  ClSource_CsvTxt_Aircraft(ClSimState* pclSimState, std::string sPrefix, int aircraftIndex)
+    : ClSource_CsvTxt(pclSimState, sPrefix), aircraftIndex(aircraftIndex) { }
+
+  int aircraftIndex;
+};
+
 
 /*
  * Module data
@@ -97,18 +109,13 @@ bool redirectSql = false;
 
 ClXPlaneControl         XPlaneControl;
 
-int64_t                 ClSimTimer::lSimClockTicks;
-int64_t                 ClSimTimer::lTicksPerSecond;
-int64_t                 ClSimTimer::lTicksPerStep;
-double                  ClSimTimer::fSimElapsedTime;
-
 sqlite3               * pDB;
 std::string             sSQL;
 std::string             sTableName;
 
 int                     iOutFile;
 
-std::vector<ClSource_BMNavTxt *> txtSources;
+std::vector<ClSource_CsvTxt_Aircraft*> txtSources;
 std::vector<std::string> inputFiles;
 
 EnInputType         enInputType = InputUnknown;
@@ -126,6 +133,7 @@ uint32_t mkgmtime(struct tm * psuTmTime);
 void FfmpegOpen(char * szOutFile);
 void FfmpegClose();
 int  FfmpegWrite(void* pUserData, uint8_t* pvDataBuffer, int iDataBufferSize);
+ConfigMapping GenerateBlueMaxCsvMapping();
 void vUsage(void);
 
 // ============================================================================
@@ -147,16 +155,14 @@ int main(int iArgc, char* aszArgv[])
   int64_t         iFrameCounter = 0;
 
   // Data Sources
-  ClSource_BMNavDB* pSource_BMNavDB = nullptr;
+  ClSource_SQLiteDB* pSource_SQLiteDB = nullptr;
 
-  // Various simulation clocks and time
-  ClSimTimer::lSimClockTicks = 0;
-  ClSimTimer::lTicksPerSecond = 10000000;
-  ClSimTimer::lTicksPerStep = 400000;     // 40 msec / 25 Hz
-  ClSimTimer::fSimElapsedTime = 0.0;
-  ClSimTimer      clSimTimer_40ms(400000);    // 40 msec / 25 Hz
-  ClSimTimer      clSimTimer_100ms(1000000);  // 100 msec / 10 Hz
-  ClSimTimer      clSimTimer_1S(10000000);    // 1 sec
+    // Various simulation clocks and time
+    ClSimTimer::lSimClockTicks  =        0;
+    ClSimTimer::fSimElapsedTime =      0.0;
+    ClSimTimer      clSimTimer_40ms(400000);    // 40 msec / 25 Hz
+    ClSimTimer      clSimTimer_100ms(1000000);  // 100 msec / 10 Hz
+    ClSimTimer      clSimTimer_1S(10000000);    // 1 sec
 
   ClSimState      clSimState;
   double          fBluemaxTime;           // Bluemax data time (seconds)
@@ -272,15 +278,19 @@ int main(int iArgc, char* aszArgv[])
   switch (enInputType)
   {
   case InputSqlite:
-    pSource_BMNavDB = new ClSource_BMNavDB(&clSimState, "BM.");
-    bStatus = pSource_BMNavDB->Open(szInFile);
+    pSource_SQLiteDB = new ClSource_SQLiteDB(&clSimState, "BM.");
+    bStatus = pSource_SQLiteDB->Open(szInFile);
     if (bStatus == false)
       return 1;
-    pSource_BMNavDB->ReadNextLine();
+    pSource_SQLiteDB->ReadNextLine();
     break;
   case InputText:
     for (int i = 0; i < inputFiles.size(); i++) {
-      ClSource_BMNavTxt* txtsrc = new ClSource_BMNavTxt(&clSimState, "BM", i);
+      ClSource_CsvTxt_Aircraft* txtsrc = new ClSource_CsvTxt_Aircraft(&clSimState, "BM", i);
+
+      // The following replaces hardcoded conversions in original ClSource_BMNavTxt::Open() method
+      txtsrc->SetMapping(GenerateBlueMaxCsvMapping()); 
+
       txtSources.push_back(txtsrc);
       bStatus = txtsrc->Open(inputFiles[i]);
       if (bStatus == false)
@@ -335,7 +345,7 @@ int main(int iArgc, char* aszArgv[])
 
       switch (enInputType)
       {
-      case InputSqlite: bStatus = pSource_BMNavDB->UpdateSimState(ClSimTimer::fSimElapsedTime);  break;
+      case InputSqlite: bStatus = pSource_SQLiteDB->UpdateSimState(ClSimTimer::fSimElapsedTime);  break;
       case InputText:
       {
         bStatus = false;
@@ -445,7 +455,7 @@ int main(int iArgc, char* aszArgv[])
 // Close files
   switch (enInputType)
   {
-  case InputSqlite: pSource_BMNavDB->Close();  break;
+  case InputSqlite: pSource_SQLiteDB->Close();  break;
   case InputText: 
     for (auto i = txtSources.begin(); i != txtSources.end(); i++)
       (*i)->Close();
@@ -830,6 +840,31 @@ int FfmpegWrite(void* pUserData, uint8_t* pvDataBuffer, int iDataBufferSize)
   return iDataBufferSize;
 }
     
+
+ConfigMapping GenerateBlueMaxCsvMapping()
+{
+  ConfigMapping mapping;
+
+  mapping.insert(pair("actime", "AC_TIME"));
+  mapping.insert(pair("aclatd", "AC_LAT"));
+  mapping.insert(pair("aclond", "AC_LON"));
+  mapping.insert(pair("acaltf", "AC_ALT"));
+  mapping.insert(pair("acktas", "AC_TAS"));
+  mapping.insert(pair("acvxi", "AC_VEL_NORTH"));
+  mapping.insert(pair("acvyi", "AC_VEL_EAST"));
+  mapping.insert(pair("acvzi", "AC_VEL_DOWN"));
+  mapping.insert(pair("acaxi", "AC_ACCEL_NORTH"));
+  mapping.insert(pair("acayi", "AC_ACCEL_EAST"));
+  mapping.insert(pair("acazi", "AC_ACCEL_DOWN"));
+  mapping.insert(pair("acphid", "AC_ROLL"));
+  mapping.insert(pair("acthtad", "AC_PITCH"));
+  mapping.insert(pair("acpsid", "AC_TRUE_HDG"));
+  mapping.insert(pair("acmagd", "AC_MAG_HDG"));
+  mapping.insert(pair("acaoad", "AC_AOA"));
+  mapping.insert(pair("acthro", "AC_THROTTLE"));
+  
+  return mapping;
+}
 
 // ----------------------------------------------------------------------------
 

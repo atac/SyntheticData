@@ -72,7 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>..\3rdParty\SQLite;..\3rdParty\ffmpeg\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\3rdParty\SQLite;..\3rdParty\json;..\3rdParty\csv-parser;..\3rdParty\ffmpeg\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\3rdParty\ffmpeg\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -96,6 +96,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>..\XPlaneControl;..\SynthCh10Gen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -160,9 +161,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\3rdParty\csv-parser\csv_parser.cpp" />
     <ClCompile Include="..\3rdParty\SQLite\sqlite3.c" />
-    <ClCompile Include="..\SynthCh10Gen\Source_BMNavTxt.cpp" />
-    <ClCompile Include="..\SynthCh10Gen\Source_BMNavDB.cpp" />
+    <ClCompile Include="..\SynthCh10Gen\Source_CsvTxt.cpp" />
+    <ClCompile Include="..\SynthCh10Gen\Source_SQLiteDB.cpp" />
     <ClCompile Include="..\XPlaneControl\XPlaneControl.cpp" />
     <ClCompile Include="BM6toXPlaneVideo.cpp" />
     <ClCompile Include="DXGIManager.cpp">
@@ -172,10 +174,12 @@
     <ClCompile Include="MpegEncoder.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\3rdParty\csv-parser\csv_parser.hpp" />
     <ClInclude Include="..\3rdParty\SQLite\sqlite3.h" />
     <ClInclude Include="..\SynthCh10Gen\SimState.h" />
-    <ClInclude Include="..\SynthCh10Gen\Source_BMNavTxt.h" />
-    <ClInclude Include="..\SynthCh10Gen\Source_BMNavDB.h" />
+    <ClInclude Include="..\SynthCh10Gen\Source_CsvTxt.h" />
+    <ClInclude Include="..\SynthCh10Gen\Source_Nav.h" />
+    <ClInclude Include="..\SynthCh10Gen\Source_SQLiteDB.h" />
     <ClInclude Include="..\XPlaneControl\XPlaneControl.h" />
     <ClInclude Include="DXGIManager.hpp" />
     <ClInclude Include="MpegEncoder.h" />

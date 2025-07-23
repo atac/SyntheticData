@@ -72,7 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>..\SynthCh10Gen;..\3rdParty\SQLite;$(IncludePath)</IncludePath>
+    <IncludePath>..\SynthCh10Gen;..\3rdParty\SQLite;..\3rdParty\json;..\3rdParty\csv-parser;$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -99,6 +99,7 @@
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -164,13 +165,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\3rdParty\csv-parser\csv_parser.hpp" />
     <ClInclude Include="..\3rdParty\SQLite\sqlite3.h" />
     <ClInclude Include="..\SynthCh10Gen\SimState.h" />
-    <ClInclude Include="..\SynthCh10Gen\Source_BMNavTxt.h" />
+    <ClInclude Include="..\SynthCh10Gen\Source_CsvTxt.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\3rdParty\csv-parser\csv_parser.cpp" />
     <ClCompile Include="..\3rdParty\SQLite\sqlite3.c" />
-    <ClCompile Include="..\SynthCh10Gen\Source_BMNavTxt.cpp" />
+    <ClCompile Include="..\SynthCh10Gen\Source_CsvTxt.cpp" />
     <ClCompile Include="BM6toDB.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
