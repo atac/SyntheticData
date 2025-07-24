@@ -86,7 +86,7 @@ void ClSource_SQLiteDB::Init()
   if (iStatus == SQLITE_OK)
   {
     // Read column labels and types from DB
-    while (sqlite3_step(pSqlStmt) == SQLITE_ROW)
+    while (sqlite3_step(pSqlStmt) == SQLITE_ROW) // last iteration in lieu of calling ReadNextLine() like other sources
     {
       this->DataLabels.push_back((char*)sqlite3_column_text(pSqlStmt, 1));
       this->DataTypes.push_back((char*)sqlite3_column_text(pSqlStmt, 2));

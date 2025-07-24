@@ -14,10 +14,10 @@ public:
 
   // Data
 public:
-  inline static const int64_t  lTicksPerSecond = 10000000; // 10 MHz, same as IRIG RTC
-  inline static const int64_t  lTicksPerStep = 100000;     // 10 msec / 100 Hz
-  inline static int64_t  lSimClockTicks = 0;
-  inline static double   fSimElapsedTime = 0.0;
+  static inline const int64_t  lTicksPerSecond = 10000000; // 10 MHz, same as IRIG RTC
+  static inline const int64_t  lTicksPerStep = 100000;     // 10 msec / 100 Hz
+  static inline int64_t  lSimClockTicks = 0;
+  static inline double   fSimElapsedTime = 0.0;
 
   int64_t     lTimer;
   int64_t     lTimeoutVal;
