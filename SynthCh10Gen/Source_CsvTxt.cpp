@@ -21,6 +21,7 @@ ClSource_CsvTxt::ClSource_CsvTxt(ClSimState * pclSimState, std::string sPrefix)
     this->sPrefix     = sPrefix;
     this->enInputType = this->InputNasaCsv;
     this->hCsvInput   = NULL;
+    this->dataAvailable = false;
     }
 
 
@@ -216,30 +217,31 @@ bool ClSource_CsvTxt::ReadNextLine()
     {
     const size_t        maxLength = 2000;
     char                szLine[maxLength];
-    bool                bCsvStatus;
     bool                bStatus;
     double              fDecodedTime;
 
 
     // Get the next line
-    bCsvStatus = ReadLineToBuffer(szLine, maxLength);
-    if (!bCsvStatus)
-      return false;
+    bStatus = ReadLineToBuffer(szLine, maxLength);
 
-    // Parse the input data line
-    CsvMap.clear();
-    bCsvStatus = ParseLine(szLine, DataLabels, CsvMap);
-    if (!bCsvStatus || CsvMap.empty())
-      return false;
+    if (bStatus) {
+      // Parse the input data line
+      CsvMap.clear();
+      bStatus = ParseLine(szLine, DataLabels, CsvMap);
+      if (CsvMap.empty())
+        bStatus = false;
+    }
 
-//    display_map_contents(szLine, CsvMap);
+    if (bStatus) {
+      // Decode the current data time
+      bStatus = timeParser.Parse(CsvMap[sPrefix + "AC_TIME"], &fDecodedTime);
+      assert(bStatus == true);
+      fRelTime = fDecodedTime - fStartTime;
+    }
 
-    // Decode the current data time
-    bStatus = timeParser.Parse(CsvMap[sPrefix + "AC_TIME"], &fDecodedTime);
-    assert(bStatus == true);
-    fRelTime = fDecodedTime - fStartTime;
+    dataAvailable = bStatus;
 
-    return true;
+    return dataAvailable;
     } // end ReadNextLine()
 
 

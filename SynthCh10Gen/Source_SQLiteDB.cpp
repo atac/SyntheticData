@@ -19,6 +19,7 @@ ClSource_SQLiteDB::ClSource_SQLiteDB(ClSimState* pclSimState, std::string sPrefi
   this->pclSimState = pclSimState;
   this->sPrefix = sPrefix;
   this->enInputType = this->InputBMSqlite;
+  this->dataAvailable = false;
 }
 
 
@@ -147,17 +148,18 @@ void ClSource_SQLiteDB::InitSimStateFields()
 
 bool ClSource_SQLiteDB::ReadNextLine()
     {
-    int         iStatus;
+    if (sqlite3_step(pSqlStmt) == SQLITE_ROW)
+    {
+      // Assume the BMdb actime column is index one and represents seconds since 0.0
+      // TODO: make this use TimeParser
+      fRelTime = sqlite3_column_double(pSqlStmt, 1);
+      dataAvailable = false;
+    }
+    else
+      dataAvailable = true;
 
-    // Get the next row of data
-    iStatus = sqlite3_step(pSqlStmt);
-    if (iStatus != SQLITE_ROW)
-        return false;
 
-    // Assume the BMdb actime column is index one and represents seconds since 0.0
-    fRelTime = sqlite3_column_double(pSqlStmt, 1);
-
-    return true;
+    return dataAvailable;
     }
 
 

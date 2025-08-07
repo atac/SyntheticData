@@ -46,6 +46,8 @@ protected:
   ConfigMapping mapping;
   TimeParser timeParser;
 
+  bool dataAvailable;
+
 public:
   std::string         sPrefix;        // Simulation state data label prefix to make it unique
   ClSimState*         pclSimState;    // Pointer to the simulation state 
@@ -76,6 +78,8 @@ public:
   virtual bool ReadNextLine()                         = 0;
   virtual bool UpdateSimState(double fSimElapsedTime) = 0;
   virtual void SetMapping(ConfigMapping map)          = 0;
+
+  bool HasData() { return dataAvailable; }
 
 protected:
   virtual void ApplyMapping()                         = 0;
