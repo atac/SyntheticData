@@ -785,7 +785,7 @@ void FfmpegOpen(char* szOutFile)
     // Create new video table
     sSQL = "CREATE TABLE ";
     sSQL += sTableName;
-    sSQL += "(RowNum INT, VideoData BLOB);";
+    sSQL += "(Time REAL, RowNum INT, VideoData BLOB);";
     iStatus = sqlite3_exec(pDB, sSQL.c_str(), NULL, NULL, NULL);
     assert(iStatus == SQLITE_OK);
   }
@@ -816,17 +816,20 @@ int FfmpegWrite(void* pUserData, uint8_t* pvDataBuffer, int iDataBufferSize)
     std::string     sSQL;
     sqlite3_stmt* pSqlInsStmt;
 
+    double          time = ((ClSimState*)pUserData)->fState["BM.0.AC_TIME"];
     long            lNavRowNum = ((ClSimState*)pUserData)->lState["BM.RowNum"];
 
     sSQL = "INSERT INTO ";
     sSQL += sTableName;
-    sSQL += " VALUES(?, ?);";
+    sSQL += " VALUES(?, ?, ?);";
 
     iStatus = sqlite3_prepare_v2(pDB, sSQL.c_str(), sSQL.size(), &pSqlInsStmt, nullptr);
     assert(iStatus == SQLITE_OK);
-    iStatus = sqlite3_bind_int(pSqlInsStmt, 1, lNavRowNum);
+    iStatus = sqlite3_bind_double(pSqlInsStmt, 1, time);
     assert(iStatus == SQLITE_OK);
-    iStatus = sqlite3_bind_blob(pSqlInsStmt, 2, pvDataBuffer, iDataBufferSize, SQLITE_TRANSIENT);
+    iStatus = sqlite3_bind_int(pSqlInsStmt, 2, lNavRowNum);
+    assert(iStatus == SQLITE_OK);
+    iStatus = sqlite3_bind_blob(pSqlInsStmt, 3, pvDataBuffer, iDataBufferSize, SQLITE_TRANSIENT);
     //   iStatus = sqlite3_bind_blob(pSqlInsStmt, 2, pvDataBuffer, iDataBufferSize, SQLITE_STATIC);
     assert(iStatus == SQLITE_OK);
     iStatus = sqlite3_step(pSqlInsStmt);
@@ -837,7 +840,7 @@ int FfmpegWrite(void* pUserData, uint8_t* pvDataBuffer, int iDataBufferSize)
   else
     _write(iOutFile, pvDataBuffer, iDataBufferSize);
 
-  printf("FfmpegWrite wrote %6d bytes  ", iDataBufferSize);
+  printf("FfmpegWrite wrote %6d bytes  \n", iDataBufferSize);
   assert((iDataBufferSize % 188) == 0);
   return iDataBufferSize;
 }
