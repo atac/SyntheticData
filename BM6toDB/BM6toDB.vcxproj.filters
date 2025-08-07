@@ -36,6 +36,12 @@
     <ClInclude Include="..\3rdParty\csv-parser\csv_parser.hpp">
       <Filter>CSV Parser</Filter>
     </ClInclude>
+    <ClInclude Include="..\SynthCh10Gen\TimeParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SynthCh10Gen\Source_TsvTxt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BM6toDB.cpp">
@@ -49,6 +55,12 @@
     </ClCompile>
     <ClCompile Include="..\3rdParty\csv-parser\csv_parser.cpp">
       <Filter>CSV Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SynthCh10Gen\TimeParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SynthCh10Gen\Source_TsvTxt.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

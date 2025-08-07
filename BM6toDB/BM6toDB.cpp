@@ -6,7 +6,7 @@
 #include <unordered_map>
 
 #include "SimState.h"
-#include "Source_CsvTxt.h"
+#include "Source_TsvTxt.h"
 
 #define SQLITE
 //#define HDF5
@@ -36,7 +36,7 @@ int main(int iArgc, char* aszArgv[])
 
   // Data Sources
   ClSimState          clSimState;
-  ClSource_CsvTxt*    pSource_BMNav;
+  ClSource_TsvTxt*    pSource_BMNav;
 
   std::vector<std::string>::iterator itDataLabel;
 
@@ -52,7 +52,7 @@ int main(int iArgc, char* aszArgv[])
 #endif
 
   // Make data sources. No data name prefix in database.
-  pSource_BMNav = new ClSource_CsvTxt(&clSimState, "");
+  pSource_BMNav = new ClSource_TsvTxt(&clSimState, "");
 
   // Process command line
   // --------------------

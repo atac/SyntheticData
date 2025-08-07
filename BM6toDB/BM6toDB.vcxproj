@@ -169,11 +169,15 @@
     <ClInclude Include="..\3rdParty\SQLite\sqlite3.h" />
     <ClInclude Include="..\SynthCh10Gen\SimState.h" />
     <ClInclude Include="..\SynthCh10Gen\Source_CsvTxt.h" />
+    <ClInclude Include="..\SynthCh10Gen\Source_TsvTxt.h" />
+    <ClInclude Include="..\SynthCh10Gen\TimeParser.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\3rdParty\csv-parser\csv_parser.cpp" />
     <ClCompile Include="..\3rdParty\SQLite\sqlite3.c" />
     <ClCompile Include="..\SynthCh10Gen\Source_CsvTxt.cpp" />
+    <ClCompile Include="..\SynthCh10Gen\Source_TsvTxt.cpp" />
+    <ClCompile Include="..\SynthCh10Gen\TimeParser.cpp" />
     <ClCompile Include="BM6toDB.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

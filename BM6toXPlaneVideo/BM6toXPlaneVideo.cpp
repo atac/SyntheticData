@@ -52,7 +52,7 @@
 #include "MpegEncoder.h"
 
 #include "SimState.h"
-#include "Source_CsvTxt.h"
+#include "Source_TsvTxt.h"
 #include "Source_SQLiteDB.h"
 #include "SimTimer.h"
 
@@ -91,12 +91,14 @@ bool redirectSql = false;
  * ---------------
  */
 
-// Decorator class for ClSource_CsvTxt
-class ClSource_CsvTxt_Aircraft : public ClSource_CsvTxt
+// Decorator class for ClSource_TsvTxt
+class ClSource_TsvTxt_Aircraft : public ClSource_TsvTxt
 {
 public:
-  ClSource_CsvTxt_Aircraft(ClSimState* pclSimState, std::string sPrefix, int aircraftIndex)
-    : ClSource_CsvTxt(pclSimState, sPrefix), aircraftIndex(aircraftIndex) { }
+  ClSource_TsvTxt_Aircraft(ClSimState* pclSimState, std::string sPrefix, int aircraftIndex)
+    : ClSource_TsvTxt(pclSimState, sPrefix + "." + to_string(aircraftIndex) + "."), aircraftIndex(aircraftIndex)
+  {
+  }
 
   int aircraftIndex;
 };
@@ -115,7 +117,7 @@ std::string             sTableName;
 
 int                     iOutFile;
 
-std::vector<ClSource_CsvTxt_Aircraft*> txtSources;
+std::vector<ClSource_TsvTxt_Aircraft*> txtSources;
 std::vector<std::string> inputFiles;
 
 EnInputType         enInputType = InputUnknown;
@@ -286,7 +288,7 @@ int main(int iArgc, char* aszArgv[])
     break;
   case InputText:
     for (int i = 0; i < inputFiles.size(); i++) {
-      ClSource_CsvTxt_Aircraft* txtsrc = new ClSource_CsvTxt_Aircraft(&clSimState, "BM", i);
+      ClSource_TsvTxt_Aircraft* txtsrc = new ClSource_TsvTxt_Aircraft(&clSimState, "BM", i);
 
       // The following replaces hardcoded conversions in original ClSource_BMNavTxt::Open() method
       txtsrc->SetMapping(GenerateBlueMaxCsvMapping()); 
