@@ -59,7 +59,11 @@ void display_map_contents(const STR& input_line, const KEY_VAL_FIELDS& output_ma
     }
 
 
-bool ClSource_CsvTxt::GetLine(char* buf, size_t bufLen) {
+bool ClSource_CsvTxt::ReadLineToBuffer(char* buf, size_t bufLen, fpos_t* lastPosition)
+{
+  if (lastPosition != nullptr)
+    fgetpos(hCsvInput, lastPosition);
+
   fgets(buf, bufLen, hCsvInput);
   if (feof(hCsvInput))
     return false;
@@ -94,60 +98,61 @@ bool ClSource_CsvTxt::HasNumericData(CSV_FIELDS &values) {
 /// header with variable names. The first column of data must be DATE_TIME.
 
 bool ClSource_CsvTxt::Open(std::string sFilename)
-    {
-    const size_t        maxLength = 2000;
-    char                szLine[maxLength];   // Make sure this is big enough!
-    bool                bCsvStatus;
+{
+  const size_t        maxLength = 2000;
+  char                szLine[maxLength];   // Make sure this is big enough!
+  bool                bCsvStatus;
 
-    hCsvInput = fopen(sFilename.c_str(), "r");
-    if (hCsvInput == NULL)
-        return false;
+  hCsvInput = fopen(sFilename.c_str(), "r");
+  if (hCsvInput == NULL)
+    return false;
 
-    // Get the first header line
-    if (!GetLine(szLine, maxLength))
+  if (!ReadLineToBuffer(szLine, maxLength, nullptr))
+    return false;
+
+  // Parse the header line
+  DataLabels.clear();
+  bCsvStatus = ParseLine(szLine, DataLabels);
+  if (!bCsvStatus || DataLabels.empty())
+    return false;
+
+  // Apply any field name mapping
+  ApplyMapping();
+
+  // Add prefix to data labels
+  ApplyPrefix();
+
+  // Look for column types within the next two lines
+  CSV_FIELDS tmpFields;
+  fpos_t lastLinePos;
+  for (int i = 2; i > 0; i--)
+  {
+    if (!ReadLineToBuffer(szLine, maxLength, &lastLinePos))
       return false;
 
-    // Parse the header line
-    DataLabels.clear();
-    bCsvStatus = CsvParser.parse_line(szLine, DataLabels);
-    assert(bCsvStatus == true);
+    tmpFields.clear();
+    bCsvStatus = ParseLine(szLine, tmpFields);
+    if (!bCsvStatus || tmpFields.empty())
+      return false;
 
-    // Apply any field name mapping
-    ApplyMapping();
-
-    // Add prefix to data labels
-    ApplyPrefix();
-
-    // Look for column types within the next two lines
-    CSV_FIELDS tmpFields;
-    for (int i = 2; i > 0; i--) 
-    {
-      fpos_t lastLinePos;
-      fgetpos(hCsvInput, &lastLinePos);
-
-      if (!GetLine(szLine, maxLength))
-        return false;
-
-      tmpFields.clear();
-      CsvParser.parse_line(szLine, tmpFields);
-      if (HasNumericData(tmpFields)) {
-        fsetpos(hCsvInput, &lastLinePos); // reset position before line
-        break;
-      }
-      else
-        DataTypes = tmpFields;
+    if (HasNumericData(tmpFields)) {
+      fsetpos(hCsvInput, &lastLinePos); // reset position before line
+      break;
     }
+    else
+      DataTypes = tmpFields;
+  }
 
 
 
 //    display_vector_contents(szLine, CsvFields);
 
-    // Get the sim state variables ready
-    Init();
+  // Get the sim state variables ready
+  Init();
 
-    return true;
+  return true;
 
-    } // end Open()
+} // end Open()
 
 
 // ----------------------------------------------------------------------------
@@ -205,12 +210,15 @@ bool ClSource_CsvTxt::ReadNextLine()
 
 
     // Get the next line
-    GetLine(szLine, maxLength);
+    bCsvStatus = ReadLineToBuffer(szLine, maxLength);
+    if (!bCsvStatus)
+      return false;
 
     // Parse the input data line
     CsvMap.clear();
-    bCsvStatus = CsvParser.parse_line(szLine, DataLabels, CsvMap);
-    assert(bCsvStatus == true);
+    bCsvStatus = ParseLine(szLine, DataLabels, CsvMap);
+    if (!bCsvStatus || CsvMap.empty())
+      return false;
 
 //    display_map_contents(szLine, CsvMap);
 
@@ -312,4 +320,14 @@ void ClSource_CsvTxt::ApplyMapping() {
 void ClSource_CsvTxt::ApplyPrefix() {
   for (auto i = DataLabels.begin(); i != DataLabels.end(); i++)
     (*i) = sPrefix + (*i);
+}
+
+bool ClSource_CsvTxt::ParseLine(char* szLine, CSV_FIELDS& fields)
+{
+  return CsvParser.parse_line(szLine, fields);
+}
+
+bool ClSource_CsvTxt::ParseLine(char* szLine, CSV_FIELDS& labels, KEY_VAL_FIELDS& fieldMap)
+{
+  return CsvParser.parse_line(szLine, labels, fieldMap);
 }

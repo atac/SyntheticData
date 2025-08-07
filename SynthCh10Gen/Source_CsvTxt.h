@@ -28,9 +28,11 @@ public:
 
   // Class variables
 protected:
-  FILE* hCsvInput;
-  CSV_Parser                                  CsvParser;
-  KEY_VAL_FIELDS                              CsvMap;
+  FILE*           hCsvInput;
+  KEY_VAL_FIELDS  CsvMap;
+
+private:
+  CSV_Parser      CsvParser;
 
 public:
 
@@ -46,10 +48,13 @@ protected:
   void Init();
   bool ConvertTime(std::string sTime, double* fDecodedTime);
 
-  bool GetLine(char* buf, size_t bufLen);
+  bool ReadLineToBuffer(char* buf, size_t bufLen, fpos_t* lastPosition = nullptr);
   bool HasNumericData(CSV_FIELDS& values);
 
   virtual void ApplyMapping();
   virtual void ApplyPrefix();
+
+  virtual bool ParseLine(char* szLine, CSV_FIELDS& fields);
+  virtual bool ParseLine(char* szLine, CSV_FIELDS& labels, KEY_VAL_FIELDS& fieldMap);
 };
 
