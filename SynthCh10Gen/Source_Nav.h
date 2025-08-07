@@ -13,6 +13,7 @@ of time.
 #include "SimState.h"
 #include "SimTimer.h"
 #include "Config.h"
+#include "TimeParser.h"
 
 // https://github.com/rakeshgk/csv-parser
 #include "csv_parser.hpp"
@@ -43,6 +44,7 @@ public:
   // Class variables
 protected:
   ConfigMapping mapping;
+  TimeParser timeParser;
 
 public:
   std::string         sPrefix;        // Simulation state data label prefix to make it unique

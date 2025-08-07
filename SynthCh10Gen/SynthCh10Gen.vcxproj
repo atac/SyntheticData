@@ -57,8 +57,8 @@
     <ClCompile Include="GenerationController.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Source_CsvTxt.cpp" />
-    <ClCompile Include="Source_NasaNavTxt.cpp" />
     <ClCompile Include="Source_SQLiteDB.cpp" />
+    <ClCompile Include="TimeParser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\3rdParty\csv-parser\csv_parser.hpp" />
@@ -104,6 +104,7 @@
     <ClInclude Include="Ch10Writer_Video.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="Source_SQLiteDB.h" />
+    <ClInclude Include="TimeParser.h" />
     <ClInclude Include="TmatsFormatter.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="GenerationController.h" />
@@ -111,7 +112,6 @@
     <ClInclude Include="SimState.h" />
     <ClInclude Include="SimTimer.h" />
     <ClInclude Include="Source_CsvTxt.h" />
-    <ClInclude Include="Source_NasaNavTxt.h" />
     <ClInclude Include="Source_Nav.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

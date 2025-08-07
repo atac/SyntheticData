@@ -5,9 +5,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="CVS Parser">
-      <UniqueIdentifier>{01668873-25b6-4aa5-afa6-3c7e07b7c14d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{d2eaafa8-3900-460d-8ac6-b4c1579f69df}</UniqueIdentifier>
     </Filter>
@@ -20,10 +17,13 @@
     <Filter Include="SQLite3">
       <UniqueIdentifier>{c057538f-3940-451c-b79a-151f36afb58e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="CSV Parser">
+      <UniqueIdentifier>{01668873-25b6-4aa5-afa6-3c7e07b7c14d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\3rdParty\csv-parser\csv_parser.cpp">
-      <Filter>CVS Parser</Filter>
+      <Filter>CSV Parser</Filter>
     </ClCompile>
     <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_1553f1.c">
       <Filter>irig106lib</Filter>
@@ -103,9 +103,6 @@
     <ClCompile Include="Source_CsvTxt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source_NasaNavTxt.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\3rdParty\SQLite\sqlite3.c">
       <Filter>SQLite3</Filter>
     </ClCompile>
@@ -136,12 +133,17 @@
     <ClCompile Include="Ch10Formatter_1553.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source_SQLiteDB.cpp" />
-    <ClCompile Include="Ch10Format_Video.cpp" />
+    <ClCompile Include="Ch10Format_Video.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source_SQLiteDB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeParser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\3rdParty\csv-parser\csv_parser.hpp">
-      <Filter>CVS Parser</Filter>
+      <Filter>CSV Parser</Filter>
     </ClInclude>
     <ClInclude Include="Ch10Format_1553_Nav.h">
       <Filter>Header Files</Filter>
@@ -183,9 +185,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source_CsvTxt.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source_NasaNavTxt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source_Nav.h">
@@ -284,11 +283,18 @@
     <ClInclude Include="Ch10Formatter_1553.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source_SQLiteDB.h" />
     <ClInclude Include="Ch10Writer_Video.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Ch10Formatter_Video.h" />
-    <ClInclude Include="Ch10Format_Video.h" />
+    <ClInclude Include="Ch10Format_Video.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Ch10Formatter_Video.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source_SQLiteDB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeParser.h" />
   </ItemGroup>
 </Project>
