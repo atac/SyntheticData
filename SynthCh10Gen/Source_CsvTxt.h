@@ -46,7 +46,6 @@ public:
 
 protected:
   void Init();
-  bool ConvertTime(std::string sTime, double* fDecodedTime);
 
   bool ReadLineToBuffer(char* buf, size_t bufLen, fpos_t* lastPosition = nullptr);
   bool HasNumericData(CSV_FIELDS& values);

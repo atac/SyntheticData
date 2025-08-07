@@ -143,7 +143,19 @@ bool ClSource_CsvTxt::Open(std::string sFilename)
       DataTypes = tmpFields;
   }
 
+  // Parse the first line's first field to determine time parsing format
+  if (!ReadLineToBuffer(szLine, maxLength, &lastLinePos))
+    return false;
 
+  tmpFields.clear();
+  bCsvStatus = ParseLine(szLine, tmpFields);
+  if (!bCsvStatus || tmpFields.empty())
+    return false;
+
+  timeParser.Init(tmpFields.at(0));
+  assert(timeParser.Valid());
+
+  fsetpos(hCsvInput, &lastLinePos); // reset position before line
 
 //    display_vector_contents(szLine, CsvFields);
 
@@ -223,7 +235,7 @@ bool ClSource_CsvTxt::ReadNextLine()
 //    display_map_contents(szLine, CsvMap);
 
     // Decode the current data time
-    bStatus = ConvertTime(CsvMap[sPrefix + "DATE_TIME"], &fDecodedTime);
+    bStatus = timeParser.Parse(CsvMap[sPrefix + "AC_TIME"], &fDecodedTime);
     assert(bStatus == true);
     fRelTime = fDecodedTime - fStartTime;
 
@@ -270,40 +282,6 @@ bool ClSource_CsvTxt::UpdateSimState(double fSimElapsedTime)
   return bStatus;
 }
 
-
-// ----------------------------------------------------------------------------
-
-// Convert time string to a time value. Time must be in the form
-//   2001-01-12 09:15:46.140
-// The output time value is a floating point representation of a time_t.
-
-bool ClSource_CsvTxt::ConvertTime(std::string sTime, double *fDecodedTime)
-    {
-    struct tm   suNasaTime;
-    time_t      lNasaTime;
-    double      fSecond;
-    int         iTokens;
-
-    // Decode the time string
-    iTokens = sscanf(sTime.c_str(), "%d-%d-%d %d:%d:%lf", 
-            &suNasaTime.tm_year, &suNasaTime.tm_mon, &suNasaTime.tm_mday,
-            &suNasaTime.tm_hour, &suNasaTime.tm_min, &fSecond);
-    if (iTokens != 6)
-        return false;
-
-    // Fix up some tm fields
-    suNasaTime.tm_year -= 1900;
-    suNasaTime.tm_mon  -= 1;
-    suNasaTime.tm_sec   = (int)fSecond;
-
-    // Convert to a time_t
-    lNasaTime = _mkgmtime(&suNasaTime);
-
-    // Make a floating point representation
-    *fDecodedTime = lNasaTime + (fSecond - suNasaTime.tm_sec);
-
-    return true;
-    }
 
 void ClSource_CsvTxt::SetMapping(ConfigMapping map) {
   this->mapping = map;
