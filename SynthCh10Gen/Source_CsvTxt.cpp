@@ -183,6 +183,9 @@ void ClSource_CsvTxt::Init()
         pclSimState->insert((*itLabel),-1.0);
         } // end for all header labels
 
+    if (!sPrefix.empty())
+      pclSimState->insertReady(sPrefix);
+
     // Get the first line of data and figure out the start time
     fStartTime = 0.0;
     ReadNextLine();
@@ -219,7 +222,7 @@ bool ClSource_CsvTxt::ReadNextLine()
     char                szLine[maxLength];
     bool                bStatus;
     double              fDecodedTime;
-
+    bool dataAvailable = false;
 
     // Get the next line
     bStatus = ReadLineToBuffer(szLine, maxLength);
@@ -237,9 +240,10 @@ bool ClSource_CsvTxt::ReadNextLine()
       bStatus = timeParser.Parse(CsvMap[sPrefix + "AC_TIME"], fDecodedTime);
       assert(bStatus == true);
       fRelTime = fDecodedTime - fStartTime;
+      dataAvailable = true;
     }
 
-    dataAvailable = bStatus;
+    pclSimState->updateReady(this->sPrefix, dataAvailable);
 
     return dataAvailable;
     } // end ReadNextLine()

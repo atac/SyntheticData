@@ -140,6 +140,9 @@ void ClSource_SQLiteDB::InitSimStateFields()
     else if (type == "BLOB")
       pclSimState->insert(DataLabels[i], nullptr);
   }
+
+  if (!sPrefix.empty())
+    pclSimState->insertReady(sPrefix);
 }
 
 // ----------------------------------------------------------------------------
@@ -147,20 +150,22 @@ void ClSource_SQLiteDB::InitSimStateFields()
 /// Read the next line of BlueMax data
 
 bool ClSource_SQLiteDB::ReadNextLine()
-    {
-    if (sqlite3_step(pSqlStmt) == SQLITE_ROW)
-    {
-      // Assume the BMdb actime column is index one and represents seconds since 0.0
-      // TODO: make this use TimeParser
-      fRelTime = sqlite3_column_double(pSqlStmt, 1);
-      dataAvailable = false;
-    }
-    else
-      dataAvailable = true;
+{
+  bool dataAvailable = false;
 
+  int status = sqlite3_step(pSqlStmt);
+  if (status == SQLITE_ROW)
+  {
+    // First column must be time
+    double time = sqlite3_column_double(pSqlStmt, 1);
+    fRelTime = time - fStartTime;
+    dataAvailable = true;
+  }
 
-    return dataAvailable;
-    }
+  pclSimState->updateReady(sPrefix, dataAvailable);
+
+  return dataAvailable;
+}
 
 
 // ----------------------------------------------------------------------------

@@ -76,7 +76,7 @@ private:
   ControllerStatus    AddDataChannel(ConfigChannel channel);
 
   std::string GenerateChannelName(Ch10Channel::ChannelType type);
-  Ch10Channel* CreateChannel(Ch10Writer* writer, Ch10Formatter* formatter, Ch10Channel::ChannelType type, std::string name = "");
+  Ch10Channel* CreateChannel(Ch10Writer* writer, Ch10Formatter* formatter, Ch10Channel::ChannelType type, std::string sourcePrefix, std::string name = "");
   ClSource_Nav* CreateSource(ConfigDataSource config, int channelID);
 
   // TODO: this should eventually take (or use) a structure containing source setup data rather than a csv source

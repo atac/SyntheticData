@@ -59,12 +59,14 @@ ControllerStatus GenerationController::Fire() {
 }
 
 bool GenerationController::UpdateSources() {
+  bool sourceIsReady = false;
+
   for (auto s : *sources) {
-    if (!s->UpdateSimState(time.srcTime))
-      return false;
+    if (s->UpdateSimState(time.srcTime))
+      sourceIsReady = true;
   }
 
-  return true;
+  return sourceIsReady;
 }
 
 void GenerationController::PollTimers() {
@@ -235,7 +237,7 @@ ControllerStatus GenerationController::AddDataChannel(ConfigChannel config) {  /
   assert(writer != nullptr);
 
   // create channel passing formatter/writer
-  Ch10Channel* channel = CreateChannel(writer, formatter, config.type, config.name);
+  Ch10Channel* channel = CreateChannel(writer, formatter, config.type, source->sPrefix, config.name);
 
   // create timers for channel actions
   AddTimedChannelAction(channel, config.pollRate, ChannelActionType::PUSH);
@@ -259,7 +261,7 @@ void GenerationController::AddIndexChannel(ClCh10Writer_Time* timeWriter) {
 
   Ch10Channel::ChannelType type = Ch10Channel::ChannelType::INDEX;
 
-  Ch10Channel* channel = CreateChannel(writer, formatter, type);
+  Ch10Channel* channel = CreateChannel(writer, formatter, type, "");
 
   AddTimedChannelAction(channel, indexAppendRate, ChannelActionType::PUSH);
   AddTimedChannelAction(channel, nodeCommitRate, ChannelActionType::COMMIT);
@@ -274,7 +276,7 @@ ClCh10Writer_Time* GenerationController::AddTimeChannel() {
 
   Ch10Channel::ChannelType type = Ch10Channel::ChannelType::TIME;
 
-  this->timeChannel = CreateChannel(writer, formatter, type);
+  this->timeChannel = CreateChannel(writer, formatter, type, "");
 
   Rate timeRate = Rate(1000, RateUnit::TIME_MS);
 
@@ -379,6 +381,7 @@ Ch10Channel* GenerationController::CreateChannel(
   Ch10Writer* writer, 
   Ch10Formatter* formatter,
   Ch10Channel::ChannelType type,
+  std::string sourcePrefix,
   std::string name) 
 {
   if (name == "")
@@ -386,7 +389,7 @@ Ch10Channel* GenerationController::CreateChannel(
 
   Ch10Channel* channel = new Ch10Channel();
   channels->push_back(channel);
-  channel->Init(writer, formatter, type, name);
+  channel->Init(writer, formatter, type, name, sourcePrefix);
   return channel;
 }
 
