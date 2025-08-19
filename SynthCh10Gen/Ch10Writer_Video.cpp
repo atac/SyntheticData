@@ -99,7 +99,10 @@ void Ch10Writer_Video::AppendMsg()
 
   // If there is no data yet then the packet RTC is the first message RTC
   if (currBufOffset <= 4)
-    vLLInt2TimeArray(formatter->GetRTC(), suCh10Header.aubyRefTime);
+  {
+    int64_t rtc = formatter->GetRTC();
+    vLLInt2TimeArray(&rtc, suCh10Header.aubyRefTime);
+  }
 
   unsigned dataLen = currBufOffset + formatter->videoData->size();
 
