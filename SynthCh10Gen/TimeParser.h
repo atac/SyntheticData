@@ -30,24 +30,24 @@ public:
   void Init(std::string timeString);
   void Init(Format format);
 
-  bool Parse(std::string timeString, double* timeSeconds);
+  bool Parse(std::string timeString, double& timeSeconds);
   Format GetFormat();
 
 private:
   Format format;
 
-  bool (TimeParser::*DoParse)(std::string timeString, double* time);
+  bool (TimeParser::*DoParse)(std::string timeString, double& time);
 
   void SetParseMethod();
-  bool Parse_INVALID(std::string sTime, double* time);
-  bool Parse_Double(std::string sTime, double* time);
-  bool Parse_MM_SS(std::string sTime, double* time);
-  bool Parse_HH_MM_SS(std::string sTime, double* time);
-  bool Parse_DDD_HH_MM_SS(std::string sTime, double* time);
-  bool Parse_MM_DD_HH_MM_SS(std::string sTime, double* time);
-  bool Parse_YYYY_DDD_HH_MM_SS(std::string sTime, double* time);
-  bool Parse_YYYY_MM_DD_HH_MM_SS(std::string sTime, double* time);
+  bool Parse_INVALID(std::string sTime, double& time);
+  bool Parse_Double(std::string sTime, double& time);
+  bool Parse_MM_SS(std::string sTime, double& time);
+  bool Parse_HH_MM_SS(std::string sTime, double& time);
+  bool Parse_DDD_HH_MM_SS(std::string sTime, double& time);
+  bool Parse_MM_DD_HH_MM_SS(std::string sTime, double& time);
+  bool Parse_YYYY_DDD_HH_MM_SS(std::string sTime, double& time);
+  bool Parse_YYYY_MM_DD_HH_MM_SS(std::string sTime, double& time);
 
   static Format DetermineFormat(std::string timeString);
-  static tm SecondsToTm(double seconds, double* remainder);
+  static tm SecondsToTm(double seconds, double& remainder);
 };

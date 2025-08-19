@@ -234,7 +234,7 @@ bool ClSource_CsvTxt::ReadNextLine()
 
     if (bStatus) {
       // Decode the current data time
-      bStatus = timeParser.Parse(CsvMap[sPrefix + "AC_TIME"], &fDecodedTime);
+      bStatus = timeParser.Parse(CsvMap[sPrefix + "AC_TIME"], fDecodedTime);
       assert(bStatus == true);
       fRelTime = fDecodedTime - fStartTime;
     }

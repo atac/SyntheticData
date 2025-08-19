@@ -27,7 +27,7 @@ void TimeParser::Init(Format format)
   this->format = format;
 }
 
-bool TimeParser::Parse(std::string timeString, double* timeSeconds)
+bool TimeParser::Parse(std::string timeString, double& timeSeconds)
 {
   if (time == nullptr)
     return false;
@@ -76,12 +76,12 @@ void TimeParser::SetParseMethod()
   }
 }
 
-bool TimeParser::Parse_INVALID(std::string sTime, double* time)
+bool TimeParser::Parse_INVALID(std::string sTime, double& time)
 {
   return false;
 }
 
-bool TimeParser::Parse_Double(std::string sTime, double* time)
+bool TimeParser::Parse_Double(std::string sTime, double& time)
 {
   double d;
 
@@ -93,14 +93,14 @@ bool TimeParser::Parse_Double(std::string sTime, double* time)
   }
 
   double rem;
-  tm t = SecondsToTm(d, &rem);
+  tm t = SecondsToTm(d, rem);
 
-  *time = _mkgmtime(&t);
+  time = _mkgmtime(&t);
 
   return true;
 }
 
-bool TimeParser::Parse_MM_SS(std::string sTime, double* time)
+bool TimeParser::Parse_MM_SS(std::string sTime, double& time)
 {
   tm t;
   time_t tt;
@@ -120,12 +120,12 @@ bool TimeParser::Parse_MM_SS(std::string sTime, double* time)
 
   tt = _mkgmtime(&t);
 
-  *time = tt + (sec - t.tm_sec);
+  time = tt + (sec - t.tm_sec);
 
   return true;
 }
 
-bool TimeParser::Parse_HH_MM_SS(std::string sTime, double* time)
+bool TimeParser::Parse_HH_MM_SS(std::string sTime, double& time)
 {
   tm t;
   time_t tt;
@@ -144,12 +144,12 @@ bool TimeParser::Parse_HH_MM_SS(std::string sTime, double* time)
 
   tt = _mkgmtime(&t);
 
-  *time = tt + (sec - t.tm_sec);
+  time = tt + (sec - t.tm_sec);
 
   return true;
 }
 
-bool TimeParser::Parse_DDD_HH_MM_SS(std::string sTime, double* time)
+bool TimeParser::Parse_DDD_HH_MM_SS(std::string sTime, double& time)
 {
   tm t;
   time_t tt;
@@ -167,11 +167,11 @@ bool TimeParser::Parse_DDD_HH_MM_SS(std::string sTime, double* time)
 
   tt = _mkgmtime(&t);
 
-  *time = tt + (sec - t.tm_sec);
+  time = tt + (sec - t.tm_sec);
 
   return true;
 }
-bool TimeParser::Parse_MM_DD_HH_MM_SS(std::string sTime, double* time)
+bool TimeParser::Parse_MM_DD_HH_MM_SS(std::string sTime, double& time)
 {
   tm t;
   time_t tt;
@@ -190,12 +190,12 @@ bool TimeParser::Parse_MM_DD_HH_MM_SS(std::string sTime, double* time)
 
   tt = _mkgmtime(&t);
 
-  *time = tt + (sec - t.tm_sec);
+  time = tt + (sec - t.tm_sec);
 
   return true;
 }
 
-bool TimeParser::Parse_YYYY_DDD_HH_MM_SS(std::string sTime, double* time)
+bool TimeParser::Parse_YYYY_DDD_HH_MM_SS(std::string sTime, double& time)
 {
   tm t;
   time_t tt;
@@ -213,12 +213,12 @@ bool TimeParser::Parse_YYYY_DDD_HH_MM_SS(std::string sTime, double* time)
 
   tt = _mkgmtime(&t);
 
-  *time = tt + (sec - t.tm_sec);
+  time = tt + (sec - t.tm_sec);
 
   return true;
 }
 
-bool TimeParser::Parse_YYYY_MM_DD_HH_MM_SS(std::string sTime, double* time)
+bool TimeParser::Parse_YYYY_MM_DD_HH_MM_SS(std::string sTime, double& time)
 {
   tm t;
   time_t tt;
@@ -237,7 +237,7 @@ bool TimeParser::Parse_YYYY_MM_DD_HH_MM_SS(std::string sTime, double* time)
 
   tt = _mkgmtime(&t);
 
-  *time = tt + (sec - t.tm_sec);
+  time = tt + (sec - t.tm_sec);
 
   return true;
 }
@@ -287,7 +287,7 @@ TimeParser::Format TimeParser::DetermineFormat(std::string timeString)
 }
 
 
-tm TimeParser::SecondsToTm(double seconds, double* remainder)
+tm TimeParser::SecondsToTm(double seconds, double& remainder)
 {
   tm t;
   int days;
@@ -295,7 +295,7 @@ tm TimeParser::SecondsToTm(double seconds, double* remainder)
   int mins;
 
   long long sec = (long long)seconds;
-  *remainder = seconds - sec;
+  remainder = seconds - sec;
 
   // remove any years
   sec = sec % (60 * 60 * 24 * 365);
