@@ -83,19 +83,12 @@ bool TimeParser::Parse_INVALID(std::string sTime, double& time)
 
 bool TimeParser::Parse_Double(std::string sTime, double& time)
 {
-  double d;
-
   try {
-    d = std::stod(sTime);
+    time = std::stod(sTime);
   }
   catch (...) {
     return false;
   }
-
-  double rem;
-  tm t = SecondsToTm(d, rem);
-
-  time = _mkgmtime(&t);
 
   return true;
 }
