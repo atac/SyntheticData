@@ -164,6 +164,8 @@ void ClCh10Writer_A429::AppendMsg()
     for (int iIdx=1; iIdx < formatter->aArinc429Msgs.size(); iIdx++)
         uPrevGapSum += formatter->aArinc429Msgs[iIdx].suIPH.uGapTime;
 
+    msgReady = true;
+
     } // end AppendMsg()
 
 
@@ -198,6 +200,8 @@ void ClCh10Writer_A429::Commit()
     suWriteMsgA429.suCh10Header.ubySeqNum++;
     suWriteMsgA429.suCh10Header.ulDataLen = 4;
     suWriteMsgA429.psuA429CSDW->uMsgCount = 0;
+
+    msgReady = false;
 
     return;
     } // Commit()

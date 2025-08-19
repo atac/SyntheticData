@@ -22,10 +22,10 @@ void Ch10Channel::PushData(ClSimState* simState, int64_t* clockTicks) {
   this->formatter->FormatMsg(simState);
   this->formatter->SetRTC(clockTicks);
   this->writer->AppendMsg();
-}
 
 void Ch10Channel::CommitPacket() {
-  this->writer->Commit();
+  if (this->writer->HasMsgToWrite())
+    this->writer->Commit();
 }
 
 std::string Ch10Channel::GetTMATS(ClTmatsIndexes index) {

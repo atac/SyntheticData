@@ -115,6 +115,8 @@ void Ch10Writer_Video::AppendMsg()
 
   memcpy(dataBuf + currBufOffset, formatter->videoData->data(), formatter->videoData->size());
   currBufOffset = dataLen;
+
+  msgReady = true;
 }
 
 void Ch10Writer_Video::Commit()
@@ -152,6 +154,8 @@ void Ch10Writer_Video::Commit()
    
   // Reset buffer
   currBufOffset = sizeof(SuVideoF0_ChanSpec);
+
+  msgReady = false;
 }
 
 

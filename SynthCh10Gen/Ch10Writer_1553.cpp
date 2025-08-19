@@ -275,6 +275,8 @@ void ClCh10Writer_1553::AppendMsg() {
       uCurrBufferOffset += 2;
     } // end if full RT to RT
 
+    msgReady = true;
+
 } // end WriteMsg1553Append()
 
 
@@ -314,6 +316,8 @@ void ClCh10Writer_1553::Commit()
     suWriteMsg1553.suCh10Header.ubySeqNum++;
     suWriteMsg1553.suCh10Header.ulDataLen = 4;
     suWriteMsg1553.psu1553CSDW->uMsgCnt = 0;
+
+    msgReady = false;
 
     return;
     } // Commit()

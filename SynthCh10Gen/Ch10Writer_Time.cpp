@@ -54,8 +54,11 @@ void ClCh10Writer_Time::Init(int iHandle, unsigned int uChanID, Ch10Format_Time*
 }
 
 void ClCh10Writer_Time::AppendMsg() {
-  if (formatter != nullptr)
+  if (formatter != nullptr) {
     currentTime = formatter->GetCurrentTime();
+
+    msgReady = true;
+  }
 }
 
 void ClCh10Writer_Time::Commit()
@@ -125,6 +128,8 @@ void ClCh10Writer_Time::Commit()
 
   enI106Ch10WriteMsg(iHandle, &(suWritePktTimeF1.suCh10Header), &(suWritePktTimeF1.suTimePktBuffer));
   suWritePktTimeF1.suCh10Header.ubySeqNum++;
+
+  msgReady = false;
 
   return;
 }

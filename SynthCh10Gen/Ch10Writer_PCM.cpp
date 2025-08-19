@@ -127,6 +127,8 @@ void ClCh10Writer_PCM::AppendMsg()
   memcpy(suWriteMsgPCM.pchDataBuff + uCurrBufferOffset, formatter->pFrame, formatter->uFrameLen);
   uCurrBufferOffset += formatter->uFrameLen;
 
+  msgReady = true;
+
 } // end AppendMsg()
 
 
@@ -160,6 +162,8 @@ void ClCh10Writer_PCM::Commit()
   // Reset the buffer
   suWriteMsgPCM.suCh10Header.ubySeqNum++;
   suWriteMsgPCM.suCh10Header.ulDataLen = 4;
+
+  msgReady = false;
 
   return;
 } // Commit()

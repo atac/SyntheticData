@@ -27,16 +27,22 @@ protected:
   unsigned int uChanID;
   int iHandle;
 
+  bool msgReady;
+
 protected:
   void Init(int iHandle, unsigned int uChanID)
   {
     this->iHandle = iHandle;
     this->uChanID = uChanID;
+
+    msgReady = false;
   };
+
+public:
+  bool HasMsgToWrite() { return msgReady; }
 
 public:
   virtual void AppendMsg() = 0;
   virtual void Commit() = 0;
-
   virtual std::string TMATS(ClTmatsIndexes& tmatsIndex, std::string sCDLN) = 0;
 };

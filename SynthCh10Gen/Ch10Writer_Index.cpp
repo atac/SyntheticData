@@ -67,6 +67,8 @@ void ClCh10Writer_Index::Commit() {
     WriteRootPacket();
     rootNodeCount = 0;
   }
+
+  msgReady = false;
 }
 
 
@@ -93,6 +95,8 @@ void ClCh10Writer_Index::AppendNodeIndex()
   suNodeInfo.suData.uDataType = formatData.dataType;
 
   asuNodeData.push_back(suNodeInfo);
+
+  msgReady = true;
 }
 
 
