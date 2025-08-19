@@ -11,16 +11,16 @@ public:
   std::vector<uint8_t>* videoData;
 
 
-  virtual void SetRTC(int64_t* pllRelTime) = 0;
+  virtual void SetRTC(int64_t relTime) = 0;
   virtual void FormatMsg(ClSimState* simState) = 0;
   virtual std::string TMATS(ClTmatsIndexes& tmatsIndex, std::string sCDLN) = 0;
 
-  int64_t* GetRTC()
+  int64_t GetRTC()
   {
-    return pllRelTime;
+    return llRelTime;
   }
 
 protected:
-  int64_t* pllRelTime;
+  int64_t llRelTime;
 };
 

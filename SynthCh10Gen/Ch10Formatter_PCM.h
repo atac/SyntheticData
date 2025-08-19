@@ -63,9 +63,9 @@ public:
   std::string TMATS(ClTmatsIndexes& tmatsIndex, std::string sCDLN) = 0;
 
 
-  void SetRTC(int64_t* pullRelTime) 
+  void SetRTC(int64_t relTime) 
   {
-    vLLInt2TimeArray(pullRelTime, suIPH.aubyIntPktTime);
+    vLLInt2TimeArray(&relTime, suIPH.aubyIntPktTime);
   }
 };
 

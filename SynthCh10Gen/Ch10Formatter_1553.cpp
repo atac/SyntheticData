@@ -104,9 +104,9 @@ Ch10Formatter_1553::~Ch10Formatter_1553()
 
 // Set the relative time counter
 
-void Ch10Formatter_1553::SetRTC(int64_t * pullRelTime)
+void Ch10Formatter_1553::SetRTC(int64_t relTime)
     {
-    vLLInt2TimeArray(pullRelTime, suIPH.aubyIntPktTime);
+    vLLInt2TimeArray(&relTime, suIPH.aubyIntPktTime);
     }
 
 

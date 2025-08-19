@@ -45,7 +45,7 @@ public:
 
   // Methods
 public:
-  void SetRTC(int64_t* pullRelTime);
+  void SetRTC(int64_t relTime);
   virtual void FormatMsg(ClSimState* pclSimState) = 0;
   virtual std::string TMATS(ClTmatsIndexes& TmatsIndex, std::string sCDLN) = 0;
 

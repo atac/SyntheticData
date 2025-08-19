@@ -10,7 +10,7 @@ public:
   Ch10Format_Video(CSV_FIELDS dataLabels, CSV_FIELDS dataTypes);
   ~Ch10Format_Video() {};
 
-  void SetRTC(int64_t* pllRelTime);
+  void SetRTC(int64_t relTime);
   void FormatMsg(ClSimState* simState);
   std::string TMATS(ClTmatsIndexes& tmatsIndex, std::string sCDLN);
 

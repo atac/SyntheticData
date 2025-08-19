@@ -26,7 +26,7 @@ public:
 
   RequiredIndexFields GetFormatValues();
 
-  void SetRTC(int64_t* pullRelTime) {};
+  void SetRTC(int64_t relTime) {};
 
 private:
   SuI106Ch10Header* pCh10Header;

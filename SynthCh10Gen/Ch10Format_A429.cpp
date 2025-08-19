@@ -49,9 +49,9 @@ Ch10Formatter_ARINC429::~Ch10Formatter_ARINC429()
 
 // Set the relative time counter
 
-void Ch10Formatter_ARINC429::SetRTC(int64_t * pllRefTime)
+void Ch10Formatter_ARINC429::SetRTC(int64_t  refTime)
     {
-    llRefTime = *pllRefTime;
+    llRefTime = refTime;
     }
 
 

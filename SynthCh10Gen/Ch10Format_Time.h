@@ -10,7 +10,7 @@ public:
   double      GetCurrentTime();
 
 private:
-  void        SetRTC(int64_t* pullRelTime) {};
+  void        SetRTC(int64_t relTime) {};
 
   double currentTime = -1.0; 
 };

@@ -8,9 +8,9 @@ Ch10Format_Video::Ch10Format_Video(CSV_FIELDS dataLabels, CSV_FIELDS dataTypes)
 }
 
 
-void Ch10Format_Video::SetRTC(int64_t* pllRelTime)
+void Ch10Format_Video::SetRTC(int64_t relTime)
 {
-  this->pllRelTime = pllRelTime;
+  this->llRelTime = relTime;
 }
 
 void Ch10Format_Video::FormatMsg(ClSimState* simState) 

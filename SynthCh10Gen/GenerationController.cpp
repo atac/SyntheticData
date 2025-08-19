@@ -2,7 +2,6 @@
 
 
 // TODO:
-// Need more time conversions
 // Decide if we need a case for poll and packet rate being "on demand"
 // Should we find a way to combine sources for channels that use the same source?
 
@@ -44,7 +43,7 @@ ControllerStatus GenerationController::Init(string configPathname) {
   InitTimers();
 
   TmatsFormatter::WriteTMATS(i106OutFileHandle, programName, this->time.currSimClockTime, this->channels);
-  timeChannel->PushData(simState, &ClSimTimer::lSimClockTicks);
+  timeChannel->PushData(simState, ClSimTimer::lSimClockTicks);
   timeChannel->CommitPacket();
 
   return result;
@@ -87,7 +86,7 @@ void GenerationController::DoAction(ChannelAction chanAction) {
   switch (chanAction.type) {
 
   case ChannelActionType::PUSH:
-    chanAction.channel->PushData(simState, &ClSimTimer::lSimClockTicks);
+    chanAction.channel->PushData(simState, ClSimTimer::lSimClockTicks);
     break;
 
   case ChannelActionType::COMMIT:
