@@ -15,14 +15,15 @@ public:
   // Data
 public:
   static inline const int64_t  lTicksPerSecond = 10000000; // 10 MHz, same as IRIG RTC
-  static inline const int64_t  lTicksPerStep = 100000;     // 10 msec / 100 Hz
+  static inline int64_t  lTicksPerStep = 100000;           // default 10 msec / 100 Hz
   static inline int64_t  lSimClockTicks = 0;
   static inline double   fSimElapsedTime = 0.0;
 
+  std::vector<ChannelAction>* actions = nullptr;
+
+private:
   int64_t     lTimer;
   int64_t     lTimeoutVal;
-
-  std::vector<ChannelAction>* actions = nullptr;
 
   // Methods
 public:
