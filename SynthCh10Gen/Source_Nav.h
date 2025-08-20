@@ -46,7 +46,7 @@ protected:
   ConfigMapping mapping;
   TimeParser timeParser;
 
-  bool dataAvailable;
+  bool eof;
 
 public:
   std::string         sPrefix;        // Simulation state data label prefix to make it unique
@@ -79,7 +79,6 @@ public:
   virtual bool UpdateSimState(double fSimElapsedTime) = 0;
   virtual void SetMapping(ConfigMapping map)          = 0;
 
-  bool HasData() { return dataAvailable; }
 
 protected:
   virtual void ApplyMapping()                         = 0;

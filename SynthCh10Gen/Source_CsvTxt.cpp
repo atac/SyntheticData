@@ -21,7 +21,7 @@ ClSource_CsvTxt::ClSource_CsvTxt(ClSimState * pclSimState, std::string sPrefix)
     this->sPrefix     = sPrefix;
     this->enInputType = this->InputNasaCsv;
     this->hCsvInput   = NULL;
-    this->dataAvailable = false;
+    this->eof = false;
     }
 
 
@@ -234,6 +234,8 @@ bool ClSource_CsvTxt::ReadNextLine()
       if (CsvMap.empty())
         bStatus = false;
     }
+    else
+      eof = true;
 
     if (bStatus) {
       // Decode the current data time
@@ -258,6 +260,9 @@ bool ClSource_CsvTxt::ReadNextLine()
 bool ClSource_CsvTxt::UpdateSimState(double fSimElapsedTime)
 {
   bool    bStatus;
+
+  if (eof)
+    return false;
 
   // Return if simulation time is less than current data time from this source
   if (fSimElapsedTime < fRelTime)

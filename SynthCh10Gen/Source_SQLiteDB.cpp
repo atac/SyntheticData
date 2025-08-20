@@ -19,7 +19,7 @@ ClSource_SQLiteDB::ClSource_SQLiteDB(ClSimState* pclSimState, std::string sPrefi
   this->pclSimState = pclSimState;
   this->sPrefix = sPrefix;
   this->enInputType = this->InputBMSqlite;
-  this->dataAvailable = false;
+  this->eof = false;
 }
 
 
@@ -161,6 +161,8 @@ bool ClSource_SQLiteDB::ReadNextLine()
     fRelTime = time - fStartTime;
     dataAvailable = true;
   }
+  else if (status == SQLITE_DONE)
+    eof = true;
 
   pclSimState->updateReady(sPrefix, dataAvailable);
 
@@ -174,6 +176,9 @@ bool ClSource_SQLiteDB::UpdateSimState(double fSimElapsedTime)
 {
   unsigned    uColIdx;
   bool        bStatus;
+
+  if (eof)
+    return false;
 
   // Return if simulation time is less than current data time from this source
   if (fSimElapsedTime < fRelTime)
