@@ -96,7 +96,7 @@ bool ClSource_CsvTxt::HasNumericData(CSV_FIELDS &values) {
 // ----------------------------------------------------------------------------
 
 /// Open the CSV data file and read the header line. The first line must be a
-/// header with variable names. The first column of data must be DATE_TIME.
+/// header with variable names. The first column of data must be time.
 
 bool ClSource_CsvTxt::Open(std::string sFilename)
 {
@@ -239,7 +239,7 @@ bool ClSource_CsvTxt::ReadNextLine()
 
     if (bStatus) {
       // Decode the current data time
-      bStatus = timeParser.Parse(CsvMap[sPrefix + "AC_TIME"], fDecodedTime);
+      bStatus = timeParser.Parse(CsvMap[DataLabels[0]], fDecodedTime);
       assert(bStatus == true);
       fRelTime = fDecodedTime - fStartTime;
       dataAvailable = true;
@@ -268,24 +268,14 @@ bool ClSource_CsvTxt::UpdateSimState(double fSimElapsedTime)
   if (fSimElapsedTime < fRelTime)
     return true;
 
-  // Copy parsed data into the SimState variable.
+  // Copy parsed data into the SimState
   for (CONST_MAP_ITR itCsvMap = CsvMap.begin(); itCsvMap != CsvMap.end(); ++itCsvMap)
   {
-
-    // Handle any special conversion cases
-    if (itCsvMap->first == sPrefix + "DATE_TIME")
-    {
-      // Relative time has already been calculated so store it
-      pclSimState->update(sPrefix + "AC_TIME", fRelTime);
-    }
-
-    // Default is to convert to a double and store it
+    if (itCsvMap->first == DataLabels[0])
+      pclSimState->update(DataLabels[0], fRelTime);
     else
-    {
-      //            double fDecodedVal = std::stod(itCsvMap->second);
       pclSimState->update(itCsvMap->first, std::stod(itCsvMap->second));
-    } // end if default copy
-  } // end for all CSV labeled data
+  }
 
 // Get the next line of data
   bStatus = ReadNextLine();
