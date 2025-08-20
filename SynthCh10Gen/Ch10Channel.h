@@ -37,7 +37,7 @@ public:
   ~Ch10Channel();
 
   void Init(Ch10Writer* writer, Ch10Formatter* formatter, ChannelType type, std::string name, std::string sourcePrefix);
-  void PushData(ClSimState* simState, int64_t* clockTicks); // push data from sim into packet
+  void PushData(ClSimState* simState, int64_t clockTicks); // push data from sim into packet
   void CommitPacket(); // commit full packet to file stream
 
   std::string GetTMATS(ClTmatsIndexes index);
