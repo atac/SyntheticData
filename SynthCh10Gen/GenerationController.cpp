@@ -530,15 +530,11 @@ Ch10Formatter_Video* GenerationController::CreateVideoFormatter(Ch10Channel::Cha
 
   switch (format) {
 
-  case Ch10Channel::ChannelDataFormat::UNFORMATTED:
-    break;
-
-  case Ch10Channel::ChannelDataFormat::SYNTHFORMAT1:
-    break;
-
   case Ch10Channel::ChannelDataFormat::CUSTOM:
     break;
 
+  case Ch10Channel::ChannelDataFormat::UNFORMATTED:
+  case Ch10Channel::ChannelDataFormat::SYNTHFORMAT1:
   default:
   {
     Ch10Format_Video* formatVideo = new Ch10Format_Video(src->DataLabels, src->DataTypes);
