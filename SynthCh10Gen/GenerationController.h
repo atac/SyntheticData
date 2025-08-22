@@ -64,10 +64,10 @@ private:
   // Configuration functions
   // =======================
 
-  void AddTimedChannelAction(Ch10Channel* channel, Rate rate, ChannelActionType action);
-  ClSimTimer* GetTimer(Rate rate);
-  ClSimTimer* GetExistingTimer(int64_t msTimeout);
-  ClSimTimer* CreateTimer(int64_t timeout);
+  void AddTimedChannelAction(Ch10Channel* channel, Rate rate, ChannelActionType action, bool fireImmediately = false);
+  ClSimTimer* GetTimer(Rate rate, bool startExpired);
+  ClSimTimer* GetExistingTimer(int64_t msTimeout, bool startExpired);
+  ClSimTimer* CreateTimer(int64_t timeout, bool startExpired);
   void InsertTimer(ClSimTimer* timer);
   //Source_Nav AddSource(std::string sourcePathname);
 

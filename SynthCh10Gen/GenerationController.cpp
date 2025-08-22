@@ -106,7 +106,7 @@ void GenerationController::Tick() {
 
 void GenerationController::InitTimers() {
   for (auto t : *timers) {
-    t->FromNow();
+    t->InitToSimClock();
   }
 }
 
@@ -240,7 +240,7 @@ ControllerStatus GenerationController::AddDataChannel(ConfigChannel config) {  /
   Ch10Channel* channel = CreateChannel(writer, formatter, config.type, source->sPrefix, config.name);
 
   // create timers for channel actions
-  AddTimedChannelAction(channel, config.pollRate, ChannelActionType::PUSH);
+  AddTimedChannelAction(channel, config.pollRate, ChannelActionType::PUSH, true);
   AddTimedChannelAction(channel, config.packetRate, ChannelActionType::COMMIT);
 
   return ControllerStatus::OK;
@@ -286,28 +286,28 @@ ClCh10Writer_Time* GenerationController::AddTimeChannel() {
   return timeWriter;
 }
 
-void GenerationController::AddTimedChannelAction(Ch10Channel* channel, Rate rate, ChannelActionType actionType) {
+void GenerationController::AddTimedChannelAction(Ch10Channel* channel, Rate rate, ChannelActionType actionType, bool fireImmediately) {
   ChannelAction action(channel, actionType);
-  ClSimTimer* timer = GetTimer(rate);
+  ClSimTimer* timer = GetTimer(rate, fireImmediately);
   timer->AddAction(action);
 }
 
 // Get or create timer based on the specified rate
-ClSimTimer* GenerationController::GetTimer(Rate rate) {
+ClSimTimer* GenerationController::GetTimer(Rate rate, bool startExpired) {
   rate.ConvertUnits(RateUnit::TIME_RTC);
 
-  ClSimTimer* timer = GetExistingTimer(rate.value);
+  ClSimTimer* timer = GetExistingTimer(rate.value, startExpired);
 
   if (timer == nullptr)
-    timer = CreateTimer(rate.value);
+    timer = CreateTimer(rate.value, startExpired);
 
   return timer;
 }
 
 // Check if a timer with the same timeout already exists
-ClSimTimer* GenerationController::GetExistingTimer(int64_t rtcTimeout) {
+ClSimTimer* GenerationController::GetExistingTimer(int64_t rtcTimeout, bool startExpired) {
   for (auto t : *timers) {
-    if (t->GetTimeoutValue() == rtcTimeout) {
+    if (t->GetTimeoutValue() == rtcTimeout && t->StartsExpired() == startExpired) {
       return t;
     }
   }
@@ -315,8 +315,8 @@ ClSimTimer* GenerationController::GetExistingTimer(int64_t rtcTimeout) {
 }
 
 // Create timer and add to timers list
-ClSimTimer* GenerationController::CreateTimer(int64_t timeout) {
-  ClSimTimer* timer = new ClSimTimer(timeout);
+ClSimTimer* GenerationController::CreateTimer(int64_t timeout, bool startExpired) {
+  ClSimTimer* timer = new ClSimTimer(timeout, startExpired);
   InsertTimer(timer);
   return timer;
 }
