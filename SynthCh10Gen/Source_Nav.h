@@ -73,15 +73,15 @@ public:
 
   // Methods
 public:
-  virtual bool Open(std::string sFilename)            = 0;
-  virtual void Close()                                = 0;
-  virtual bool ReadNextLine()                         = 0;
-  virtual bool UpdateSimState(double fSimElapsedTime) = 0;
-  virtual void SetMapping(ConfigMapping map)          = 0;
+  virtual bool Open(std::string sFilename)            = 0; // Open data source, init as needed, and read first line
+  virtual void Close()                                = 0; // Clean up and close data source
+  virtual bool ReadNextLine()                         = 0; // Advance source by one line
+  virtual bool UpdateSimState(double fSimElapsedTime) = 0; // Advance source to current sim time, update state, and readnextline
+  virtual void SetMapping(ConfigMapping map)          = 0; // Set a mapping between source and simstate labels
 
 
 protected:
-  virtual void ApplyMapping()                         = 0;
-  virtual void ApplyPrefix()                          = 0;
+  virtual void ApplyMapping()                         = 0; // Apply the mapping to the instance's labels
+  virtual void ApplyPrefix()                          = 0; // Apply the data source prefix to the instance's labels (do not call before mapping)
 };
 
