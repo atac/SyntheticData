@@ -50,17 +50,16 @@ void Ch10Writer_Video::Init(int iHandle, unsigned int uChanID, Ch10Formatter_Vid
   // Init data buffer
   bufLen = 1000;
   dataBuf = (uint8_t*)malloc(bufLen);
-  currBufOffset = sizeof(SuVideoF0_ChanSpec);
+  currBufOffset = 0;
 
   // Init CSDW
-  suVideoF0CSDW = (SuVideoF0_ChanSpec*)dataBuf;
-  memset(suVideoF0CSDW, 0, 4);
-  suVideoF0CSDW->bET = 0;
-  suVideoF0CSDW->bIPH = 0;
-  suVideoF0CSDW->bSRS = 0;
-  suVideoF0CSDW->bKLV = 0;
-  suVideoF0CSDW->uType = 0;    // MPEG-2 MP@ML guess!
-  suVideoF0CSDW->uBA = 0;    // Little-endian
+  memset(&suVideoF0CSDW, 0, 4);
+  suVideoF0CSDW.bET = 0;
+  suVideoF0CSDW.bIPH = 0;
+  suVideoF0CSDW.bSRS = 0;
+  suVideoF0CSDW.bKLV = 0;
+  suVideoF0CSDW.uType = 0;    // MPEG-2 MP@ML guess!
+  suVideoF0CSDW.uBA = 0;    // Little-endian
 }
 
 
@@ -98,7 +97,7 @@ void Ch10Writer_Video::AppendMsg()
     return; // nothing to do
 
   // If there is no data yet then the packet RTC is the first message RTC
-  if (currBufOffset <= 4)
+  if (currBufOffset <= 0)
   {
     int64_t rtc = formatter->GetRTC();
     vLLInt2TimeArray(&rtc, suCh10Header.aubyRefTime);
@@ -110,7 +109,6 @@ void Ch10Writer_Video::AppendMsg()
   {
     bufLen = dataLen + 1000;
     dataBuf = (uint8_t*)realloc(dataBuf, bufLen);
-    suVideoF0CSDW = (SuVideoF0_ChanSpec*)dataBuf;
   }
 
   memcpy(dataBuf + currBufOffset, formatter->videoData->data(), formatter->videoData->size());
@@ -153,58 +151,7 @@ void Ch10Writer_Video::Commit()
   } // end while there are bytes to write
    
   // Reset buffer
-  currBufOffset = sizeof(SuVideoF0_ChanSpec);
+  currBufOffset = 0;
 
   msgReady = false;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-//// ----------------------------------------------------------------------------
-//
-//void Ch10Writer_Video::Write(int64_t* pullRelTime, uint8_t* pDataBuff, int iDataLen)
-//{
-//
-////#if 0
-////  uint32_t    uDataBuffLen;
-////
-////  // Make sure the data buffer is big enough to hold the filler and checksum
-////  int     iChecksumType = suWriteMsg1553.suCh10Header.ubyPacketFlags & I106CH10_PFLAGS_CHKSUM_MASK;
-////  uDataBuffLen = uCalcDataBuffReqSize(suWriteMsg1553.suCh10Header.ulDataLen, iChecksumType);
-////
-////  if (uDataBuffLen > suWriteMsg1553.uBuffLen)
-////  {
-////    suWriteMsg1553.uBuffLen += 1000;
-////    suWriteMsg1553.pchDataBuff = (unsigned char*)realloc(suWriteMsg1553.pchDataBuff, suWriteMsg1553.uBuffLen);
-////    suWriteMsg1553.psu1553CSDW = (Su1553F1_ChanSpec*)suWriteMsg1553.pchDataBuff;
-////  }
-////
-////  // Put a checksum on the end of the packet
-////  uAddDataFillerChecksum(&(suWriteMsg1553.suCh10Header), suWriteMsg1553.pchDataBuff);
-////
-////  // Update the packet length and data length fields
-////  suWriteMsg1553.suCh10Header.ulPacketLen = iGetHeaderLen(&(suWriteMsg1553.suCh10Header)) + uDataBuffLen;
-////  //    suWriteMsg1553.suCh10Header.ulDataLen = suWriteMsg1553.uDataLen;
-////  suWriteMsg1553.suCh10Header.uChecksum = uCalcHeaderChecksum(&(suWriteMsg1553.suCh10Header));
-////
-////  // Write it
-////  enI106Ch10WriteMsg(iHandle, &(suWriteMsg1553.suCh10Header), suWriteMsg1553.pchDataBuff);
-////
-////  // Reset the buffer
-////  suWriteMsg1553.suCh10Header.ubySeqNum++;
-////  suWriteMsg1553.suCh10Header.ulDataLen = 4;
-////  suWriteMsg1553.psu1553CSDW->uMsgCnt = 0;
-////#endif
-//
-//  return;
-//} // end Write()

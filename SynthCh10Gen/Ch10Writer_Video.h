@@ -33,7 +33,7 @@ public:
   // Data
 public:
   SuI106Ch10Header    suCh10Header;
-  SuVideoF0_ChanSpec* suVideoF0CSDW;
+  SuVideoF0_ChanSpec  suVideoF0CSDW;
 
   uint8_t* dataBuf;
   uint32_t bufLen;
