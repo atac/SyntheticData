@@ -80,10 +80,6 @@ int main(int iArgc, char* aszArgv[])
   if (bStatus == false)
     return 1;
 
-  bStatus = pSource_BMNav->ReadNextLine();
-  if (bStatus == false)
-    return 1;
-
   elapsedTime = pSource_BMNav->fRelTime;
 
 #if 0
