@@ -160,6 +160,7 @@ int main(int iArgc, char* aszArgv[])
   ClSource_SQLiteDB* pSource_SQLiteDB = nullptr;
 
     // Various simulation clocks and time
+    ClSimTimer::lTicksPerStep   =   400000;     // 25 Hz to match default BlueMax data rate
     ClSimTimer::lSimClockTicks  =        0;
     ClSimTimer::fSimElapsedTime =      0.0;
     ClSimTimer      clSimTimer_40ms(400000);    // 40 msec / 25 Hz
@@ -167,14 +168,14 @@ int main(int iArgc, char* aszArgv[])
     ClSimTimer      clSimTimer_1S(10000000);    // 1 sec
 
   ClSimState      clSimState;
-  double          fBluemaxTime;           // Bluemax data time (seconds)
+  ClSource_Nav*   primarySrc;
 
   // Init some stuff
   szInFile[0] = '\0';
   szOutFile[0] = '\0';
   bStatus = false;
 
-  fBluemaxTime = 0.0;
+  primarySrc = nullptr;
   clSimState.clear();
 
   // Process command line
@@ -284,7 +285,7 @@ int main(int iArgc, char* aszArgv[])
     bStatus = pSource_SQLiteDB->Open(szInFile);
     if (bStatus == false)
       return 1;
-    pSource_SQLiteDB->ReadNextLine();
+    primarySrc = pSource_SQLiteDB;
     break;
   case InputText:
     for (int i = 0; i < inputFiles.size(); i++) {
@@ -297,13 +298,15 @@ int main(int iArgc, char* aszArgv[])
       bStatus = txtsrc->Open(inputFiles[i]);
       if (bStatus == false)
         return 1;
-      if (!txtsrc->ReadNextLine())
-        return 1;
-      if (!txtsrc->UpdateSimState(ClSimTimer::fSimElapsedTime))
-        return 1;
+
+      if (i == 0)
+        primarySrc = txtsrc;
     }
     break;
   } // end switch on input type
+
+  if (primarySrc == nullptr)
+    return 1;
 
 // Open output file
   switch (enOutputType)
@@ -342,7 +345,7 @@ int main(int iArgc, char* aszArgv[])
     // ---------------
 
     // Bluemax XLS input data
-    while (clSimState.fState["BM.0.AC_TIME"] < fBluemaxTime)
+    while (primarySrc->fRelTime + TIME_COMPARE_MARGIN < ClSimTimer::fSimElapsedTime)
     {
 
       switch (enInputType)
@@ -369,7 +372,7 @@ int main(int iArgc, char* aszArgv[])
       // Update XPlane state
       XPlaneUpdate(&clSimState);
       //printf("%.2f %.3f %.3f %.1f %3.0f %5.1f %5.1f\n", clSimState.fState["BM.0.actime"], clSimState.fState["BM.0.aclatd"], clSimState.fState["BM.0.aclond"], clSimState.fState["BM.0.acaltf"], clSimState.fState["BM.0.acktas"], clSimState.fState["BM.0.acthtad"], clSimState.fState["BM.0.acphid"]);
-      printf("%.2f %.3f %.3f %.1f %3.0f %5.1f %5.1f\n", clSimState.fState["BM.0.AC_TIME"], clSimState.fState["BM.0.AC_LAT"], clSimState.fState["BM.0.AC_LON"], clSimState.fState["BM.0.AC_ALT"], clSimState.fState["BM.0.AC_TAS"], clSimState.fState["BM.0.AC_PITCH"], clSimState.fState["BM.0.AC_ROLL"]);
+      //printf("%.2f %.3f %.3f %.1f %3.0f %5.1f %5.1f\n", clSimState.fState["BM.0.AC_TIME"], clSimState.fState["BM.0.AC_LAT"], clSimState.fState["BM.0.AC_LON"], clSimState.fState["BM.0.AC_ALT"], clSimState.fState["BM.0.AC_TAS"], clSimState.fState["BM.0.AC_PITCH"], clSimState.fState["BM.0.AC_ROLL"]);
 //Sleep(20);
 
     } // end while reading Bluemax XLS data
@@ -389,6 +392,8 @@ int main(int iArgc, char* aszArgv[])
 // ---------------
     if (clSimTimer_100ms.Expired())
     {
+      printf("%.2f %.3f %.3f %.1f %3.0f %5.1f %5.1f\n", clSimState.fState["BM.0.AC_TIME"], clSimState.fState["BM.0.AC_LAT"], clSimState.fState["BM.0.AC_LON"], clSimState.fState["BM.0.AC_ALT"], clSimState.fState["BM.0.AC_TAS"], clSimState.fState["BM.0.AC_PITCH"], clSimState.fState["BM.0.AC_ROLL"]);
+
       clSimTimer_100ms.FromPrev();
     } // end 100 msec / 10 Hz events
 
@@ -451,7 +456,6 @@ int main(int iArgc, char* aszArgv[])
 // -------------------------
 
     ClSimTimer::Tick();
-    fBluemaxTime = ClSimTimer::fSimElapsedTime;
   } // end while reading until done
 
 // Close files

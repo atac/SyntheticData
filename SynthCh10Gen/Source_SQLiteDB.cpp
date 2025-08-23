@@ -181,7 +181,7 @@ bool ClSource_SQLiteDB::UpdateSimState(double fSimElapsedTime)
     return false;
 
   // Return if simulation time is less than current data time from this source
-  if (fSimElapsedTime < fRelTime)
+  if (fSimElapsedTime + TIME_COMPARE_MARGIN < fRelTime)
     return true;
 
   // Get the individual column values

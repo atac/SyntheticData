@@ -6,6 +6,8 @@
 
 #include "GenerationControllerTypes.h"
 
+#define TIME_COMPARE_MARGIN 0.000002
+
 class ClSimTimer
 {
 public:
