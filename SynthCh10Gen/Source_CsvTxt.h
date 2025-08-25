@@ -45,7 +45,7 @@ public:
   virtual void    SetMapping(ConfigMapping map);
 
 protected:
-  void Init();
+  bool Init();
 
   bool ReadLineToBuffer(char* buf, size_t bufLen, fpos_t* lastPosition = nullptr);
   bool HasNumericData(CSV_FIELDS& values);

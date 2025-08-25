@@ -100,13 +100,25 @@ bool ClSource_CsvTxt::HasNumericData(CSV_FIELDS &values) {
 
 bool ClSource_CsvTxt::Open(std::string sFilename)
 {
-  const size_t        maxLength = 2000;
-  char                szLine[maxLength];   // Make sure this is big enough!
-  bool                bCsvStatus;
 
   hCsvInput = fopen(sFilename.c_str(), "r");
   if (hCsvInput == NULL)
     return false;
+
+  return Init();
+
+} // end Open()
+
+
+// ----------------------------------------------------------------------------
+
+// Read the header line, initialize the sim state, and otherwise get ready.
+
+bool ClSource_CsvTxt::Init()
+{
+  const size_t        maxLength = 2000;
+  char                szLine[maxLength];   // Make sure this is big enough!
+  bool                bCsvStatus;
 
   if (!ReadLineToBuffer(szLine, maxLength, nullptr))
     return false;
@@ -158,44 +170,28 @@ bool ClSource_CsvTxt::Open(std::string sFilename)
 
   fsetpos(hCsvInput, &lastLinePos); // reset position before line
 
-//    display_vector_contents(szLine, CsvFields);
+  // Step through all the header labels found
+  for (VECTOR_ITR itLabel = DataLabels.begin(); itLabel != DataLabels.end(); ++itLabel)
+  {
+    // Insert an initial placeholder into SimState map
+    // Note that it is assumed the data can be represented with a floating point. If this
+    // isn't the case it needs to be fixed in a derived class.
+    pclSimState->insert((*itLabel), -1.0);
+  } // end for all header labels
 
-  // Get the sim state variables ready
-  Init();
+  if (!sPrefix.empty())
+    pclSimState->insertReady(sPrefix);
 
-  return true;
+  // Get the first line of data and figure out the start time
+  fStartTime = 0.0;
+  ReadNextLine();
+  fStartTime = fRelTime;
 
-} // end Open()
+  // Since we are at the beginning of the data file reset the relative time to 0.0
+  fRelTime = 0.0;
 
-
-// ----------------------------------------------------------------------------
-
-// Read the header line, initialize the sim state, and otherwise get ready.
-
-void ClSource_CsvTxt::Init()
-    {
-    // Step through all the header labels found
-    for (VECTOR_ITR itLabel = DataLabels.begin(); itLabel != DataLabels.end(); ++itLabel)
-        {
-        // Insert an initial placeholder into SimState map
-        // Note that it is assumed the data can be represented with a floating point. If this
-        // isn't the case it needs to be fixed in a derived class.
-        pclSimState->insert((*itLabel),-1.0);
-        } // end for all header labels
-
-    if (!sPrefix.empty())
-      pclSimState->insertReady(sPrefix);
-
-    // Get the first line of data and figure out the start time
-    fStartTime = 0.0;
-    ReadNextLine();
-    fStartTime = fRelTime;
-
-    // Since we are at the beginning of the data file reset the relative time to 0.0
-    fRelTime = 0.0;
-
-    return;
-    }
+  return;
+}
 
 
 // ----------------------------------------------------------------------------
