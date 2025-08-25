@@ -14,7 +14,6 @@ GenerationController::GenerationController() {
 
   i106OutFileHandle = -1;
 
-  time.srcTime = 0.0;
   time.startSimClockTime = -1.0;
 
   programName = "";
@@ -62,7 +61,7 @@ bool GenerationController::UpdateSources() {
   bool sourceIsReady = false;
 
   for (auto s : *sources) {
-    if (s->UpdateSimState(time.srcTime))
+    if (s->UpdateSimState(ClSimTimer::fSimElapsedTime))
       sourceIsReady = true;
   }
 
@@ -100,7 +99,6 @@ void GenerationController::DoAction(ChannelAction chanAction) {
 
 void GenerationController::Tick() {
   ClSimTimer::Tick();
-  time.srcTime = ClSimTimer::fSimElapsedTime;
   time.currSimClockTime = time.startSimClockTime + ClSimTimer::fSimElapsedTime;
 }
 

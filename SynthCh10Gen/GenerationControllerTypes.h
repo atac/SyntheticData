@@ -109,7 +109,6 @@ public:
 };
 
 struct ControllerTime {
-  double srcTime;              // Nav source data time (seconds)
   double startSimClockTime;    // Starting simulation Date/Time
   double currSimClockTime;     // Current simulation Data/Time
   double nextPrintTime;
