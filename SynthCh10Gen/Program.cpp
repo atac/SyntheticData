@@ -16,6 +16,9 @@ bool StatusOk(ControllerStatus val) {
   case ControllerStatus::OPEN_SOURCE_FILE_FAILED:
     printf("error: Failed to open a data source file\n");
     break;
+  case ControllerStatus::INVALID_START_TIME:
+    printf("error: Invalid start time\n");
+    break;
   case ControllerStatus::SOURCES_DEPLETED:
     printf("Done\n");
     break;

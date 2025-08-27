@@ -131,6 +131,9 @@ ControllerStatus GenerationController::ReadConfig(string configFilepath) {
       return ControllerStatus::OPEN_SOURCE_FILE_FAILED;
   }
 
+  if (time.startSimClockTime < 0.0)
+    return ControllerStatus::INVALID_START_TIME;
+
   timeWriter->SetRelTime(ClSimTimer::lSimClockTicks, this->time.startSimClockTime);
 
   return ControllerStatus::OK;
