@@ -172,7 +172,8 @@ ControllerStatus GenerationController::AddDataChannel(ConfigChannel config) {  /
   }
 
   // get start time from source
-  time.startSimClockTime = source->fStartTime;
+  if (config.timeSource)
+    time.startSimClockTime = source->fStartTime;
 
   Rate framerate = config.pollRate;
   framerate.ConvertUnits(RateUnit::HERTZ);

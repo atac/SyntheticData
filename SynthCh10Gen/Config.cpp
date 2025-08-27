@@ -429,7 +429,7 @@ string Config::GenerateChannelName(int channelID, Ch10Channel::ChannelType type)
   return typestr + "in" + to_string(channelID);
 }
 
-void Config::CheckForTimeSource(ConfigChannel channel) {
+void Config::CheckForTimeSource(ConfigChannel& channel) {
   if (!timeSourceFound) {
     if (timeSourceChannel.size() == 0) {
       channel.timeSource = true;

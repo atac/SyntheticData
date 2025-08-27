@@ -75,7 +75,7 @@ private:
   void GenerateUnspecifiedChannelNames();
   string GenerateChannelName(int channelID, Ch10Channel::ChannelType type);
 
-  void CheckForTimeSource(ConfigChannel channel);
+  void CheckForTimeSource(ConfigChannel& channel);
 };
 
 struct ConfigDataSource
@@ -88,7 +88,11 @@ struct ConfigDataSource
 
 struct ConfigChannel 
 {
-  ConfigChannel(Ch10Channel::ChannelType type, int id) : type(type), id(id) { };
+  ConfigChannel(Ch10Channel::ChannelType type, int id) : type(type), id(id) 
+  { 
+    timeSource = false;
+    format = Ch10Channel::ChannelDataFormat::INVALID;
+  };
 
   bool timeSource;
   int id;
