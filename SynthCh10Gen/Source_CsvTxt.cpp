@@ -190,7 +190,7 @@ bool ClSource_CsvTxt::Init()
   // Since we are at the beginning of the data file reset the relative time to 0.0
   fRelTime = 0.0;
 
-  return;
+  return true;
 }
 
 
