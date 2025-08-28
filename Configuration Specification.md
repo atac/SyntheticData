@@ -1,4 +1,4 @@
-Configuration files for SynthCh10Gen provide the application with datasource and channel setup information for a single generation run. These files (see [examples](#example-configuration)) are in JSON format and have the following requirements.
+Configuration files for SynthCh10Gen provide the application with data source and channel setup information for a single generation run. These files (see [examples](#example-configuration)) are in JSON format and have the following requirements.
 
 
 ## Configuration File Description
@@ -29,12 +29,23 @@ Configuration files for SynthCh10Gen provide the application with datasource and
 
 |  Key  | Type  | Required | Description  | Default |
 | ------------ | ------------ | ------------ | ------------ | ------------ |
-| `pathname` | `string` | Yes | Pathname of a data file used as the source for packet generation. Depending on the source file type other properties may be required. (See below) | |
+| `pathname` | `string` | Yes | Pathname of a data file used as the source for packet generation. Additional properties may be required depending on the source file type. (See below) | |
 | `mapping` | `string` | | Name of a field name mapping set from the [mappings](#mappings-description) property | No mapping |
 
-|.sql|||||
+##### SQLite Database (.sql)
+|  Key  | Type  | Required | Description  | Default |
 |-|-|-|-|-|
 | `table` | `string` | Yes | Name of the DB table containing the desired source data columns |
+
+##### Comma-Separated Value (.csv)
+|  Key  | Type  | Required | Description  | Default |
+|-|-|-|-|-|
+|-|-|-|-|-|
+
+##### Tab-Separated Value (.txt)
+|  Key  | Type  | Required | Description  | Default |
+|-|-|-|-|-|
+|-|-|-|-|-|
 
 ### Rate Description
 
