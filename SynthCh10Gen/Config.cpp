@@ -356,6 +356,8 @@ SourceFileType Config::GetSourceFileTypeFromString(string pathname) {
     sft = SourceFileType::CSV;
   else if (ext == "sql")
     sft = SourceFileType::SQLITE;
+  else if (ext == "txt")
+    sft = SourceFileType::TSV;
 
   return sft;
 }

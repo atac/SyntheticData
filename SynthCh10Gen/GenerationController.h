@@ -7,6 +7,7 @@
 #include "Ch10Channel.h"
 
 #include "Source_CsvTxt.h"
+#include "Source_TsvTxt.h"
 #include "Source_SQLiteDB.h"
 
 #include "Ch10Format_PCM_CSV.h"

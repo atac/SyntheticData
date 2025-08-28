@@ -58,6 +58,7 @@
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Source_CsvTxt.cpp" />
     <ClCompile Include="Source_SQLiteDB.cpp" />
+    <ClCompile Include="Source_TsvTxt.cpp" />
     <ClCompile Include="TimeParser.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -104,6 +105,7 @@
     <ClInclude Include="Ch10Writer_Video.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="Source_SQLiteDB.h" />
+    <ClInclude Include="Source_TsvTxt.h" />
     <ClInclude Include="TimeParser.h" />
     <ClInclude Include="TmatsFormatter.h" />
     <ClInclude Include="Common.h" />

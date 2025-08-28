@@ -410,6 +410,13 @@ ClSource_Nav* GenerationController::CreateSource(ConfigDataSource config, int ch
     break;
   }
 
+  case SourceFileType::TSV:
+  {
+    ClSource_TsvTxt* tsvSrc = new ClSource_TsvTxt(simState, sourcePrefix);
+    src = dynamic_cast<ClSource_Nav*>(tsvSrc);
+    break;
+  }
+
   case SourceFileType::SQLITE:
   {
     ClSource_SQLiteDB* dbSrc = new ClSource_SQLiteDB(simState, sourcePrefix);

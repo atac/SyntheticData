@@ -140,6 +140,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TimeParser.cpp" />
+    <ClCompile Include="Source_TsvTxt.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\3rdParty\csv-parser\csv_parser.hpp">
@@ -296,5 +297,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TimeParser.h" />
+    <ClInclude Include="Source_TsvTxt.h" />
   </ItemGroup>
 </Project>
