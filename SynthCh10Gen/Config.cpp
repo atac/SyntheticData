@@ -265,7 +265,8 @@ ConfigDataSource Config::ParseDataSource(json source) {
   switch (ds.type) {
 
   case SourceFileType::SQLITE:
-    ds.properties.insert(pair("tableName", source["table"].get<string>()));
+    if (source.contains("table") && source["table"].is_string())
+      ds.properties.insert(pair("tableName", source["table"].get<string>()));
     break;
 
   default:
