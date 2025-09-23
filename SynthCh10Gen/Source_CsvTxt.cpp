@@ -100,6 +100,7 @@ bool ClSource_CsvTxt::HasNumericData(CSV_FIELDS &values) {
 
 bool ClSource_CsvTxt::Open(std::string sFilename)
 {
+  this->fileSize = filesystem::file_size(sFilename.c_str());
 
   hCsvInput = fopen(sFilename.c_str(), "r");
   if (hCsvInput == NULL)
@@ -156,19 +157,6 @@ bool ClSource_CsvTxt::Init()
       DataTypes = tmpFields;
   }
 
-  // Parse the first line's first field to determine time parsing format
-  if (!ReadLineToBuffer(szLine, maxLength, &lastLinePos))
-    return false;
-
-  tmpFields.clear();
-  bCsvStatus = ParseLine(szLine, tmpFields);
-  if (!bCsvStatus || tmpFields.empty())
-    return false;
-
-  timeParser.Init(tmpFields.at(0));
-  assert(timeParser.Valid());
-
-  fsetpos(hCsvInput, &lastLinePos); // reset position before line
 
   // Step through all the header labels found
   for (VECTOR_ITR itLabel = DataLabels.begin(); itLabel != DataLabels.end(); ++itLabel)
@@ -182,13 +170,70 @@ bool ClSource_CsvTxt::Init()
   if (!sPrefix.empty())
     pclSimState->insertReady(sPrefix);
 
-  // Get the first line of data and figure out the start time
-  fStartTime = 0.0;
-  ReadNextLine();
-  fStartTime = fRelTime;
 
-  // Since we are at the beginning of the data file reset the relative time to 0.0
-  fRelTime = 0.0;
+  if (!GetTimes())
+    return false;
+
+  ReadNextLine(); // prep the data for the first iteration
+
+  return true;
+}
+
+bool ClSource_CsvTxt::GetTimes() {
+  const size_t        maxLength = 2000;
+  char                tmp[maxLength];
+  char                szLine[maxLength];   // Make sure this is big enough!
+  fpos_t startPos;
+
+  // Parse the first line's first field to determine time parsing format
+  if (!ReadLineToBuffer(szLine, maxLength, &startPos))
+    return false;
+
+  CSV_FIELDS tmpFields;
+  bool status = ParseLine(szLine, tmpFields);
+  if (!status || tmpFields.empty())
+    return false;
+
+  timeParser.Init(tmpFields.at(0));
+  assert(timeParser.Valid());
+
+  // parse start time
+  if (!timeParser.Parse(tmpFields.at(0), fStartTime))
+    return false;
+
+  // Find time from last line
+  int offset = 1024;
+  if (offset > fileSize)
+    offset = fileSize;
+
+  bool foundTime = false;
+  while (!foundTime) { // every iteration, go back farther from eof
+    fseek(hCsvInput, fileSize - offset, SEEK_SET);
+
+    // Read lines until eof
+    // Last successful read is the last line
+    int linesRead = 0;
+    while (ReadLineToBuffer(tmp, maxLength))
+    {
+      memcpy(szLine, tmp, maxLength);
+      linesRead++;
+    }
+
+    if (linesRead > 1) { // this guarantees last line read is not partial
+      tmpFields.clear();
+      bool status = ParseLine(szLine, tmpFields);
+      if (status && !tmpFields.empty()) {
+        if (timeParser.Parse(tmpFields[0], fEndTime))
+          foundTime = true;
+        else
+          break; // failed to find time
+      }
+      else
+        break; // failed to find time
+    }
+  }
+
+  fsetpos(hCsvInput, &startPos);
 
   return true;
 }

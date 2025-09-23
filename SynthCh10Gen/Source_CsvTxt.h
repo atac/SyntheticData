@@ -10,6 +10,8 @@ can be used as-is but some important assumptions are made when using this class.
 
 #pragma once
 
+#include <filesystem>
+
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -33,6 +35,7 @@ protected:
 
 private:
   CSV_Parser      CsvParser;
+  uintmax_t fileSize;
 
 public:
 
@@ -46,6 +49,7 @@ public:
 
 protected:
   bool Init();
+  bool GetTimes();
 
   bool ReadLineToBuffer(char* buf, size_t bufLen, fpos_t* lastPosition = nullptr);
   bool HasNumericData(CSV_FIELDS& values);
