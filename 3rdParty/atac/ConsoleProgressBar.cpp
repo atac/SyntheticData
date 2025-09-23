@@ -20,12 +20,8 @@ ConsoleProgressBar::~ConsoleProgressBar()
 
 void ConsoleProgressBar::Init(double start, double end, int size)
 {
-  if (end - start > 0.0)
-    factor = 1 / (end - start);
-  else
-    factor = -1.0;
-
   offset = start;
+  factor = 1 / (end - start);
   progress = 0.0;
   percent = 0.0;
 
@@ -33,6 +29,8 @@ void ConsoleProgressBar::Init(double start, double end, int size)
 
   if (!ValidParameters())
     throw exception("Invalid progress bar parameters\n");
+
+  time = new TimeEstimator(5.0, 0.50);
 }
 
 bool ConsoleProgressBar::ValidParameters() {
@@ -56,6 +54,8 @@ bool ConsoleProgressBar::SetProgress(double value)
 
   percent = progress * 100;
 
+  time->SetProgress(progress);
+
   return false;
 }
 
@@ -76,6 +76,8 @@ string ConsoleProgressBar::GetBar()
   ss << string(barProgress, '=') << string(barRemaining, '-');
   ss << "| ";
   ss << setw(6) << fixed << setprecision(2) << percent << "%%  ";
+
+  ss << time->GetEstimate() << "  ";
 
   return ss.str();
 }

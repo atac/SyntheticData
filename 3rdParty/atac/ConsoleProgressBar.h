@@ -4,6 +4,8 @@
 #include <sstream>
 #include <iomanip>
 
+#include "TimeEstimator.h"
+
 using namespace std;
 
 #pragma once
@@ -11,6 +13,8 @@ class ConsoleProgressBar
 {
 private:
   static const unsigned int DEFAULT_SIZE = 50;
+
+  TimeEstimator *time;
 
 public:
 

@@ -66,6 +66,9 @@
     <ClCompile Include="..\3rdParty\atac\ConsoleProgressBar.cpp">
       <Filter>ProgressBar</Filter>
     </ClCompile>
+    <ClCompile Include="..\3rdParty\atac\TimeEstimator.cpp">
+      <Filter>ProgressBar</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\XPlaneControl\XPlaneControl.h">
@@ -102,6 +105,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\3rdParty\atac\ConsoleProgressBar.h">
+      <Filter>ProgressBar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\atac\TimeEstimator.h">
       <Filter>ProgressBar</Filter>
     </ClInclude>
   </ItemGroup>

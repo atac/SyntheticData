@@ -48,6 +48,9 @@
     <ClInclude Include="..\3rdParty\atac\ConsoleProgressBar.h">
       <Filter>ProgressBar</Filter>
     </ClInclude>
+    <ClInclude Include="..\3rdParty\atac\TimeEstimator.h">
+      <Filter>ProgressBar</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BM6toDB.cpp">
@@ -69,6 +72,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\3rdParty\atac\ConsoleProgressBar.cpp">
+      <Filter>ProgressBar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\atac\TimeEstimator.cpp">
       <Filter>ProgressBar</Filter>
     </ClCompile>
   </ItemGroup>
