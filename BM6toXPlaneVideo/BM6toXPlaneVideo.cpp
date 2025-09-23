@@ -58,6 +58,8 @@
 
 #include "Config.h"
 
+#include "ConsoleProgressBar.h"
+
 /*
  * Macros and definitions
  * ----------------------
@@ -85,6 +87,7 @@ enum EnInputType  { InputUnknown,  InputSqlite,  InputText  } ;
 enum EnOutputType { OutputNone,    OutputSqlite, OutputMpeg } ;
 
 bool redirectSql = false;
+bool verbose = false;
 
 /*
  * Data structures
@@ -170,6 +173,9 @@ int main(int iArgc, char* aszArgv[])
   ClSimState      clSimState;
   ClSource_Nav*   primarySrc;
 
+  ConsoleProgressBar progressBar;
+  double barStartTime;
+
   // Init some stuff
   szInFile[0] = '\0';
   szOutFile[0] = '\0';
@@ -187,6 +193,10 @@ int main(int iArgc, char* aszArgv[])
 
     case '-':
       switch (aszArgv[iArgIdx][1]) {
+
+      case 'v':
+        verbose = true;
+        break;
 
       case 'd':                   // Input database file
         if (enInputType != InputUnknown)
@@ -308,6 +318,17 @@ int main(int iArgc, char* aszArgv[])
   if (primarySrc == nullptr)
     return 1;
 
+  // Initialize progress bar
+  barStartTime = primarySrc->fStartTime;
+  try {
+    progressBar = ConsoleProgressBar(barStartTime, primarySrc->fEndTime, 80);
+    progressBar.SetProgress(barStartTime);
+  }
+  catch (exception ex) {
+    printf(ex.what());
+    return 1;
+  }
+
 // Open output file
   switch (enOutputType)
   {
@@ -392,7 +413,8 @@ int main(int iArgc, char* aszArgv[])
 // ---------------
     if (clSimTimer_100ms.Expired())
     {
-      printf("%.2f %.3f %.3f %.1f %3.0f %5.1f %5.1f\n", clSimState.fState["BM.0.AC_TIME"], clSimState.fState["BM.0.AC_LAT"], clSimState.fState["BM.0.AC_LON"], clSimState.fState["BM.0.AC_ALT"], clSimState.fState["BM.0.AC_TAS"], clSimState.fState["BM.0.AC_PITCH"], clSimState.fState["BM.0.AC_ROLL"]);
+      if (verbose)
+        printf("%.2f %.3f %.3f %.1f %3.0f %5.1f %5.1f\n", clSimState.fState["BM.0.AC_TIME"], clSimState.fState["BM.0.AC_LAT"], clSimState.fState["BM.0.AC_LON"], clSimState.fState["BM.0.AC_ALT"], clSimState.fState["BM.0.AC_TAS"], clSimState.fState["BM.0.AC_PITCH"], clSimState.fState["BM.0.AC_ROLL"]);
 
       clSimTimer_100ms.FromPrev();
     } // end 100 msec / 10 Hz events
@@ -456,6 +478,15 @@ int main(int iArgc, char* aszArgv[])
 // -------------------------
 
     ClSimTimer::Tick();
+
+
+    // update progress bar
+    progressBar.SetProgress(barStartTime + ClSimTimer::fSimElapsedTime);
+    if (!verbose) {
+      string bar = "\r" + progressBar.GetBar();
+      printf(bar.data());
+    }
+
   } // end while reading until done
 
 // Close files
@@ -616,13 +647,15 @@ void XPlaneUpdate(ClSimState* pclSimState)
   {
     pclSimState->update("AC_geardown", false);
     XPlaneControl.SendCMND("sim/flight_controls/landing_gear_up");
-    printf("CMD Gear Up\n");
+    if (verbose)
+      printf("CMD Gear Up\n");
   }
   else if ((pclSimState->bState["AC_geardown"] == false) && (pclSimState->fState[prefix + "acgear"] > 60.0))
   {
     pclSimState->update("AC_geardown", true);
     XPlaneControl.SendCMND("sim/flight_controls/landing_gear_down");
-    printf("CMD Gear Down\n");
+    if (verbose)
+      printf("CMD Gear Down\n");
   }
 
   //XPlaneControl.SendDREF("", (float)pclSimState->fState[""]);
@@ -844,7 +877,8 @@ int FfmpegWrite(void* pUserData, uint8_t* pvDataBuffer, int iDataBufferSize)
   else
     _write(iOutFile, pvDataBuffer, iDataBufferSize);
 
-  printf("FfmpegWrite wrote %6d bytes  \n", iDataBufferSize);
+  if (verbose)
+    printf("FfmpegWrite wrote %6d bytes  \n", iDataBufferSize);
   assert((iDataBufferSize % 188) == 0);
   return iDataBufferSize;
 }
@@ -882,6 +916,7 @@ void vUsage(void)
   printf("\nBM6toXPlaneVideo  " __DATE__ " " __TIME__ "\n");
   printf("Drive XPlane with BlueMax nav data and record a video\n");
   printf("Usage: BM6toXPlaneVideo [flags]\n");
+  printf("   -v           Verbose output (disables console progress bar)");
   printf("   -d filename  Input database file name    \n");
   printf("   -t filename  Input text file name        \n");
   printf("   -D filename  Output database file name   \n");

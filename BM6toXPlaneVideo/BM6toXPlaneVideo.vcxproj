@@ -72,7 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>..\3rdParty\SQLite;..\3rdParty\json;..\3rdParty\csv-parser;..\3rdParty\ffmpeg\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\3rdParty\atac;..\3rdParty\SQLite;..\3rdParty\json;..\3rdParty\csv-parser;..\3rdParty\ffmpeg\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\3rdParty\ffmpeg\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -80,8 +80,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\3rdParty\SQLite;..\3rdParty\ffmpeg-master-latest-win32-gpl-shared\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\3rdParty\ffmpeg-master-latest-win32-gpl-shared\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\3rdParty\atac;..\3rdParty\SQLite;..\3rdParty\json;..\3rdParty\csv-parser;..\3rdParty\ffmpeg\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\3rdParty\ffmpeg\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -161,6 +161,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\3rdParty\atac\ConsoleProgressBar.cpp" />
     <ClCompile Include="..\3rdParty\csv-parser\csv_parser.cpp" />
     <ClCompile Include="..\3rdParty\SQLite\sqlite3.c" />
     <ClCompile Include="..\SynthCh10Gen\Source_CsvTxt.cpp" />
@@ -176,6 +177,7 @@
     <ClCompile Include="MpegEncoder.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\3rdParty\atac\ConsoleProgressBar.h" />
     <ClInclude Include="..\3rdParty\csv-parser\csv_parser.hpp" />
     <ClInclude Include="..\3rdParty\SQLite\sqlite3.h" />
     <ClInclude Include="..\SynthCh10Gen\SimState.h" />

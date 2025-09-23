@@ -20,6 +20,9 @@
     <Filter Include="CSV Parser">
       <UniqueIdentifier>{01668873-25b6-4aa5-afa6-3c7e07b7c14d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ProgressBar">
+      <UniqueIdentifier>{6b31f68d-c6dc-4099-929c-0d95ff194929}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\3rdParty\csv-parser\csv_parser.cpp">
@@ -141,7 +144,9 @@
     </ClCompile>
     <ClCompile Include="TimeParser.cpp" />
     <ClCompile Include="Source_TsvTxt.cpp" />
-    <ClCompile Include="..\3rdParty\atac\ConsoleProgressBar.cpp" />
+    <ClCompile Include="..\3rdParty\atac\ConsoleProgressBar.cpp">
+      <Filter>ProgressBar</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\3rdParty\csv-parser\csv_parser.hpp">
@@ -299,6 +304,8 @@
     </ClInclude>
     <ClInclude Include="TimeParser.h" />
     <ClInclude Include="Source_TsvTxt.h" />
-    <ClInclude Include="..\3rdParty\atac\ConsoleProgressBar.h" />
+    <ClInclude Include="..\3rdParty\atac\ConsoleProgressBar.h">
+      <Filter>ProgressBar</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

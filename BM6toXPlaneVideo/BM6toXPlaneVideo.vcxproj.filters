@@ -28,6 +28,9 @@
     <Filter Include="CSV Parser">
       <UniqueIdentifier>{0b48736c-4333-4af6-8bf1-fe025774932e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ProgressBar">
+      <UniqueIdentifier>{7dc33c59-5927-4d49-8e59-81e3fd5521da}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BM6toXPlaneVideo.cpp">
@@ -59,6 +62,9 @@
     </ClCompile>
     <ClCompile Include="..\SynthCh10Gen\Source_TsvTxt.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\atac\ConsoleProgressBar.cpp">
+      <Filter>ProgressBar</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -94,6 +100,9 @@
     </ClInclude>
     <ClInclude Include="..\SynthCh10Gen\Source_TsvTxt.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\atac\ConsoleProgressBar.h">
+      <Filter>ProgressBar</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
