@@ -40,6 +40,7 @@ private:
 
   void InitSimStateFields();
   void Init();
+  bool GetTimes();
 
   string tableName;
 };

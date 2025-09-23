@@ -107,6 +107,9 @@ void ClSource_SQLiteDB::Init()
   }
   sqlite3_finalize(pSqlStmt);
 
+  
+  GetTimes();
+
 
   // Select all the data from the BlueMax table and get ready to iterate through it.
   sSQL = "SELECT ";
@@ -119,10 +122,49 @@ void ClSource_SQLiteDB::Init()
     pSqlStmt = NULL;
   }
 
-  fStartTime = 0.0;
-  ReadNextLine();
-  fStartTime = fRelTime;
-  fRelTime = 0.0;
+  ReadNextLine(); // prep the data for the first iteration
+}
+
+bool ClSource_SQLiteDB::GetTimes()
+{
+  // Find first timestamp
+  string sql = "SELECT * from " + this->tableName + " ORDER BY RowNum ASC LIMIT 1;";
+  int iStatus = sqlite3_prepare_v2(pDB, sql.c_str(), -1, &pSqlStmt, NULL);
+  if (iStatus != SQLITE_OK)
+  {
+    printf("SQLite SELECT error - %s\n", sqlite3_errmsg(pDB));
+    return false;
+  }
+
+  iStatus = sqlite3_step(pSqlStmt);
+  if (iStatus != SQLITE_ROW)
+    return false;
+
+  // First column must be time
+  fStartTime = sqlite3_column_double(pSqlStmt, 1);
+
+  sqlite3_finalize(pSqlStmt);
+
+
+  // Find last timestamp
+  sql = "SELECT * from " + this->tableName + " ORDER BY RowNum DESC LIMIT 1;";
+  iStatus = sqlite3_prepare_v2(pDB, sql.c_str(), -1, &pSqlStmt, NULL);
+  if (iStatus != SQLITE_OK)
+  {
+    printf("SQLite SELECT error - %s\n", sqlite3_errmsg(pDB));
+    return false;
+  }
+
+  iStatus = sqlite3_step(pSqlStmt);
+  if (iStatus != SQLITE_ROW)
+    return false;
+
+  // First column must be time
+  fEndTime = sqlite3_column_double(pSqlStmt, 1);
+
+  sqlite3_finalize(pSqlStmt);
+
+  return true;
 }
 
 void ClSource_SQLiteDB::InitSimStateFields() 
