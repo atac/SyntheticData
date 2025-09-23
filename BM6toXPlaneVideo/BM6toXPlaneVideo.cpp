@@ -502,6 +502,8 @@ int main(int iArgc, char* aszArgv[])
   FfmpegClose();
   sqlite3_close(pDB);
 
+  printf("Done\n\n");
+
   return 0;
 }
 
