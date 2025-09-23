@@ -54,6 +54,8 @@ public:
   double              fStartTime;     // Data start clock time (time_t)
   double              fRelTime;       // Current data time offset (seconds) since fStartTime
 
+  bool timeSource;
+
   CSV_FIELDS DataLabels;
   CSV_FIELDS DataTypes;
 
