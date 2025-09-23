@@ -8,10 +8,10 @@ Config::Config(string configPathname) {
   if (Valid())
     ParseConfig();
 
-  configTime = time(nullptr);
-
   file->close();
   delete file;
+
+  configTime = time(nullptr);
 }
 
 void Config::Open(string pathname) {
@@ -26,7 +26,9 @@ void Config::ParseConfig() {
   try {
     config = json::parse(*file);
 
-    if (!ConfigIsValid())
+    valid = ConfigIsValid();
+
+    if (!Valid())
       return;
 
     ParseGeneralInfo();
@@ -119,8 +121,8 @@ bool Config::SourceIsValid(json source) {
   case SourceFileType::SQLITE:
   {
     auto t = source.find("table");
-    if (n == source.end()
-      || !n->is_string())
+    if (t == source.end()
+      || !t->is_string())
       return false;
     break;
   }
