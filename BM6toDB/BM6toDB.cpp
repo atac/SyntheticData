@@ -7,6 +7,7 @@
 
 #include "SimState.h"
 #include "Source_TsvTxt.h"
+#include "ConsoleProgressBar.h""
 
 #define SQLITE
 //#define HDF5
@@ -82,6 +83,18 @@ int main(int iArgc, char* aszArgv[])
 
   elapsedTime = pSource_BMNav->fRelTime;
 
+
+  ConsoleProgressBar progressBar;
+  try {
+    progressBar = ConsoleProgressBar(pSource_BMNav->fStartTime, pSource_BMNav->fEndTime);
+    progressBar.SetProgress(elapsedTime);
+  }
+  catch (exception ex) {
+    printf(ex.what());
+    return 1;
+  }
+
+
 #if 0
   // Get the list of available data items
   // BM/actime BM/aclatd BM/aclond BM/acaltf BM/acktas BM/acvifps BM/acvxi 
@@ -122,7 +135,7 @@ int main(int iArgc, char* aszArgv[])
       sSQL += ");";
   } // end while listing data labels
 
-  std::cout << sSQL << "\n";
+  std::cout << sSQL << "\n\n";
 
   iStatus = sqlite3_exec(pDB, sSQL.c_str(), NULL, NULL, NULL);
   if (iStatus != SQLITE_OK)
@@ -161,6 +174,8 @@ int main(int iArgc, char* aszArgv[])
   long            lRowIdx = 0;
   while (pSource_BMNav->UpdateSimState(elapsedTime) != false)
   {
+
+
     // Loop on individual data labels
     itDataLabel = std::begin(pSource_BMNav->DataLabels);
 #ifdef SQLITE
@@ -177,7 +192,7 @@ int main(int iArgc, char* aszArgv[])
         sSQL += ");";
 #endif
     } // end while listing data labels
-    std::cout << lRowIdx << std::endl;
+    //std::cout << lRowIdx << std::endl;
 #ifdef SQLITE
     iStatus = sqlite3_exec(pDB, sSQL.c_str(), NULL, NULL, NULL);
     if (iStatus != SQLITE_OK)
@@ -187,6 +202,12 @@ int main(int iArgc, char* aszArgv[])
     lRowIdx++;
 
     elapsedTime = pSource_BMNav->fRelTime;
+
+    // print progress
+    progressBar.SetProgress(elapsedTime);
+    string bar = "\r" + progressBar.GetBar();
+    printf(bar.data());
+
   } // end while reading BlueMax
 
 // Close data files and clean up
@@ -197,6 +218,8 @@ int main(int iArgc, char* aszArgv[])
 #endif
 
   pSource_BMNav->Close();
+
+  printf("Done\n");
 
   return 0;
 } // end main()

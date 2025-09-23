@@ -22,6 +22,9 @@
     <Filter Include="CSV Parser">
       <UniqueIdentifier>{ec637569-cc54-4a81-819a-dd4b8e2f3969}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ProgressBar">
+      <UniqueIdentifier>{7aff374d-88ac-49a8-a276-c25e0f88a01c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\SynthCh10Gen\SimState.h">
@@ -42,6 +45,9 @@
     <ClInclude Include="..\SynthCh10Gen\Source_TsvTxt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\3rdParty\atac\ConsoleProgressBar.h">
+      <Filter>ProgressBar</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BM6toDB.cpp">
@@ -61,6 +67,9 @@
     </ClCompile>
     <ClCompile Include="..\SynthCh10Gen\Source_TsvTxt.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\atac\ConsoleProgressBar.cpp">
+      <Filter>ProgressBar</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
