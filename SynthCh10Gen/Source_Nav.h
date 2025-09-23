@@ -52,6 +52,7 @@ public:
   std::string         sPrefix;        // Simulation state data label prefix to make it unique
   ClSimState*         pclSimState;    // Pointer to the simulation state 
   double              fStartTime;     // Data start clock time (time_t)
+  double              fEndTime;
   double              fRelTime;       // Current data time offset (seconds) since fStartTime
 
   bool timeSource;
@@ -85,5 +86,6 @@ public:
 protected:
   virtual void ApplyMapping()                         = 0; // Apply the mapping to the instance's labels
   virtual void ApplyPrefix()                          = 0; // Apply the data source prefix to the instance's labels (do not call before mapping)
+  virtual bool GetTimes()                             = 0; // Find the first and last time stamp in the source and assign to instance data
 };
 
