@@ -31,6 +31,8 @@
 #include "TmatsFormatter.h"
 #include "Config.h"
 
+#include "ConsoleProgressBar.h"
+
 using namespace std;  
 
 class GenerationController
@@ -40,6 +42,7 @@ class GenerationController
 
   ClSimState* simState;
   ControllerTime time;
+  ConsoleProgressBar * progressBar;
 
   vector<ClSource_Nav*>* sources;
   vector<Ch10Channel*>* channels;
@@ -98,6 +101,7 @@ private:
   void InitControllerObjects();
   int  InitOutputFile(string directory, string filename);
   void InitTimers();
+  void InitProgressBar();
 
   // ========================
 
@@ -109,6 +113,7 @@ private:
   void DoChannelActions(vector<ChannelAction>* chanActions);
   void DoAction(ChannelAction);
   void Tick(); // update the clocks
+  void UpdateProgressBar();
   // ===================
 };
 

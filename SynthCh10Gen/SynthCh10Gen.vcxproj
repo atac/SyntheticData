@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\3rdParty\atac\ConsoleProgressBar.cpp" />
     <ClCompile Include="..\3rdParty\csv-parser\csv_parser.cpp" />
     <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_1553f1.c" />
     <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_index.c" />
@@ -62,6 +63,7 @@
     <ClCompile Include="TimeParser.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\3rdParty\atac\ConsoleProgressBar.h" />
     <ClInclude Include="..\3rdParty\csv-parser\csv_parser.hpp" />
     <ClInclude Include="..\3rdParty\irig106lib\src\config.h" />
     <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_1553f1.h" />
@@ -176,7 +178,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\3rdParty\SQLite;$(IncludePath)</IncludePath>
+    <IncludePath>..\3rdParty\json;..\3rdParty\csv-parser;..\3rdParty\SQLite;..\3rdParty\irig106lib\src;$(IncludePath)</IncludePath>
     <IntDir>CSV\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -192,10 +194,14 @@
       <PreprocessorDefinitions>_USE_32BIT_TIME_T;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>Default</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>..\3rdParty\atac;..\XPlaneControl;..\3rdParty\irig106lib\src;..\3rdParty\boost_1_75_0;..\3rdParty\SQLite;..\3rdParty\csv-parser;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -206,13 +212,16 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>COMPILE_CSV;_USE_32BIT_TIME_T;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\XPlaneControl;..\3rdParty\irig106lib\src;..\3rdParty\boost_1_75_0;..\3rdParty\SQLite;..\3rdParty\csv-parser;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\3rdParty\atac;..\XPlaneControl;..\3rdParty\irig106lib\src;..\3rdParty\boost_1_75_0;..\3rdParty\SQLite;..\3rdParty\csv-parser;..\3rdParty\atac;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

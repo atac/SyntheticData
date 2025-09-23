@@ -7,6 +7,7 @@
 
 
 GenerationController::GenerationController() {
+  progressBar = nullptr;
   simState = nullptr;
   sources = nullptr;
   channels = nullptr;
@@ -20,6 +21,9 @@ GenerationController::GenerationController() {
 }
 
 GenerationController::~GenerationController() {
+  if (progressBar != nullptr)
+    delete progressBar;
+
   if (simState != nullptr)
     delete simState;
 
@@ -45,6 +49,15 @@ ControllerStatus GenerationController::Init(string configPathname) {
   timeChannel->PushData(simState, ClSimTimer::lSimClockTicks);
   timeChannel->CommitPacket();
 
+  try {
+    InitProgressBar();
+    UpdateProgressBar();
+  }
+  catch (exception ex) {
+    printf(ex.what());
+    result = ControllerStatus::INVALID_PROGRESS_PARAMETERS;
+  }
+
   return result;
 }
 
@@ -53,6 +66,8 @@ ControllerStatus GenerationController::Fire() {
     return ControllerStatus::SOURCES_DEPLETED;
   PollTimers();
   Tick();
+
+  UpdateProgressBar();
 
   return ControllerStatus::OK;
 }
@@ -100,6 +115,13 @@ void GenerationController::DoAction(ChannelAction chanAction) {
 void GenerationController::Tick() {
   ClSimTimer::Tick();
   time.currSimClockTime = time.startSimClockTime + ClSimTimer::fSimElapsedTime;
+}
+
+void GenerationController::UpdateProgressBar()
+{
+  progressBar->SetProgress(time.currSimClockTime);
+  string bar = "\r" + progressBar->GetBar();
+  printf(bar.data());
 }
 
 void GenerationController::InitTimers() {
@@ -163,6 +185,18 @@ int GenerationController::InitOutputFile(string directory, string filename) {
   }
 
   return 0;
+}
+
+void GenerationController::InitProgressBar() {
+  double startTime = this->time.startSimClockTime;
+  double endTime = 0.0;
+
+  for (auto src : (*this->sources)) {
+    if (src->fEndTime > endTime)
+      endTime = src->fEndTime;
+  }
+
+  progressBar = new ConsoleProgressBar(startTime, endTime);
 }
 
 ControllerStatus GenerationController::AddDataChannel(ConfigChannel config) {  // FOREACH SOURCE
