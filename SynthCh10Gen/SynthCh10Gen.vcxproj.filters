@@ -150,6 +150,7 @@
     <ClCompile Include="..\3rdParty\atac\TimeEstimator.cpp">
       <Filter>ProgressBar</Filter>
     </ClCompile>
+    <ClCompile Include="ControllerState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\3rdParty\csv-parser\csv_parser.hpp">
@@ -313,5 +314,6 @@
     <ClInclude Include="..\3rdParty\atac\TimeEstimator.h">
       <Filter>ProgressBar</Filter>
     </ClInclude>
+    <ClInclude Include="ControllerState.h" />
   </ItemGroup>
 </Project>
