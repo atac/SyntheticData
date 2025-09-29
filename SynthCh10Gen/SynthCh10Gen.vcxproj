@@ -58,6 +58,7 @@
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="ControllerState.cpp" />
     <ClCompile Include="GenerationController.cpp" />
+    <ClCompile Include="Logger.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Source_CsvTxt.cpp" />
     <ClCompile Include="Source_SQLiteDB.cpp" />
@@ -110,6 +111,8 @@
     <ClInclude Include="Ch10Writer_Video.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="ControllerState.h" />
+    <ClInclude Include="Logger.h" />
+    <ClInclude Include="LoggerTypes.h" />
     <ClInclude Include="Source_SQLiteDB.h" />
     <ClInclude Include="Source_TsvTxt.h" />
     <ClInclude Include="TimeParser.h" />

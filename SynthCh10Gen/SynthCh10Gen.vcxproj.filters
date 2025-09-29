@@ -151,6 +151,7 @@
       <Filter>ProgressBar</Filter>
     </ClCompile>
     <ClCompile Include="ControllerState.cpp" />
+    <ClCompile Include="Logger.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\3rdParty\csv-parser\csv_parser.hpp">
@@ -315,5 +316,7 @@
       <Filter>ProgressBar</Filter>
     </ClInclude>
     <ClInclude Include="ControllerState.h" />
+    <ClInclude Include="Logger.h" />
+    <ClInclude Include="LoggerTypes.h" />
   </ItemGroup>
 </Project>
