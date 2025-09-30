@@ -1,107 +1,256 @@
 #include "ConfigValidator.h"
 
 
-bool ConfigValidator::Validate(json& config) {
+bool ConfigValidator::Validate(json& config, Logger& logger) {
+  state.logger = &logger;
+  state.timeSourceChannelName = "";
+  state.foundTimeSourceChannel = false;
+  state.foundValidChannel = false;
+  state.foundInvalidChannel = false;
+
+  bool valid = true;
+
   try {
-    ConfigIsValid(config);
+    valid = ConfigIsValid(config);
   }
   catch (json::exception e) {
     printf("Error parsing JSON: \n%s\n", e.what());
-    return false;
+    valid = false;
   }
 
-  return true;
+  state.logger = nullptr;
+
+  return valid;
 }
 
-bool ConfigValidator::ConfigIsValid(json& config) {
+bool ConfigValidator::ConfigIsValid(json& config)
+{
+  bool valid = true;
+
+  if (!GeneralInfoIsValid(config)) {
+    LogError("Error found in the general info configuration");
+    valid = false;
+  }
+
+  if (!ChannelsAreValid(config)) {
+    LogError("Error found in one or more channel configurations");
+    valid = false;
+  }
+
+  if (valid)
+    LogInfo("Validation successful");
+
+  return valid;
+}
+
+bool ConfigValidator::GeneralInfoIsValid(json& config) {
   bool valid = true;
 
   json outDir = config["outputDirectory"];
-
-  if (outDir.is_null() || !outDir.is_string())
+  if (outDir.is_null()) {
+    LogError("'outputDirectory' property not found");
     valid = false;
-
-  if (valid) {
-    valid = filesystem::exists(outDir.get<string>());
+  }
+  else if (!outDir.is_string()) {
+    LogError("'outputDirectory' property value is not a string");
+    valid = false;
+  }
+  else if (!filesystem::exists(outDir.get<string>())) {
+    LogError("Output directory does not exist on the filesystem");
+    valid = false;
   }
 
-  if (valid) {
-    bool foundValidChannel = false;
+json timeSource = config["timeSource"];
+if (!timeSource.is_null() && timeSource.is_string()) {
+  state.timeSourceChannelName = timeSource.get<string>();
+  transform(
+    state.timeSourceChannelName.begin(),
+    state.timeSourceChannelName.end(),
+    state.timeSourceChannelName.begin(),
+    ::tolower
+  );
+}
 
-    json& chanList = config["channels"];
+return valid;
+}
 
-    if (!chanList.is_null() && chanList.is_array() && chanList.size() > 0) {
-      for (auto& c : chanList) {
-        if (ChannelIsValid(c)) {
-          foundValidChannel = true;
-          c[validProperty] = "true";
-        }
-        else
-          c[validProperty] = "false";
-      }
+bool ConfigValidator::ChannelsAreValid(json& config) {
+  bool valid = true;
+
+  json& chanList = config["channels"];
+
+  if (chanList.is_null()) {
+    LogError("Channels array not found");
+    valid = false;
+  }
+  else if (!chanList.is_array()) {
+    LogError("'channels' property value is not an array");
+    valid = false;
+  }
+  else if (chanList.size() <= 0) {
+    LogError("No channels found");
+    valid = false;
+  }
+  else {
+    for (auto& c : chanList) {
+      if (ChannelIsValid(c))
+        state.foundValidChannel = true;
+      else
+        state.foundInvalidChannel = true;
     }
 
-    if (!foundValidChannel)
+    if (!state.foundValidChannel) {
+      LogError("No valid channels found");
       valid = false;
+    }
+    else {
+      if (state.foundInvalidChannel) {
+        LogError("One or more channels are not valid");
+        valid = false;
+      }
+
+      if (!state.foundTimeSourceChannel) {
+        LogError("No valid channel was found that matches the time source designation");
+        valid = false;
+      }
+    }
   }
 
   return valid;
 }
 
 bool ConfigValidator::ChannelIsValid(json& channel) {
-  auto t = channel.find("type");
-  if (t == channel.end()
-    || !t->is_string()
-    || GetChannelTypeFromString(t->get<string>()) == Ch10Channel::ChannelType::INVALID)
-    return false;
+  bool valid = true;
 
-  auto f = channel.find("format");
-  if (f != channel.end() &&
-    (!f->is_string() ||
-      GetChannelDataFormatFromString(f->get<string>()) == Ch10Channel::ChannelDataFormat::INVALID
-      )
-    )
-    return false;
-
-  auto s = channel.find("source");
-  if (s == channel.end() || !s->is_object())
-    return false;
-
-  if (!SourceIsValid(*s)) {
-    (*s)[validProperty] = "false";
-    return false;
+  string name = "";
+  string nameLC = "";
+  json n = channel["name"];
+  if (!n.is_null() && n.is_string()) {
+    name = n.get<string>();
+    nameLC = name;
+    transform(nameLC.begin(), nameLC.end(), nameLC.begin(), ::tolower);
+    name = "(" + n.get<string>() + ")";
   }
 
-  (*s)[validProperty] = "true";
+  auto t = channel.find("type");
+  if (t == channel.end()) {
+    LogError("Channel " + name + " 'type' property not found");
+    valid = false;
+  }
+  else if (!t->is_string()) {
+    LogError("Channel " + name + " 'type' property is not a string");
+    valid = false;
+  }
+  else if (GetChannelTypeFromString(t->get<string>()) == Ch10Channel::ChannelType::INVALID) {
+    LogError("Channel " + name + " type invalid");
+    valid = false;
+  }
+
+  auto f = channel.find("format");
+  if (f != channel.end()) {
+    if (!f->is_string()) {
+      LogError("Channel " + name + " 'format' property is not a string");
+      valid = false;
+    }
+    else if (GetChannelDataFormatFromString(f->get<string>()) == Ch10Channel::ChannelDataFormat::INVALID) {
+      LogError("Channel " + name + " format invalid");
+      valid = false;
+    }
+  }
+
+  json& s = channel["source"];
+  if (s.is_null()) {
+    LogError("Channel " + name + " 'source' property not found");
+    valid = false;
+  }
+  else if (!s.is_object()) {
+    LogError("Channel " + name + " 'source' property is not an object");
+    valid = false;
+  }
+  else {
+    if (!SourceIsValid(s)) {
+      LogError("Channel " + name + " source is not valid");
+      valid = false;
+    }
+  }
+
+  if (valid) {
+    channel[validProperty] = "true";
+
+    if (!state.foundTimeSourceChannel) {
+      if (state.timeSourceChannelName.size() == 0) // then first valid channel is time source
+        state.foundTimeSourceChannel = true;
+      else {
+        if (state.timeSourceChannelName == nameLC)
+          state.foundTimeSourceChannel = true;
+      }
+    }
+  }
+  else
+    channel[validProperty] = "false";
+
   return true;
 }
 
 bool ConfigValidator::SourceIsValid(json& source) {
+  bool valid = true;
+
   auto n = source.find("pathname");
-  if (n == source.end()
-    || !n->is_string())
-    return false;
-
-  SourceFileType sft = GetSourceFileTypeFromString(n->get<string>());
-  if (sft == SourceFileType::INVALID)
-    return false;
-
-  switch (sft)
-  {
-  case SourceFileType::SQLITE:
-  {
-    auto t = source.find("table");
-    if (t == source.end()
-      || !t->is_string())
-      return false;
-    break;
+  if (n == source.end()) {
+    LogError("Source 'pathname' property not found");
+    valid = false;
   }
-  default:
-    break;
+  else if (!n->is_string()) {
+    LogError("Source 'pathname' property is not a string");
+    valid = false;
+  }
+  else {
+    SourceFileType sft = GetSourceFileTypeFromString(n->get<string>());
+    if (sft == SourceFileType::INVALID) {
+      LogError("Source file type is invalid");
+      valid = false;
+    }
+    else {
+      switch (sft)
+      {
+      case SourceFileType::SQLITE:
+      {
+        auto t = source.find("table");
+        if (t == source.end()) {
+          LogError("Source file type is SQLite DB, but no 'table' property was defined");
+          valid = false;
+        }
+        else if (!t->is_string()) {
+          LogError("Source file type is SQLite DB, but 'table' property is not a string");
+          valid = false;
+        }
+        break;
+      }
+      default:
+        break;
+      }
+
+      if (!filesystem::exists(n->get<string>())) {
+        LogError("Source file does not exist on the filesystem: " + n->get<string>());
+        valid = false;
+      }
+    }
   }
 
-  if (!filesystem::exists(n->get<string>()))
-    return false;
+  if (valid)
+    source[validProperty] = "true";
+  else
+    source[validProperty] = "false";
 
-  return true;
+  return valid;
+}
+
+
+
+void ConfigValidator::LogError(string msg) {
+  state.logger->Add(CONFIG_ERROR, msg);
+}
+
+void ConfigValidator::LogInfo(string msg) {
+  state.logger->Add(CONFIG_INFO, msg);
 }
