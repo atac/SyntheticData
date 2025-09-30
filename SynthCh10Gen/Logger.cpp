@@ -27,4 +27,6 @@ string Logger::ToString() {
     os << i << "  " << t.tm_hour << ":" << t.tm_min << ":" << t.tm_sec << endl;
     os << log[i].second << endl << endl;
   }
+
+  return os.str();
 }

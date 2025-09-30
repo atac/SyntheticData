@@ -12,7 +12,8 @@ enum class CodeType : unsigned int {
   WARNING,
   ERROR
 };
-map<CodeType, string>codeTypeStringMap = {
+
+static const map<CodeType, string> codeTypeStringMap = {
   { CodeType::INFO, "INFO" },
   { CodeType::STATUS, "STATUS" },
   { CodeType::WARNING, "WARNING" },
@@ -25,10 +26,12 @@ public:
     : name(name), type(type), desc(description) {};
 
   inline CodeType GetType() { return type; }
+
   friend inline ostream& operator<<(ostream& os, const MessageCode& obj) {
     os << "(" << codeTypeStringMap.at(obj.type) << ") " << obj.name;
     if (!obj.desc.empty())
       os << ": " << obj.desc;
+    return os;
   }
 
 private:
@@ -47,6 +50,7 @@ public:
   friend inline ostream& operator<<(ostream& os, const LogItem& obj) {
     os << obj.code << endl;
     os << obj.msg;
+    return os;
   }
 private:
   MessageCode code;
