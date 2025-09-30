@@ -7,16 +7,12 @@
 #include <ctime>
 
 #include "GenerationControllerTypes.h"
-
-#include "nlohmann/json.hpp"
+#include "ConfigLib.h"
+#include "ConfigValidator.h"
 
 using namespace std;
-using namespace nlohmann;
+using namespace GenerationConfig;
 
-
-struct ConfigDataSource;
-struct ConfigChannel;
-typedef map<string, string> ConfigMapping;
 
 
 class Config
@@ -48,9 +44,7 @@ private:
 
   void Open(string pathname);
 
-  bool ConfigIsValid();
-  bool ChannelIsValid(json channel);
-  bool SourceIsValid(json source);
+  bool ChannelIsValid(json& channel);
 
   void ParseConfig();
 
@@ -62,10 +56,6 @@ private:
   ConfigDataSource ParseDataSource(json source);
   Rate ParseRate(json rate);
 
-  Ch10Channel::ChannelType GetChannelTypeFromString(string typeStr);
-  Ch10Channel::ChannelDataFormat GetChannelDataFormatFromString(string formatStr);
-  RateUnit GetRateUnitFromString(string unitStr);
-  SourceFileType GetSourceFileTypeFromString(string pathname);
   ConfigMapping GetMappingByName(string mapName);
 
   string GenerateProgramName();
@@ -76,30 +66,4 @@ private:
   string GenerateChannelName(int channelID, Ch10Channel::ChannelType type);
 
   void CheckForTimeSource(ConfigChannel& channel);
-};
-
-struct ConfigDataSource
-{
-  string pathname;
-  SourceFileType type;
-  ConfigMapping mapping;
-  map<string, string> properties;
-};
-
-struct ConfigChannel 
-{
-  ConfigChannel(Ch10Channel::ChannelType type, int id) : type(type), id(id) 
-  { 
-    timeSource = false;
-    format = Ch10Channel::ChannelDataFormat::INVALID;
-  };
-
-  bool timeSource;
-  int id;
-  Ch10Channel::ChannelType type;
-  Ch10Channel::ChannelDataFormat format;
-  string name;
-  ConfigDataSource dataSource;
-  Rate pollRate;
-  Rate packetRate;
 };

@@ -26,7 +26,8 @@ void Config::ParseConfig() {
   try {
     config = json::parse(*file);
 
-    valid = ConfigIsValid();
+    ConfigValidator& v = ConfigValidator::GetValidator();
+    valid = v.Validate(config);
 
     if (!Valid())
       return;
@@ -39,101 +40,6 @@ void Config::ParseConfig() {
     valid = false;
     printf("%s\n", e.what());
   }
-}
-
-bool Config::ConfigIsValid() {
-  bool valid = true;
-
-  try {
-    json outDir = config["outputDirectory"];
-
-    if (outDir.is_null() || !outDir.is_string())
-      valid = false;
-
-    if (valid) {
-      valid = filesystem::exists(outDir.get<string>());
-    }
-
-    if (valid) {
-      bool foundValidChannel = false;
-
-      json chanList = config["channels"];
-
-      if (!chanList.is_null() && chanList.is_array() && chanList.size() > 0) {
-        for (auto c : chanList) {
-          if (ChannelIsValid(c)) {
-            foundValidChannel = true;
-            break;
-          }
-        }
-      }
-
-      if (!foundValidChannel)
-        valid = false;
-    }
-
-  }
-  catch (json::exception e) {
-    printf("Error parsing JSON: \n%s\n", e.what());
-    valid = false;
-  }
-
-  return valid;
-}
-
-bool Config::ChannelIsValid(json channel) {
-  auto t = channel.find("type");
-  if (t == channel.end() 
-    || !t->is_string()
-    || GetChannelTypeFromString(t->get<string>()) == Ch10Channel::ChannelType::INVALID)
-    return false;
-
-  auto f = channel.find("format");
-  if (f != channel.end() &&
-    (!f->is_string() ||
-      GetChannelDataFormatFromString(f->get<string>()) == Ch10Channel::ChannelDataFormat::INVALID
-      )
-    )
-    return false;
-
-  auto s = channel.find("source");
-  if (s == channel.end() || !s->is_object())
-    return false;
-
-  if (!SourceIsValid(*s))
-    return false;
-
-  return true;
-}
-
-bool Config::SourceIsValid(json source) {
-  auto n = source.find("pathname");
-  if (n == source.end()
-    || !n->is_string())
-    return false;
-
-  SourceFileType sft = GetSourceFileTypeFromString(n->get<string>());
-  if (sft == SourceFileType::INVALID)
-    return false;
-
-  switch (sft)
-  {
-  case SourceFileType::SQLITE:
-  {
-    auto t = source.find("table");
-    if (t == source.end()
-      || !t->is_string())
-      return false;
-    break;
-  }
-  default:
-    break;
-  }
-
-  if (!filesystem::exists(n->get<string>()))
-    return false;
-
-  return true;
 }
 
 void Config::ParseGeneralInfo() {
@@ -296,74 +202,6 @@ bool Config::Valid() {
   return valid;
 }
 
-Ch10Channel::ChannelType Config::GetChannelTypeFromString(string typeStr) {
-  Ch10Channel::ChannelType t = Ch10Channel::ChannelType::INVALID;
-
-  transform(typeStr.begin(), typeStr.end(), typeStr.begin(), ::tolower);
-
-  if (typeStr == "pcmin" || typeStr == "pcm")
-    t = Ch10Channel::ChannelType::PCM;
-  else if (typeStr == "429in" || typeStr == "a429" || typeStr == "arinc429" || typeStr == "arinc-429" || typeStr == "arinc_429")
-    t = Ch10Channel::ChannelType::A429;
-  else if (typeStr == "1553in" || typeStr == "1553" || typeStr == "mil-std-1553" || typeStr == "mil_std_1553" || typeStr == "ms1553")
-    t = Ch10Channel::ChannelType::MS1553;
-  else if (typeStr == "vidin" || typeStr == "video" || typeStr == "vid")
-    t = Ch10Channel::ChannelType::VIDEO;
-
-  return t;
-}
-
-Ch10Channel::ChannelDataFormat Config::GetChannelDataFormatFromString(string fmtStr) {
-  Ch10Channel::ChannelDataFormat f = Ch10Channel::ChannelDataFormat::INVALID;
-
-  transform(fmtStr.begin(), fmtStr.end(), fmtStr.begin(), ::tolower);
-
-  if (fmtStr == "unformatted")
-    f = Ch10Channel::ChannelDataFormat::UNFORMATTED;
-  else if (fmtStr == "custom")
-    f = Ch10Channel::ChannelDataFormat::CUSTOM;
-  else if (fmtStr == "synthformat1" || fmtStr == "synthfmt1")
-    f = Ch10Channel::ChannelDataFormat::SYNTHFORMAT1;
-
-  return f;
-}
-
-RateUnit Config::GetRateUnitFromString(string unitStr) {
-  RateUnit u = RateUnit::TIME_MS;
-
-  transform(unitStr.begin(), unitStr.end(), unitStr.begin(), ::tolower);
-
-  if (unitStr == "s" || unitStr == "sec" || unitStr == "seconds")
-    u = RateUnit::TIME_SEC;
-  else if (unitStr == "us" || unitStr == "micro" || unitStr == "microseconds")
-    u = RateUnit::TIME_US;
-  else if (unitStr == "rtc")
-    u = RateUnit::TIME_RTC;
-  else if (unitStr == "ns" || unitStr == "nano" || unitStr == "nanoseconds")
-    u = RateUnit::TIME_NS;
-  else if (unitStr == "hz" || unitStr == "hertz" || unitStr == "frequency")
-    u = RateUnit::HERTZ;
-
-  return u;
-}
-
-SourceFileType Config::GetSourceFileTypeFromString(string pathname) {
-  size_t dotIndex = pathname.find_last_of('.');
-  string ext = pathname.substr(dotIndex + 1);
-
-  transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
-
-  SourceFileType sft = SourceFileType::INVALID;
-
-  if (ext == "csv")
-    sft = SourceFileType::CSV;
-  else if (ext == "sql")
-    sft = SourceFileType::SQLITE;
-  else if (ext == "txt")
-    sft = SourceFileType::TSV;
-
-  return sft;
-}
 
 ConfigMapping Config::GetMappingByName(string mapName) {
   auto m = mappings.find(mapName);
@@ -371,6 +209,17 @@ ConfigMapping Config::GetMappingByName(string mapName) {
     return (m->second);
   
   return ConfigMapping();
+}
+
+bool Config::ChannelIsValid(json& channel) {
+  auto validProp = channel.find(ConfigValidator::validProperty);
+
+  assert(validProp != channel.end());
+
+  if (validProp->is_string())
+    return validProp->get<string>() == "true";
+
+  return false;
 }
 
 string Config::GenerateProgramName() {
