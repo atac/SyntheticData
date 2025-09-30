@@ -46,11 +46,13 @@ public:
 
   Ch10Channel* timeChannel;
 
+  string configLog;
+
 public:
   ControllerState();
   ~ControllerState();
 
-  ControllerStatus Configure(string configFilepath);
+  ControllerStatus Configure(string configFilepath, bool validateOnly = false);
 
 private:
 

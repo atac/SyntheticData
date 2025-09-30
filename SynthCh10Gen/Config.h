@@ -7,6 +7,7 @@
 #include <ctime>
 
 #include "GenerationControllerTypes.h"
+#include "Logger.h"
 #include "ConfigLib.h"
 #include "ConfigValidator.h"
 
@@ -28,6 +29,8 @@ public:
   string startTime;
 
   vector<ConfigChannel> channels;
+
+  Logger log;
 
 private:
   time_t configTime;

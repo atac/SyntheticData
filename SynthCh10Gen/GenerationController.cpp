@@ -19,10 +19,11 @@ GenerationController::~GenerationController() {
     delete progressBar;
 }
 
-ControllerStatus GenerationController::Init(string configPathname) {
+ControllerStatus GenerationController::Init(string configPathname, bool validateOnly) {
   state = new ControllerState();
-  ControllerStatus result = state->Configure(configPathname);
-  if (result != ControllerStatus::OK)
+  ControllerStatus result = state->Configure(configPathname, validateOnly);
+
+  if (result != ControllerStatus::OK || validateOnly)
     return result;
 
   try {

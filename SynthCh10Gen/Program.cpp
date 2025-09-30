@@ -1,6 +1,8 @@
 #include "GenerationController.h"
 
 
+bool validateFlag = false;
+
 
 bool StatusOk(ControllerStatus val) {
   if (val == ControllerStatus::OK)
@@ -38,6 +40,7 @@ void showHelpString() {
 
   [options]:
     --help          Show this help string
+    --validate      Show configuration validation information
 )";
 
   printf(helpstring.data());
@@ -58,6 +61,8 @@ bool processCLI(int argCount, char* args[]) {
     if (a[0] == '-') { // argument is an option
       if (a == "--help" || a == "-h")
         return false; // show help string and exit
+      if (a == "--validate" || a == "-v")
+        validateFlag = true;
     }
     else
     {
@@ -81,7 +86,7 @@ int main(int iArgc, char* aszArgv[])
   ControllerStatus result = ControllerStatus::OK;
 
   GenerationController* controller = new GenerationController();
-  result = controller->Init(cliParams.configPathname);
+  result = controller->Init(cliParams.configPathname, validateFlag);
   if (!StatusOk(result))
     return 1;
 

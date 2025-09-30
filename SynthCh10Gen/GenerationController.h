@@ -16,7 +16,7 @@ public:
   GenerationController();
   ~GenerationController();
 
-  ControllerStatus Init(string configPathname);
+  ControllerStatus Init(string configPathname, bool validateOnly = false);
   ControllerStatus Fire(); // run an iteration
 
 private:
