@@ -1,6 +1,6 @@
 #include "Logger.h"
 
-void Logger::Add(MessageCode& code, string msg) {
+void Logger::Add(const MessageCode& code, string msg) {
   Add(LogItem(code, msg));
 }
 
@@ -24,7 +24,7 @@ string Logger::ToString() {
   os << "Log Messages (" << LogSize() << ")\n\n";
   for (int i = 0; i < log.size(); i++) {
     struct tm t = *localtime(&log[i].first);
-    os << i << "  " << t.tm_hour << ":" << t.tm_min << ":" << t.tm_sec << endl;
+    os << i+1 << "  ";// << t.tm_hour << ":" << t.tm_min << ":" << t.tm_sec << endl;
     os << log[i].second << endl << endl;
   }
 

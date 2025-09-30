@@ -25,7 +25,7 @@ public:
   const MessageCode DEFAULT_WARNING = MessageCode("DEFAULT_WARNING", CodeType::WARNING, "");
   const MessageCode DEFAULT_ERROR = MessageCode("DEFAULT_ERROR", CodeType::ERROR, "");
     
-  void Add(MessageCode& code, string msg);
+  void Add(const MessageCode& code, string msg);
   void Add(LogItem msg);
 
   unsigned int LogSize();

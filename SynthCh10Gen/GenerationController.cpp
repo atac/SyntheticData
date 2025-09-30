@@ -23,6 +23,9 @@ ControllerStatus GenerationController::Init(string configPathname, bool validate
   state = new ControllerState();
   ControllerStatus result = state->Configure(configPathname, validateOnly);
 
+  if (state->configLog.size() != 0)
+    cout << "Validation " << state->configLog << endl;
+
   if (result != ControllerStatus::OK || validateOnly)
     return result;
 

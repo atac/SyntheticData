@@ -30,7 +30,7 @@ public:
 
   vector<ConfigChannel> channels;
 
-  Logger log;
+  Logger logger;
 
 private:
   time_t configTime;

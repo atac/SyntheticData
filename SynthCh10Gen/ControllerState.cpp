@@ -32,12 +32,11 @@ ControllerState::~ControllerState() {
 ControllerStatus ControllerState::Configure(string configFilepath, bool validateOnly) {
   Config config = Config(configFilepath);
 
-  configLog = config.log.ToString();
+  configLog = config.logger.ToString();
 
   if (!config.Valid())
     return ControllerStatus::INVALID_CONFIG;
   else if (validateOnly) {
-    cout << "Validation log:\n\n" << configLog << endl;
     return ControllerStatus::OK;
   }
 

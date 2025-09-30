@@ -27,7 +27,7 @@ void Config::ParseConfig() {
     config = json::parse(*file);
 
     ConfigValidator& v = ConfigValidator::GetValidator();
-    valid = v.Validate(config);
+    valid = v.Validate(config, logger);
 
     if (!Valid())
       return;
