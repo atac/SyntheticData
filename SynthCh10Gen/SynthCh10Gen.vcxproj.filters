@@ -23,6 +23,12 @@
     <Filter Include="ProgressBar">
       <UniqueIdentifier>{6b31f68d-c6dc-4099-929c-0d95ff194929}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Ch10 Writers">
+      <UniqueIdentifier>{dc921f1c-a9b9-412b-a690-0db0ba7f8532}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ch10 Formatters">
+      <UniqueIdentifier>{8648a0d6-405b-47c1-a052-65566d787c59}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\3rdParty\csv-parser\csv_parser.cpp">
@@ -73,36 +79,6 @@
     <ClCompile Include="..\3rdParty\irig106lib\src\irig106ch10.c">
       <Filter>irig106lib</Filter>
     </ClCompile>
-    <ClCompile Include="Ch10Format_1553_Nav.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Ch10Format_A429.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Ch10Format_A429_AR100.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Ch10Format_PCM_CSV.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Ch10Writer_1553.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Ch10Writer_A429.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Ch10Writer_Index.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Ch10Writer_PCM.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Ch10Writer_Time.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Ch10Writer_Video.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source_CsvTxt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -112,20 +88,11 @@
     <ClCompile Include="Ch10Channel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Ch10Format_Time.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GenerationController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\3rdParty\irig106lib\src\i106_decode_pcmf1.c">
       <Filter>irig106lib</Filter>
-    </ClCompile>
-    <ClCompile Include="Ch10Format_PCM_SynthFmt1.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Ch10Format_Index.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Config.cpp">
       <Filter>Source Files</Filter>
@@ -133,59 +100,79 @@
     <ClCompile Include="Program.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Ch10Formatter_1553.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Ch10Format_Video.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source_SQLiteDB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TimeParser.cpp" />
-    <ClCompile Include="Source_TsvTxt.cpp" />
     <ClCompile Include="..\3rdParty\atac\ConsoleProgressBar.cpp">
       <Filter>ProgressBar</Filter>
     </ClCompile>
     <ClCompile Include="..\3rdParty\atac\TimeEstimator.cpp">
       <Filter>ProgressBar</Filter>
     </ClCompile>
-    <ClCompile Include="ControllerState.cpp" />
-    <ClCompile Include="Logger.cpp" />
+    <ClCompile Include="TimeParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source_TsvTxt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Ch10Writer_Video.cpp">
+      <Filter>Ch10 Writers</Filter>
+    </ClCompile>
+    <ClCompile Include="Ch10Writer_1553.cpp">
+      <Filter>Ch10 Writers</Filter>
+    </ClCompile>
+    <ClCompile Include="Ch10Writer_A429.cpp">
+      <Filter>Ch10 Writers</Filter>
+    </ClCompile>
+    <ClCompile Include="Ch10Writer_Index.cpp">
+      <Filter>Ch10 Writers</Filter>
+    </ClCompile>
+    <ClCompile Include="Ch10Writer_PCM.cpp">
+      <Filter>Ch10 Writers</Filter>
+    </ClCompile>
+    <ClCompile Include="Ch10Writer_Time.cpp">
+      <Filter>Ch10 Writers</Filter>
+    </ClCompile>
+    <ClCompile Include="Ch10Formatter_1553.cpp">
+      <Filter>Ch10 Formatters</Filter>
+    </ClCompile>
+    <ClCompile Include="Ch10Format_1553_Nav.cpp">
+      <Filter>Ch10 Formatters</Filter>
+    </ClCompile>
+    <ClCompile Include="Ch10Format_A429.cpp">
+      <Filter>Ch10 Formatters</Filter>
+    </ClCompile>
+    <ClCompile Include="Ch10Format_A429_AR100.cpp">
+      <Filter>Ch10 Formatters</Filter>
+    </ClCompile>
+    <ClCompile Include="Ch10Format_Index.cpp">
+      <Filter>Ch10 Formatters</Filter>
+    </ClCompile>
+    <ClCompile Include="Ch10Format_PCM_CSV.cpp">
+      <Filter>Ch10 Formatters</Filter>
+    </ClCompile>
+    <ClCompile Include="Ch10Format_PCM_SynthFmt1.cpp">
+      <Filter>Ch10 Formatters</Filter>
+    </ClCompile>
+    <ClCompile Include="Ch10Format_Time.cpp">
+      <Filter>Ch10 Formatters</Filter>
+    </ClCompile>
+    <ClCompile Include="Ch10Format_Video.cpp">
+      <Filter>Ch10 Formatters</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfigValidator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ControllerState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Logger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\3rdParty\csv-parser\csv_parser.hpp">
       <Filter>CSV Parser</Filter>
-    </ClInclude>
-    <ClInclude Include="Ch10Format_1553_Nav.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Ch10Format_A429.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Ch10Format_A429_AR100.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Ch10Format_PCM_CSV.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Ch10Writer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Ch10Writer_1553.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Ch10Writer_A429.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Ch10Writer_Index.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Ch10Writer_PCM.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Ch10Writer_Time.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Common.h">
       <Filter>Header Files</Filter>
@@ -259,13 +246,7 @@
     <ClInclude Include="..\3rdParty\SQLite\sqlite3.h">
       <Filter>SQLite3</Filter>
     </ClInclude>
-    <ClInclude Include="Ch10Formatter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Ch10Channel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Ch10Format_Time.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GenerationController.h">
@@ -277,46 +258,98 @@
     <ClInclude Include="..\3rdParty\irig106lib\src\i106_decode_tmats_r.h">
       <Filter>irig106lib</Filter>
     </ClInclude>
-    <ClInclude Include="Ch10Format_PCM_SynthFmt1.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Ch10Format_Index.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TmatsFormatter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Ch10Formatter_PCM.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Ch10Formatter_1553.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Ch10Writer_Video.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Ch10Format_Video.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Ch10Formatter_Video.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source_SQLiteDB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TimeParser.h" />
-    <ClInclude Include="Source_TsvTxt.h" />
     <ClInclude Include="..\3rdParty\atac\ConsoleProgressBar.h">
       <Filter>ProgressBar</Filter>
     </ClInclude>
     <ClInclude Include="..\3rdParty\atac\TimeEstimator.h">
       <Filter>ProgressBar</Filter>
     </ClInclude>
-    <ClInclude Include="ControllerState.h" />
-    <ClInclude Include="Logger.h" />
-    <ClInclude Include="LoggerTypes.h" />
+    <ClInclude Include="TimeParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source_TsvTxt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Ch10Writer_Video.h">
+      <Filter>Ch10 Writers</Filter>
+    </ClInclude>
+    <ClInclude Include="Ch10Writer.h">
+      <Filter>Ch10 Writers</Filter>
+    </ClInclude>
+    <ClInclude Include="Ch10Writer_1553.h">
+      <Filter>Ch10 Writers</Filter>
+    </ClInclude>
+    <ClInclude Include="Ch10Writer_A429.h">
+      <Filter>Ch10 Writers</Filter>
+    </ClInclude>
+    <ClInclude Include="Ch10Writer_Index.h">
+      <Filter>Ch10 Writers</Filter>
+    </ClInclude>
+    <ClInclude Include="Ch10Writer_PCM.h">
+      <Filter>Ch10 Writers</Filter>
+    </ClInclude>
+    <ClInclude Include="Ch10Writer_Time.h">
+      <Filter>Ch10 Writers</Filter>
+    </ClInclude>
+    <ClInclude Include="Ch10Format_1553_Nav.h">
+      <Filter>Ch10 Formatters</Filter>
+    </ClInclude>
+    <ClInclude Include="Ch10Format_A429.h">
+      <Filter>Ch10 Formatters</Filter>
+    </ClInclude>
+    <ClInclude Include="Ch10Format_A429_AR100.h">
+      <Filter>Ch10 Formatters</Filter>
+    </ClInclude>
+    <ClInclude Include="Ch10Format_Index.h">
+      <Filter>Ch10 Formatters</Filter>
+    </ClInclude>
+    <ClInclude Include="Ch10Format_PCM_CSV.h">
+      <Filter>Ch10 Formatters</Filter>
+    </ClInclude>
+    <ClInclude Include="Ch10Format_PCM_SynthFmt1.h">
+      <Filter>Ch10 Formatters</Filter>
+    </ClInclude>
+    <ClInclude Include="Ch10Format_Time.h">
+      <Filter>Ch10 Formatters</Filter>
+    </ClInclude>
+    <ClInclude Include="Ch10Format_Video.h">
+      <Filter>Ch10 Formatters</Filter>
+    </ClInclude>
+    <ClInclude Include="Ch10Formatter.h">
+      <Filter>Ch10 Formatters</Filter>
+    </ClInclude>
+    <ClInclude Include="Ch10Formatter_1553.h">
+      <Filter>Ch10 Formatters</Filter>
+    </ClInclude>
+    <ClInclude Include="Ch10Formatter_PCM.h">
+      <Filter>Ch10 Formatters</Filter>
+    </ClInclude>
+    <ClInclude Include="Ch10Formatter_Video.h">
+      <Filter>Ch10 Formatters</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigLib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigValidator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ControllerState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LoggerTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
