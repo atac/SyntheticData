@@ -52,7 +52,7 @@ struct CLIParams {
 } cliParams;
 
 bool processCLI(int argCount, char* args[]) {
-  if (argCount != 2)
+  if (argCount < 2 || argCount > 3)
     return false;
 
   for (int i = 1; i < argCount; i++) {
@@ -61,14 +61,16 @@ bool processCLI(int argCount, char* args[]) {
     if (a[0] == '-') { // argument is an option
       if (a == "--help" || a == "-h")
         return false; // show help string and exit
-      if (a == "--validate" || a == "-v")
+      if (a == "--validate" || a == "-v") {
         validateFlag = true;
+      }
     }
     else
     {
-      if (i == 1) { // expect configuration pathname
+      if (i == argCount - 1) // expect configuration pathname
         cliParams.configPathname = a;
-      }
+      else
+        return false;
     }
   }
 
@@ -87,7 +89,7 @@ int main(int iArgc, char* aszArgv[])
 
   GenerationController* controller = new GenerationController();
   result = controller->Init(cliParams.configPathname, validateFlag);
-  if (!StatusOk(result))
+  if (!StatusOk(result) || validateFlag)
     return 1;
 
   while (StatusOk(result)) {

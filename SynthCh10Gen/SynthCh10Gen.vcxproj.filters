@@ -5,9 +5,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{d2eaafa8-3900-460d-8ac6-b4c1579f69df}</UniqueIdentifier>
-    </Filter>
     <Filter Include="irig106lib">
       <UniqueIdentifier>{b2f14781-dc2e-4c4c-857b-1eef71732aca}</UniqueIdentifier>
     </Filter>
@@ -28,6 +25,9 @@
     </Filter>
     <Filter Include="Ch10 Formatters">
       <UniqueIdentifier>{8648a0d6-405b-47c1-a052-65566d787c59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{d2eaafa8-3900-460d-8ac6-b4c1579f69df}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

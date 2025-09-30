@@ -21,7 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SynthCh10Gen-CSV", "SynthCh10Gen\SynthCh10Gen_CSV.vcxproj", "{0467B76C-86FC-470A-B495-C19885FE900D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SynthCh10Gen-All", "SynthCh10Gen\SynthCh10Gen.vcxproj", "{4D298FBB-1A45-4FC4-9318-2CBD54F5939B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SynthCh10Gen", "SynthCh10Gen\SynthCh10Gen.vcxproj", "{4D298FBB-1A45-4FC4-9318-2CBD54F5939B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,7 +48,6 @@ Global
 		{266F24EF-4545-4B10-B415-72644BB5D029}.Debug|x64.ActiveCfg = Debug|x64
 		{266F24EF-4545-4B10-B415-72644BB5D029}.Debug|x64.Build.0 = Debug|x64
 		{266F24EF-4545-4B10-B415-72644BB5D029}.Debug|x86.ActiveCfg = Debug|Win32
-		{266F24EF-4545-4B10-B415-72644BB5D029}.Debug|x86.Build.0 = Debug|Win32
 		{266F24EF-4545-4B10-B415-72644BB5D029}.Release|x64.ActiveCfg = Release|x64
 		{266F24EF-4545-4B10-B415-72644BB5D029}.Release|x64.Build.0 = Release|x64
 		{266F24EF-4545-4B10-B415-72644BB5D029}.Release|x86.ActiveCfg = Release|Win32
@@ -56,7 +55,6 @@ Global
 		{12F00F79-0246-44B2-934E-74DDCF08847C}.Debug|x64.ActiveCfg = Debug|x64
 		{12F00F79-0246-44B2-934E-74DDCF08847C}.Debug|x64.Build.0 = Debug|x64
 		{12F00F79-0246-44B2-934E-74DDCF08847C}.Debug|x86.ActiveCfg = Debug|Win32
-		{12F00F79-0246-44B2-934E-74DDCF08847C}.Debug|x86.Build.0 = Debug|Win32
 		{12F00F79-0246-44B2-934E-74DDCF08847C}.Release|x64.ActiveCfg = Release|x64
 		{12F00F79-0246-44B2-934E-74DDCF08847C}.Release|x64.Build.0 = Release|x64
 		{12F00F79-0246-44B2-934E-74DDCF08847C}.Release|x86.ActiveCfg = Release|Win32
