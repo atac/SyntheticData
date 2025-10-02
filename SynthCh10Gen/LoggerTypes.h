@@ -7,17 +7,17 @@
 using namespace std;
 
 enum class CodeType : unsigned int {
-  INFO = 0,
-  STATUS,
-  WARNING,
-  ERROR
+  Info = 0,
+  Status,
+  Warning,
+  Error
 };
 
 static const map<CodeType, string> codeTypeStringMap = {
-  { CodeType::INFO, "INFO" },
-  { CodeType::STATUS, "STATUS" },
-  { CodeType::WARNING, "WARNING" },
-  { CodeType::ERROR, "ERROR" }
+  { CodeType::Info, "INFO" },
+  { CodeType::Status, "STATUS" },
+  { CodeType::Warning, "WARNING" },
+  { CodeType::Error, "ERROR" }
 };
 
 class MessageCode {

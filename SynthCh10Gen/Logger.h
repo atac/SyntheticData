@@ -8,10 +8,6 @@
 
 using namespace std;
 
-namespace MyErrorCodeSet {
-  const MessageCode FIRST_ERROR("FIRST_ERROR", CodeType::ERROR, "My description");
-}
-
 class Logger
 {
   typedef pair<time_t, LogItem> LogEntry;
@@ -20,10 +16,10 @@ class Logger
   unsigned int errorCount = 0;
 
 public:
-  const MessageCode DEFAULT_INFO = MessageCode("DEFAULT_INFO", CodeType::INFO, "");
-  const MessageCode DEFAULT_STATUS = MessageCode("DEFAULT_STATUS", CodeType::STATUS, "");
-  const MessageCode DEFAULT_WARNING = MessageCode("DEFAULT_WARNING", CodeType::WARNING, "");
-  const MessageCode DEFAULT_ERROR = MessageCode("DEFAULT_ERROR", CodeType::ERROR, "");
+  const MessageCode DEFAULT_INFO = MessageCode("DEFAULT_INFO", CodeType::Info, "");
+  const MessageCode DEFAULT_STATUS = MessageCode("DEFAULT_STATUS", CodeType::Status, "");
+  const MessageCode DEFAULT_WARNING = MessageCode("DEFAULT_WARNING", CodeType::Warning, "");
+  const MessageCode DEFAULT_ERROR = MessageCode("DEFAULT_ERROR", CodeType::Error, "");
     
   void Add(const MessageCode& code, string msg);
   void Add(LogItem msg);

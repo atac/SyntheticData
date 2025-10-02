@@ -1,4 +1,4 @@
-#include "Config.h"
+#include "Configuration.h"
 
 Config::Config(string configPathname) {
   valid = true;

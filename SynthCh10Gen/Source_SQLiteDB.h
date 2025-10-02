@@ -7,7 +7,6 @@
 #include "sqlite3.h"
 
 #include "Source_Nav.h"
-#include "Source_VideoDB.h"
 #include "SimState.h"
 
 class ClSource_SQLiteDB :

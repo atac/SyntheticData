@@ -5,7 +5,7 @@ void Logger::Add(const MessageCode& code, string msg) {
 }
 
 void Logger::Add(LogItem entry) {
-  if (entry.GetType() == CodeType::ERROR)
+  if (entry.GetType() == CodeType::Error)
     errorCount++;
 
   log.push_back(pair(time(nullptr), entry));

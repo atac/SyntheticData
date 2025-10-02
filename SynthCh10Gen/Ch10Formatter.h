@@ -5,6 +5,8 @@
 #include "Common.h"
 #include "SimState.h"
 
+using namespace std;
+
 class Ch10Formatter
 {
 public:

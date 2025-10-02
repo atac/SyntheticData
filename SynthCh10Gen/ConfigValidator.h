@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ConfigLib.h"
+#include "Logger.h"
 
 #include "nlohmann/json.hpp"
 

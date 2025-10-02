@@ -12,7 +12,7 @@ of time.
 
 #include "SimState.h"
 #include "SimTimer.h"
-#include "Config.h"
+#include "ConfigLib.h"
 #include "TimeParser.h"
 
 // https://github.com/rakeshgk/csv-parser
@@ -34,6 +34,8 @@ of time.
 // ----------------------------------------------------------------------------
 // ClSource_Nav base class
 // ----------------------------------------------------------------------------
+
+using namespace GenerationConfig;
 
 class ClSource_Nav
 {

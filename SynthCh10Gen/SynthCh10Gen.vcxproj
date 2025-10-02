@@ -55,7 +55,7 @@
     <ClCompile Include="Ch10Writer_PCM.cpp" />
     <ClCompile Include="Ch10Writer_Time.cpp" />
     <ClCompile Include="Ch10Writer_Video.cpp" />
-    <ClCompile Include="Config.cpp" />
+    <ClCompile Include="Configuration.cpp" />
     <ClCompile Include="ConfigValidator.cpp" />
     <ClCompile Include="ControllerState.cpp" />
     <ClCompile Include="GenerationController.cpp" />
@@ -110,8 +110,8 @@
     <ClInclude Include="Ch10Writer_PCM.h" />
     <ClInclude Include="Ch10Writer_Time.h" />
     <ClInclude Include="Ch10Writer_Video.h" />
-    <ClInclude Include="Config.h" />
     <ClInclude Include="ConfigLib.h" />
+    <ClInclude Include="Configuration.h" />
     <ClInclude Include="ConfigValidator.h" />
     <ClInclude Include="ControllerState.h" />
     <ClInclude Include="Logger.h" />

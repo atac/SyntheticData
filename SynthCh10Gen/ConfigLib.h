@@ -5,17 +5,17 @@
 
 #include "GenerationControllerTypes.h"
 
-#include "Logger.h"
+#include "LoggerTypes.h"
 
 
 using namespace std;
 
 namespace GenerationConfig {
 
-  const MessageCode CONFIG_INFO = MessageCode("CONFIG_INFO", CodeType::INFO, "");
-  const MessageCode CONFIG_STATUS = MessageCode("CONFIG_STATUS", CodeType::STATUS, "");
-  const MessageCode CONFIG_WARNING = MessageCode("CONFIG_WARNING", CodeType::WARNING, "");
-  const MessageCode CONFIG_ERROR = MessageCode("CONFIG_ERROR", CodeType::ERROR, "");
+  const MessageCode CONFIG_INFO = MessageCode("CONFIG_INFO", CodeType::Info, "");
+  const MessageCode CONFIG_STATUS = MessageCode("CONFIG_STATUS", CodeType::Status, "");
+  const MessageCode CONFIG_WARNING = MessageCode("CONFIG_WARNING", CodeType::Warning, "");
+  const MessageCode CONFIG_ERROR = MessageCode("CONFIG_ERROR", CodeType::Error, "");
 
   typedef map<string, string> ConfigMapping;
 

@@ -8,7 +8,7 @@
 #include "i106_stdint.h"
 #include "irig106ch10.h"
 
-#include "Config.h"
+#include "Configuration.h"
 #include "SimTimer.h"
 #include "TmatsFormatter.h"
 

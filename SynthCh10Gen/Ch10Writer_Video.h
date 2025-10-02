@@ -20,6 +20,7 @@
 //#include "i106_decode_tmats.h"
 
 #include "Common.h"
+#include "Ch10Writer.h"
 #include "Ch10Formatter_Video.h"
 
 using namespace Irig106;

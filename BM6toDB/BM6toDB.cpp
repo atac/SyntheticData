@@ -7,7 +7,7 @@
 
 #include "SimState.h"
 #include "Source_TsvTxt.h"
-#include "ConsoleProgressBar.h""
+#include "ConsoleProgressBar.h"
 
 #define SQLITE
 //#define HDF5

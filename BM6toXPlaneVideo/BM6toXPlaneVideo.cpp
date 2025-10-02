@@ -56,7 +56,7 @@
 #include "Source_SQLiteDB.h"
 #include "SimTimer.h"
 
-#include "Config.h"
+#include "ConfigLib.h"
 
 #include "ConsoleProgressBar.h"
 
