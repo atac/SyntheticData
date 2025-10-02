@@ -230,8 +230,8 @@ int main(int iArgc, char* aszArgv[])
 void vUsage(void)
     {
     printf("\nBM6toDB  " __DATE__ " " __TIME__ "\n");
-    printf("Write BlueMax6 text output to database file         \n");
+    printf("Write BlueMax7 text output to database file         \n");
     printf("Usage: BM6toDB <input filename> <output filename>   \n");
-    printf("   <input filename>   Input BlueMax6 text file name \n");
+    printf("   <input filename>   Input BlueMax7 text file name \n");
     printf("   <output filename>  Output database file name     \n");
     }

@@ -918,7 +918,7 @@ void vUsage(void)
   printf("\nBM6toXPlaneVideo  " __DATE__ " " __TIME__ "\n");
   printf("Drive XPlane with BlueMax nav data and record a video\n");
   printf("Usage: BM6toXPlaneVideo [flags]\n");
-  printf("   -v           Verbose output (disables console progress bar)");
+  printf("   -v           Verbose output (disables console progress bar)\n");
   printf("   -d filename  Input database file name    \n");
   printf("   -t filename  Input text file name        \n");
   printf("   -D filename  Output database file name   \n");
