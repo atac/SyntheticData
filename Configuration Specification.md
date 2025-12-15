@@ -3,53 +3,54 @@ Configuration files for SynthCh10Gen provide the application with data source an
 
 ## Configuration File Description
 
-|  Key  | Type  | Required | Description  | Default |
+|  Key  | Type  | Required | Description | Default |
 | ------------ | ------------ | ------------ | ------------ | ------------ |
 | `programName` | `string`  | | Sets the G\PN TMATS attribute | "Synthetic Chapter 10" |
 | `outputDirectory` | `string` | Yes | Output location of the generated Chapter 10 data file | |
 | `outputFilename` | `string` | | Name of the generated Chapter 10 data file | "synthetic_data_yyyymmdd_hhmmss.ch10" |
 | `timeSource` | `string` | | Name of the channel from which to derive simulation time | The first channel defined in the channels array |
 | `timeStart` | `string` | | ??? | ??? |
+| `sources` | `object` | | Contains single-definition sources as an alternative to defining a [Source](#source-description) within each [Channel](#channel-description) object | |
 | `channels` | `array` | Yes | Contains one or more [Channel](#channel-description) objects | |
 | `mappings` | `object` | | Name mappings used for associating source columns with fields in built-in output formats | |
 
 ### Channel Description
 
-|  Key  | Type  | Required | Description  | Default |
+|  Key  | Type  | Required | Description | Default |
 | ------------ | ------------ | ------------ | ------------ | ------------ |
 | `id` | `uint` | | Channel ID, sets the R-x\TK1-n TMATS attribute | Starts at 2 and increments by 1 for each unspecified ID |
 | `name` | `string` | | Channel name, sets the R-x\DSI-n TMATS attribute | Auto generated name |
 | `type` | `string` | Yes | Channel [Type](#channel-types), sets the R-x\CDT-n TMATS attribute | |
 | `format` | `string` | | Data packing [format](#channel-data-formats) | Unformatted
-| `source` | `object` | Yes | Sets the properties for the data [source](#source-description) which feeds this channel |
+| `source` | `object` / `string` | Yes | A data source which feeds this channel. Allows either the object definition or the key of a [Source](#source-description) object defined in the [top-level](#configuration-file-description) sources object |
 | `pollRate` | `object` | | Sets the [rate](#rate-description) at which the source data is polled | 50 Hz |
 | `packetRate` | `object` | | Sets the [rate](#rate-description) at which packets are published to the output stream | 10 Hz |
 
 ### Source Description
 
-|  Key  | Type  | Required | Description  | Default |
+|  Key  | Type  | Required | Description | Default |
 | ------------ | ------------ | ------------ | ------------ | ------------ |
 | `pathname` | `string` | Yes | Pathname of a data file used as the source for packet generation. Additional properties may be required depending on the source file type. (See below) | |
 | `mapping` | `string` | | Name of a field name mapping set from the [mappings](#mappings-description) property | No mapping |
 
 ##### SQLite Database (.sql)
-|  Key  | Type  | Required | Description  | Default |
+|  Key  | Type  | Required | Description | Default |
 |-|-|-|-|-|
 | `table` | `string` | Yes | Name of the DB table containing the desired source data columns |
 
 ##### Comma-Separated Value (.csv)
-|  Key  | Type  | Required | Description  | Default |
+|  Key  | Type  | Required | Description | Default |
 |-|-|-|-|-|
 |-|-|-|-|-|
 
 ##### Tab-Separated Value (.txt)
-|  Key  | Type  | Required | Description  | Default |
+|  Key  | Type  | Required | Description | Default |
 |-|-|-|-|-|
 |-|-|-|-|-|
 
 ### Rate Description
 
-|  Key  | Type  | Required | Description  | Default |
+|  Key  | Type  | Required | Description | Default |
 | ------------ | ------------ | ------------ | ------------ | ------------ |
 | `value` | `uint` | | Numerical rate value | 0, corresponds to unsampled or data-triggered |
 | `unit` | `string` | | Rate Units | default milliseconds |
@@ -81,7 +82,7 @@ Configuration files for SynthCh10Gen provide the application with data source an
 
 ### Mappings Description
 
-The mappings object contains one or more keys representing a mapping set object. Each mapping set object contains a set of field name mapping key/value pairs.
+The mappings object contains a set of field-name-mapping key/value pairs where the **value** is the expected data source field name, and the **key** is the field name in the generated output file (i.e. the field name is mapped from value to key). This allows generating data formats from a variety of sources by normalizing field names to match a format specification such as an ICD. Omitting an output field key or providing an empty string value will cause no mapping to be applied to that field.
 
 | Key | Type | Required | Description |
 |-|-|-|-|
@@ -90,14 +91,14 @@ The mappings object contains one or more keys representing a mapping set object.
 ```
 mappings : {
 	"navigationMap" : {
-		"LAT" : "AC_LAT",
-		"LON" : "AC_LON",
-		"ALT" : "AC_ALT"
+		"LATITUDE" : "AC_LAT",
+		"LONGITUDE" : "AC_LON",
+		"ALTITUDE" : "AC_ALT"
 	},
 	"systemMap" : {
 		"RUDDER" : "RUDD",
 		"FLAPS" : "FLAP",
-		"GEAR" : "LGDN"
+		"LANDING GEAR DOWN" : "LGDN"
 	}
 }
 ```
@@ -112,13 +113,19 @@ mappings : {
 	"timeSource" : "PCMin20",
 	"timeStart" : ???,
 	
+	"sources" : {
+		"flight42" : {
+			"pathname" : "C:/data/sources/flight42.csv",
+			"mapping" : "navigationMap"
+		}
+	}
+
 	"channels" : [
 		{
 			"name" : "PCMin20",
 			"id" : 20,
 			"type" : "pcm",
-			"sourceFile" : "C:/data/sources/flight42.csv",
-			"mapping" : "navigationMap",
+			"source" : "flight42"
 			"pollRate" : {
 				"value" : 100,
 				"unit" : "hz"
@@ -147,7 +154,9 @@ mappings : {
 	"channels" : [
 		{
 			"type" : "pcm",
-			"sourceFile" : "C:/atac/vsprojects/SyntheticData/Debug/30931-small.csv"
+			"source" : {
+				"pathname" : "C:/atac/vsprojects/SyntheticData/Debug/30931-small.csv"
+			}
 		}
 	]
 }
