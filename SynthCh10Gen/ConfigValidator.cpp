@@ -32,6 +32,11 @@ bool ConfigValidator::ConfigIsValid(json& config)
     valid = false;
   }
 
+  if (!MappingsAreValid(config)) {
+    LogError("Error found in one or more mapping definitions");
+    valid = false;
+  }
+
   if (!SingleDefinitionSourcesAreValid(config)) {
     LogError("Error found in one or more source configurations");
     valid = false;
@@ -65,18 +70,52 @@ bool ConfigValidator::GeneralInfoIsValid(json& config) {
     valid = false;
   }
 
-json timeSource = config["timeSource"];
-if (!timeSource.is_null() && timeSource.is_string()) {
-  state.timeSourceChannelName = timeSource.get<string>();
-  transform(
-    state.timeSourceChannelName.begin(),
-    state.timeSourceChannelName.end(),
-    state.timeSourceChannelName.begin(),
-    ::tolower
-  );
+  json timeSource = config["timeSource"];
+  if (!timeSource.is_null() && timeSource.is_string()) {
+    state.timeSourceChannelName = timeSource.get<string>();
+    transform(
+      state.timeSourceChannelName.begin(),
+      state.timeSourceChannelName.end(),
+      state.timeSourceChannelName.begin(),
+      ::tolower
+    );
+  }
+
+  return valid;
 }
 
-return valid;
+bool ConfigValidator::MappingsAreValid(json& config) {
+  bool valid = true;
+
+  json& mapList = config["mappings"];
+  if (!mapList.is_null()) {
+    for (auto [name, mapping] : mapList.items()) {
+      if (!MappingIsValid(mapping)) {
+        LogError("Mapping " + name + " is invalid");
+        valid = false;
+      }
+      else {
+        string lcname = name;
+        transform(lcname.begin(), lcname.end(), lcname.begin(), ::tolower);
+        state.validMappingNames.push_back(lcname);
+      }
+    }
+  }
+
+  return valid;
+}
+
+bool ConfigValidator::MappingIsValid(json& mapping) {
+  bool valid = true;
+
+  for (auto [key, val] : mapping.items()) {
+    if (!val.is_string()) {
+      LogError("Mapping property (" + key + ") is an invalid type");
+      valid = false;
+    }
+  }
+
+  return valid;
 }
 
 
@@ -269,6 +308,24 @@ bool ConfigValidator::SourceIsValid(json& source) {
 
       if (!filesystem::exists(n->get<string>())) {
         LogError("Source file does not exist on the filesystem: " + n->get<string>());
+        valid = false;
+      }
+    }
+  }
+
+  n = source.find("mapping");
+  if (n != source.end()) {
+    if (!n->is_string()) {
+      LogError("Source mapping property is not a valid type");
+      valid = false;
+    }
+    else {
+      string name = n->get<string>();
+      string lcmap = name;
+      transform(lcmap.begin(), lcmap.end(), lcmap.begin(), ::tolower);
+      auto iter = std::find(state.validMappingNames.begin(), state.validMappingNames.end(), lcmap);
+      if (iter == state.validMappingNames.end()) {
+        LogError("Source field mapping (" + name + ") not found");
         valid = false;
       }
     }

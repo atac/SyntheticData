@@ -21,6 +21,7 @@ private:
 
   struct ValidatorState {
     Logger* logger;
+    vector<string> validMappingNames;
     vector<string> validSingleDefSourceNames;
     string timeSourceChannelName;
     bool foundTimeSourceChannel;
@@ -34,6 +35,8 @@ public:
 private:
   bool ConfigIsValid(json& config);
   bool GeneralInfoIsValid(json& config);
+  bool MappingsAreValid(json& config);
+  bool MappingIsValid(json& mapping);
   bool ChannelsAreValid(json& config);
   bool ChannelIsValid(json& channel);
   bool SingleDefinitionSourcesAreValid(json& channel);
