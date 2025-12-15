@@ -41,6 +41,7 @@ private:
   bool ChannelIsValid(json& channel);
   bool SingleDefinitionSourcesAreValid(json& channel);
   bool SourceIsValid(json& source);
+  bool RateIsValid(json& rate);
 
   void LogError(string msg);
   void LogInfo(string msg);

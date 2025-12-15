@@ -79,12 +79,14 @@ namespace GenerationConfig {
   }
 
   static RateUnit GetRateUnitFromString(string unitStr) {
-    RateUnit u = RateUnit::TIME_MS;
+    RateUnit u = RateUnit::INVALID;
 
     transform(unitStr.begin(), unitStr.end(), unitStr.begin(), ::tolower);
 
     if (unitStr == "s" || unitStr == "sec" || unitStr == "seconds")
       u = RateUnit::TIME_SEC;
+    else if (unitStr == "ms" || unitStr == "milli" || unitStr == "milliseconds")
+      u = RateUnit::TIME_MS;
     else if (unitStr == "us" || unitStr == "micro" || unitStr == "microseconds")
       u = RateUnit::TIME_US;
     else if (unitStr == "rtc")

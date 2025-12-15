@@ -250,6 +250,22 @@ bool ConfigValidator::ChannelIsValid(json& channel) {
     }
   }
 
+  auto pollRate = channel["pollRate"];
+  if (!pollRate.is_null()) {
+    if (!pollRate.is_object() || !RateIsValid(pollRate)) {
+      LogError("Channel " + name + " 'pollRate' property is not valid");
+      valid = false;
+    }
+  }
+
+  auto packetRate = channel["packetRate"];
+  if (!packetRate.is_null()) {
+    if (!packetRate.is_object() || !RateIsValid(packetRate)) {
+      LogError("Channel " + name + " 'packetRate' property is not valid");
+      valid = false;
+    }
+  }
+
   if (valid) {
     channel[validProperty] = "true";
 
@@ -339,6 +355,26 @@ bool ConfigValidator::SourceIsValid(json& source) {
   return valid;
 }
 
+bool ConfigValidator::RateIsValid(json& rate) {
+  bool valid = true;
+
+  auto v = rate["value"];
+  if (!v.is_null() && !v.is_number_unsigned()) {
+    LogError("Rate value is not an unsigned integer");
+    valid = false;
+  }
+
+  auto u = rate["unit"];
+  if (!u.is_null()) {
+    string unit = u.get<string>();
+    if (GetRateUnitFromString(unit) == RateUnit::INVALID) {
+      LogError("Rate unit (" + unit + ") is invalid");
+      valid = false;
+    }
+  }
+
+  return valid;
+}
 
 
 void ConfigValidator::LogError(string msg) {

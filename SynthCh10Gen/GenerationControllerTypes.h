@@ -34,7 +34,8 @@ public:
 };
 
 enum class RateUnit {
-  TIME_SEC = 0, // seconds
+  INVALID = 0,
+  TIME_SEC,     // seconds
   TIME_MS,      // milliseconds
   TIME_US,      // microseconds
   TIME_RTC,     // 100 nanoseconds | 10 MHz
@@ -56,6 +57,9 @@ public:
     static const uint64_t ONE_BILLION = 1000000000;
     static const uint64_t ONE_MILLION = 1000000;
     static const uint64_t ONE_THOUSAND = 1000;
+
+    if (this->units == RateUnit::INVALID || toUnit == RateUnit::INVALID)
+      return;
 
     if (this->units == toUnit) // nothing to do
       return;
