@@ -21,6 +21,7 @@ private:
 
   struct ValidatorState {
     Logger* logger;
+    vector<string> validSingleDefSourceNames;
     string timeSourceChannelName;
     bool foundTimeSourceChannel;
     bool foundValidChannel;
@@ -35,6 +36,7 @@ private:
   bool GeneralInfoIsValid(json& config);
   bool ChannelsAreValid(json& config);
   bool ChannelIsValid(json& channel);
+  bool SingleDefinitionSourcesAreValid(json& channel);
   bool SourceIsValid(json& source);
 
   void LogError(string msg);

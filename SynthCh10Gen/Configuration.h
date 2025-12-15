@@ -29,6 +29,7 @@ public:
   string startTime;
 
   vector<ConfigChannel> channels;
+  map<string, ConfigDataSource> sources;
 
   Logger logger;
 
@@ -56,9 +57,11 @@ private:
   void ParseMapping(string name, json& map);
   void ParseChannels();
   void ParseChannel(json channel);
+  void ParseDataSources();
   ConfigDataSource ParseDataSource(json source);
   Rate ParseRate(json rate);
 
+  ConfigDataSource GetDataSourceByName(string srcName);
   ConfigMapping GetMappingByName(string mapName);
 
   string GenerateProgramName();

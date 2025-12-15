@@ -32,6 +32,11 @@ bool ConfigValidator::ConfigIsValid(json& config)
     valid = false;
   }
 
+  if (!SingleDefinitionSourcesAreValid(config)) {
+    LogError("Error found in one or more source configurations");
+    valid = false;
+  }
+
   if (!ChannelsAreValid(config)) {
     LogError("Error found in one or more channel configurations");
     valid = false;
@@ -72,6 +77,28 @@ if (!timeSource.is_null() && timeSource.is_string()) {
 }
 
 return valid;
+}
+
+
+bool ConfigValidator::SingleDefinitionSourcesAreValid(json& config) {
+  bool valid = true;
+
+  json& srcList = config["sources"];
+  if (!srcList.is_null()) {
+    for (auto [name, src] : srcList.items()) {
+      if (!SourceIsValid(src)) {
+        LogError("Single-definition source " + name + " is invalid");
+        valid = false;
+      }
+      else {
+        string lcname = name;
+        transform(lcname.begin(), lcname.end(), lcname.begin(), ::tolower);
+        state.validSingleDefSourceNames.push_back(lcname);
+      }
+    }
+  }
+
+  return valid;
 }
 
 bool ConfigValidator::ChannelsAreValid(json& config) {
@@ -163,8 +190,18 @@ bool ConfigValidator::ChannelIsValid(json& channel) {
     LogError("Channel " + name + " 'source' property not found");
     valid = false;
   }
+  else if (s.is_string()) { // check for single-definition source
+    string srcName = s.get<string>();
+    transform(srcName.begin(), srcName.end(), srcName.begin(), ::tolower);
+
+    auto iter = std::find(state.validSingleDefSourceNames.begin(), state.validSingleDefSourceNames.end(), srcName);
+    if (iter == state.validSingleDefSourceNames.end()) {
+      LogError("Channel " + name + " referenced source is not a valid single-definition source");
+      valid = false;
+    }
+  }
   else if (!s.is_object()) {
-    LogError("Channel " + name + " 'source' property is not an object");
+    LogError("Channel " + name + " 'source' property is not a valid type");
     valid = false;
   }
   else {

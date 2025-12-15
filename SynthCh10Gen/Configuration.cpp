@@ -33,6 +33,7 @@ void Config::ParseConfig() {
       return;
 
     ParseGeneralInfo();
+    ParseDataSources();
     ParseMappings();
     ParseChannels();
   }
@@ -161,24 +162,45 @@ void Config::ParseChannel(json channel) {
   channels.push_back(c);
 }
 
+void Config::ParseDataSources() {
+  if (config.contains("sources"))
+  {
+    json srcs = config["sources"];
+
+    for (auto& [name, src] : srcs.items()) {
+      if (src.is_object()) {
+        ConfigDataSource cds = ParseDataSource(src);
+        this->sources.insert(pair(name, cds));
+      }
+    }
+  }
+}
+
 ConfigDataSource Config::ParseDataSource(json source) {
   ConfigDataSource ds;
 
-  ds.pathname = source["pathname"].get<string>();
-  ds.type = GetSourceFileTypeFromString(ds.pathname);
-   
-  if (source.contains("mapping") && source["mapping"].is_string())
-    ds.mapping = GetMappingByName(source["mapping"].get<string>());
+  if (source.is_string()) {
+    string srcName = source.get<string>();
+    ds = GetDataSourceByName(srcName);
+  }
+  else {
 
-  switch (ds.type) {
+    ds.pathname = source["pathname"].get<string>();
+    ds.type = GetSourceFileTypeFromString(ds.pathname);
 
-  case SourceFileType::SQLITE:
-    if (source.contains("table") && source["table"].is_string())
-      ds.properties.insert(pair("tableName", source["table"].get<string>()));
-    break;
+    if (source.contains("mapping") && source["mapping"].is_string())
+      ds.mapping = GetMappingByName(source["mapping"].get<string>());
 
-  default:
-    break;
+    switch (ds.type) {
+
+    case SourceFileType::SQLITE:
+      if (source.contains("table") && source["table"].is_string())
+        ds.properties.insert(pair("tableName", source["table"].get<string>()));
+      break;
+
+    default:
+      break;
+    }
   }
 
   return ds;
@@ -202,6 +224,14 @@ bool Config::Valid() {
   return valid;
 }
 
+
+ConfigDataSource Config::GetDataSourceByName(string srcName) {
+  auto s = sources.find(srcName);
+  if (s != sources.end())
+    return (s->second);
+
+  return ConfigDataSource();
+}
 
 ConfigMapping Config::GetMappingByName(string mapName) {
   auto m = mappings.find(mapName);
