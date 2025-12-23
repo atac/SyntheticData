@@ -347,6 +347,12 @@ bool ConfigValidator::SourceIsValid(json& source) {
     }
   }
 
+  auto ts = source["timeShift"];
+  if (!ts.is_null() && !ts.is_number()) {
+    LogError("Source 'timeShift' property is not a number");
+    valid = false;
+  }
+
   if (valid)
     source[validProperty] = "true";
   else

@@ -20,6 +20,8 @@ ClSource_SQLiteDB::ClSource_SQLiteDB(ClSimState* pclSimState, std::string sPrefi
   this->sPrefix = sPrefix;
   this->enInputType = this->InputBMSqlite;
   this->eof = false;
+
+  this->fTimeShift = 0.0;
 }
 
 
@@ -221,6 +223,8 @@ bool ClSource_SQLiteDB::UpdateSimState(double fSimElapsedTime)
 
   if (eof)
     return false;
+
+  fSimElapsedTime -= fTimeShift; // apply shift by changing the apparent elapsed time
 
   // Return if simulation time is less than current data time from this source
   if (fSimElapsedTime + TIME_COMPARE_MARGIN < fRelTime)

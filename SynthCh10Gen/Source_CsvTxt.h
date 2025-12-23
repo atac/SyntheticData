@@ -37,7 +37,6 @@ private:
   CSV_Parser      CsvParser;
   uintmax_t fileSize;
 
-public:
 
   // Methods
 public:

@@ -27,11 +27,13 @@ Configuration files for SynthCh10Gen provide the application with data source an
 | `packetRate` | `object` | | Sets the [rate](#rate-description) at which packets are published to the output stream | 10 Hz |
 
 ### Source Description
+Sources are data files containing timestamped telemetry or other flight data. This data is converted to the Chapter 10 format specified by any referencing channel. When multiple sources are defined, start times are aligned to coincide with the start time of the [`timeBasis`](#configuration-file-description) channel. Use the `timeShift` property to shift times left or right on the data timeline relative to the basis.
 
 |  Key  | Type  | Required | Description | Default |
 | ------------ | ------------ | ------------ | ------------ | ------------ |
 | `pathname` | `string` | Yes | Pathname of a data file used as the source for packet generation. Additional properties may be required depending on the source file type. (See below) | |
 | `mapping` | `string` | | Name of a field name mapping set from the [mappings](#mappings-description) property | No mapping |
+| `timeShift` | `float` | | Value (in seconds) to shift the source for data alignment. Positive values shift forward relative to the basis (right on timeline), and negative values shift backward relative to the basis (left on timeline). | No bias |
 
 ##### SQLite Database (.sql)
 |  Key  | Type  | Required | Description | Default |

@@ -381,8 +381,10 @@ ClSource_Nav* ControllerState::CreateSource(ConfigDataSource config, int channel
       delete src;
       src = nullptr;
     }
-    else 
+    else {
+      src->fTimeShift = config.timeShift;
       sources->push_back(src);
+    }
   }
 
   return src;

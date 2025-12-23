@@ -191,6 +191,9 @@ ConfigDataSource Config::ParseDataSource(json source) {
     if (source.contains("mapping") && source["mapping"].is_string())
       ds.mapping = GetMappingByName(source["mapping"].get<string>());
 
+    if (source.contains("timeShift") && source["timeShift"].is_number())
+      ds.timeShift = source["timeShift"].get<double>();
+
     switch (ds.type) {
 
     case SourceFileType::SQLITE:

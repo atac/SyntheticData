@@ -15,22 +15,24 @@
 // Constructor / Destructor
 // ----------------------------------------------------------------------------
 
-ClSource_CsvTxt::ClSource_CsvTxt(ClSimState * pclSimState, std::string sPrefix)
-    {
-    this->pclSimState = pclSimState;
-    this->sPrefix     = sPrefix;
-    this->enInputType = this->InputNasaCsv;
-    this->hCsvInput   = NULL;
-    this->eof = false;
-    }
+ClSource_CsvTxt::ClSource_CsvTxt(ClSimState* pclSimState, std::string sPrefix)
+{
+  this->pclSimState = pclSimState;
+  this->sPrefix = sPrefix;
+  this->enInputType = this->InputNasaCsv;
+  this->hCsvInput = NULL;
+  this->eof = false;
+
+  this->fTimeShift = 0.0;
+}
 
 
 // ----------------------------------------------------------------------------
 
 ClSource_CsvTxt::~ClSource_CsvTxt()
-    {
-    Close();
-    }
+{
+  Close();
+}
 
 
 // ----------------------------------------------------------------------------
@@ -304,6 +306,8 @@ bool ClSource_CsvTxt::UpdateSimState(double fSimElapsedTime)
 
   if (eof)
     return false;
+
+  fSimElapsedTime -= fTimeShift; // apply shift by changing the apparent elapsed time
 
   // Return if simulation time is less than current data time from this source
   if (fSimElapsedTime + TIME_COMPARE_MARGIN < fRelTime)

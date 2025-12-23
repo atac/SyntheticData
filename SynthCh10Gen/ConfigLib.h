@@ -24,6 +24,7 @@ namespace GenerationConfig {
     string pathname;
     SourceFileType type;
     ConfigMapping mapping;
+    double timeShift;
     map<string, string> properties;
   };
 
