@@ -23,8 +23,8 @@ private:
     Logger* logger;
     vector<string> validMappingNames;
     vector<string> validSingleDefSourceNames;
-    string timeSourceChannelName;
-    bool foundTimeSourceChannel;
+    string timeBasisChannelName;
+    bool foundTimeBasisChannel;
     bool foundValidChannel;
     bool foundInvalidChannel;
   } state;

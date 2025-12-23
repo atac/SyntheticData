@@ -53,11 +53,12 @@ protected:
 public:
   std::string         sPrefix;        // Simulation state data label prefix to make it unique
   ClSimState*         pclSimState;    // Pointer to the simulation state 
-  double              fStartTime;     // Data start clock time (time_t)
-  double              fEndTime;
+  double              fStartTime;     // Data start clock time (time_t) (seconds)
+  double              fEndTime;       // Data end clock time (seconds)
   double              fRelTime;       // Current data time offset (seconds) since fStartTime
+  double              fTimeShift;     // Shift (in seconds) to apply to source data (relative to time basis)
 
-  bool timeSource;
+  bool timeBasis;
 
   CSV_FIELDS DataLabels;
   CSV_FIELDS DataTypes;

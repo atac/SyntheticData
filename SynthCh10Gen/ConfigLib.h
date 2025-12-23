@@ -31,11 +31,11 @@ namespace GenerationConfig {
   {
     ConfigChannel(Ch10Channel::ChannelType type, int id) : type(type), id(id)
     {
-      timeSource = false;
+      timeBasis = false;
       format = Ch10Channel::ChannelDataFormat::INVALID;
     };
 
-    bool timeSource;
+    bool timeBasis;
     int id;
     Ch10Channel::ChannelType type;
     Ch10Channel::ChannelDataFormat format;

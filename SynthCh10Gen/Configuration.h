@@ -43,8 +43,8 @@ private:
 
   bool valid;
 
-  string timeSourceChannel;
-  bool timeSourceFound = false;
+  string timeBasisChannel;
+  bool timeBasisFound = false;
 
   void Open(string pathname);
 
@@ -71,5 +71,5 @@ private:
   void GenerateUnspecifiedChannelNames();
   string GenerateChannelName(int channelID, Ch10Channel::ChannelType type);
 
-  void CheckForTimeSource(ConfigChannel& channel);
+  void CheckForTimeBasis(ConfigChannel& channel);
 };

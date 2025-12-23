@@ -3,8 +3,8 @@
 
 bool ConfigValidator::Validate(json& config, Logger& logger) {
   state.logger = &logger;
-  state.timeSourceChannelName = "";
-  state.foundTimeSourceChannel = false;
+  state.timeBasisChannelName = "";
+  state.foundTimeBasisChannel = false;
   state.foundValidChannel = false;
   state.foundInvalidChannel = false;
 
@@ -70,13 +70,13 @@ bool ConfigValidator::GeneralInfoIsValid(json& config) {
     valid = false;
   }
 
-  json timeSource = config["timeSource"];
-  if (!timeSource.is_null() && timeSource.is_string()) {
-    state.timeSourceChannelName = timeSource.get<string>();
+  json timeBasis = config["timeBasis"];
+  if (!timeBasis.is_null() && timeBasis.is_string()) {
+    state.timeBasisChannelName = timeBasis.get<string>();
     transform(
-      state.timeSourceChannelName.begin(),
-      state.timeSourceChannelName.end(),
-      state.timeSourceChannelName.begin(),
+      state.timeBasisChannelName.begin(),
+      state.timeBasisChannelName.end(),
+      state.timeBasisChannelName.begin(),
       ::tolower
     );
   }
@@ -175,7 +175,7 @@ bool ConfigValidator::ChannelsAreValid(json& config) {
         valid = false;
       }
 
-      if (!state.foundTimeSourceChannel) {
+      if (!state.foundTimeBasisChannel) {
         LogError("No valid channel was found that matches the time source designation");
         valid = false;
       }
@@ -269,12 +269,12 @@ bool ConfigValidator::ChannelIsValid(json& channel) {
   if (valid) {
     channel[validProperty] = "true";
 
-    if (!state.foundTimeSourceChannel) {
-      if (state.timeSourceChannelName.size() == 0) // then first valid channel is time source
-        state.foundTimeSourceChannel = true;
+    if (!state.foundTimeBasisChannel) {
+      if (state.timeBasisChannelName.size() == 0) // then first valid channel is time source
+        state.foundTimeBasisChannel = true;
       else {
-        if (state.timeSourceChannelName == nameLC)
-          state.foundTimeSourceChannel = true;
+        if (state.timeBasisChannelName == nameLC)
+          state.foundTimeBasisChannel = true;
       }
     }
   }

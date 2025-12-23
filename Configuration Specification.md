@@ -8,7 +8,7 @@ Configuration files for SynthCh10Gen provide the application with data source an
 | `programName` | `string`  | | Sets the G\PN TMATS attribute | "Synthetic Chapter 10" |
 | `outputDirectory` | `string` | Yes | Output location of the generated Chapter 10 data file | |
 | `outputFilename` | `string` | | Name of the generated Chapter 10 data file | "synthetic_data_yyyymmdd_hhmmss.ch10" |
-| `timeSource` | `string` | | Name of the channel from which to derive simulation time | The first channel defined in the channels array |
+| `timeBasis` | `string` | | Name of the channel from which to derive simulation clock time | The first channel defined in the channels array |
 | `timeStart` | `string` | | ??? | ??? |
 | `sources` | `object` | | Contains single-definition sources as an alternative to defining a [Source](#source-description) within each [Channel](#channel-description) object | |
 | `channels` | `array` | Yes | Contains one or more [Channel](#channel-description) objects | |

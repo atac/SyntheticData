@@ -157,9 +157,9 @@ ControllerStatus ControllerState::AddDataChannel(ConfigChannel config) {  // FOR
   }
 
   // get start time from source
-  if (config.timeSource) {
+  if (config.timeBasis) {
     time.startSimClockTime = source->fStartTime;
-    source->timeSource = true;
+    source->timeBasis = true;
   }
 
   Rate framerate = config.pollRate;
@@ -381,7 +381,7 @@ ClSource_Nav* ControllerState::CreateSource(ConfigDataSource config, int channel
       delete src;
       src = nullptr;
     }
-    else
+    else 
       sources->push_back(src);
   }
 

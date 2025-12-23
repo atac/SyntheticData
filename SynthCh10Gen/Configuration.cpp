@@ -69,18 +69,18 @@ void Config::ParseGeneralInfo() {
   else
     startTime = "";
 
-  // timeSourceChannel
-  auto tsc = config.find("timeSource");
+  // timeBasisChannel
+  auto tsc = config.find("timeBasis");
   if (tsc != config.end() && tsc->is_string()) {
-    timeSourceChannel = tsc.value();
+    timeBasisChannel = tsc.value();
     transform(
-      timeSourceChannel.begin(), 
-      timeSourceChannel.end(),
-      timeSourceChannel.begin(), 
+      timeBasisChannel.begin(),
+      timeBasisChannel.end(),
+      timeBasisChannel.begin(),
       ::tolower);
   }
   else
-    timeSourceChannel = "";
+    timeBasisChannel = "";
 }
 
 void Config::ParseMappings() {
@@ -157,7 +157,7 @@ void Config::ParseChannel(json channel) {
   else
     c.packetRate = Rate(10, RateUnit::HERTZ);
 
-  CheckForTimeSource(c);
+  CheckForTimeBasis(c);
 
   channels.push_back(c);
 }
@@ -313,18 +313,18 @@ string Config::GenerateChannelName(int channelID, Ch10Channel::ChannelType type)
   return typestr + "in" + to_string(channelID);
 }
 
-void Config::CheckForTimeSource(ConfigChannel& channel) {
-  if (!timeSourceFound) {
-    if (timeSourceChannel.size() == 0) {
-      channel.timeSource = true;
-      timeSourceFound = true;
+void Config::CheckForTimeBasis(ConfigChannel& channel) {
+  if (!timeBasisFound) {
+    if (timeBasisChannel.size() == 0) {
+      channel.timeBasis = true;
+      timeBasisFound = true;
     }
     else {
       string n = channel.name;
       transform(n.begin(), n.end(), n.begin(), ::tolower);
-      if (n == timeSourceChannel) {
-        channel.timeSource = true;
-        timeSourceFound = true;
+      if (n == timeBasisChannel) {
+        channel.timeBasis = true;
+        timeBasisFound = true;
       }
     }
   }
