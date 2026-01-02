@@ -218,52 +218,53 @@ bool ClSource_SQLiteDB::ReadNextLine()
 
 bool ClSource_SQLiteDB::UpdateSimState(double fSimElapsedTime)
 {
-  unsigned    uColIdx;
-  bool        bStatus;
+  unsigned uColIdx;
 
-  if (eof)
-    return false;
+  bool bStatus = true;
 
   fSimElapsedTime -= fTimeShift; // apply shift by changing the apparent elapsed time
 
-  // Return if simulation time is less than current data time from this source
-  if (fSimElapsedTime + TIME_COMPARE_MARGIN < fRelTime)
-    return true;
 
-  // Get the individual column values
-  for (uColIdx = 0; uColIdx < DataLabels.size(); uColIdx++)
-  {
-    // Read column based on column type
-    switch (sqlite3_column_type(pSqlStmt, uColIdx))
+  while (fSimElapsedTime + TIME_COMPARE_MARGIN >= fRelTime) {
+    if (eof)
+      return false;
+
+    // Get the individual column values
+    for (uColIdx = 0; uColIdx < DataLabels.size(); uColIdx++)
     {
-    case SQLITE_INTEGER:
-      pclSimState->update(DataLabels[uColIdx], (long)sqlite3_column_int64(pSqlStmt, uColIdx));
-      break;
-    case SQLITE_FLOAT:
-      pclSimState->update(DataLabels[uColIdx], sqlite3_column_double(pSqlStmt, uColIdx));
-      break;
-    case SQLITE_BLOB:
-    {
-      const uint8_t* blob = (uint8_t*)sqlite3_column_blob(pSqlStmt, uColIdx);
-      uint32_t size = sqlite3_column_bytes(pSqlStmt, uColIdx);
+      // Read column based on column type
+      switch (sqlite3_column_type(pSqlStmt, uColIdx))
+      {
+      case SQLITE_INTEGER:
+        pclSimState->update(DataLabels[uColIdx], (long)sqlite3_column_int64(pSqlStmt, uColIdx));
+        break;
+      case SQLITE_FLOAT:
+        pclSimState->update(DataLabels[uColIdx], sqlite3_column_double(pSqlStmt, uColIdx));
+        break;
+      case SQLITE_BLOB:
+      {
+        const uint8_t* blob = (uint8_t*)sqlite3_column_blob(pSqlStmt, uColIdx);
+        uint32_t size = sqlite3_column_bytes(pSqlStmt, uColIdx);
 
-      vector<uint8_t>* data;
+        vector<uint8_t>* data;
 
-      if (size == 0)
-        data = new vector<uint8_t>();
-      else
-        data = new vector<uint8_t>(blob, blob + size);
+        if (size == 0)
+          data = new vector<uint8_t>();
+        else
+          data = new vector<uint8_t>(blob, blob + size);
 
-      pclSimState->update(DataLabels[uColIdx], data);
-      break;
-    }
-    default:
-      break;
-    } // end switch on column type
-  } // end for all columns
+        pclSimState->update(DataLabels[uColIdx], data);
+        break;
+      }
+      default:
+        break;
+      } // end switch on column type
+    } // end for all columns
 
-  // Get the next line of data
-  bStatus = ReadNextLine();
+    // Get the next line of data
+    bStatus = ReadNextLine();
+  }
+
 
   return bStatus;
 } // end UpdateSimState()

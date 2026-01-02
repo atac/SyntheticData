@@ -21,6 +21,10 @@ namespace GenerationConfig {
 
   struct ConfigDataSource
   {
+    ConfigDataSource() 
+      : type(SourceFileType::INVALID), timeShift(0.0)
+    {};
+
     string pathname;
     SourceFileType type;
     ConfigMapping mapping;

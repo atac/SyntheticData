@@ -302,28 +302,27 @@ bool ClSource_CsvTxt::ReadNextLine()
 
 bool ClSource_CsvTxt::UpdateSimState(double fSimElapsedTime)
 {
-  bool    bStatus;
-
-  if (eof)
-    return false;
+  bool bStatus = true;
 
   fSimElapsedTime -= fTimeShift; // apply shift by changing the apparent elapsed time
 
-  // Return if simulation time is less than current data time from this source
-  if (fSimElapsedTime + TIME_COMPARE_MARGIN < fRelTime)
-    return true;
-
-  // Copy parsed data into the SimState
-  for (CONST_MAP_ITR itCsvMap = CsvMap.begin(); itCsvMap != CsvMap.end(); ++itCsvMap)
+  while (fSimElapsedTime + TIME_COMPARE_MARGIN >= fRelTime)
   {
-    if (itCsvMap->first == DataLabels[0])
-      pclSimState->update(DataLabels[0], fRelTime);
-    else
-      pclSimState->update(itCsvMap->first, std::stod(itCsvMap->second));
-  }
+    if (eof)
+      return false;
 
-// Get the next line of data
-  bStatus = ReadNextLine();
+    // Copy current data row into the SimState
+    for (CONST_MAP_ITR itCsvMap = CsvMap.begin(); itCsvMap != CsvMap.end(); ++itCsvMap)
+    {
+      if (itCsvMap->first == DataLabels[0])
+        pclSimState->update(DataLabels[0], fRelTime);
+      else
+        pclSimState->update(itCsvMap->first, std::stod(itCsvMap->second));
+    }
+
+    // Get the next line of data
+    bStatus = ReadNextLine();
+  }
 
   return bStatus;
 }

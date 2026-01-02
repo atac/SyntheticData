@@ -63,19 +63,14 @@ public:
   CSV_FIELDS DataLabels;
   CSV_FIELDS DataTypes;
 
-  enum EnInputType { InputUnknown, InputBMSqlite, InputBMText, InputNasaCsv, InputNasaSqlite };
-
-  EnInputType         enInputType;
-  bool                bHavePosition;
-  bool                bHaveAltitude;
-  bool                bHaveAirspeed;
-  bool                bHaveVelocity;
-  bool                bHaveAcceleration;
-  bool                bHaveTrueHeading;
-  bool                bHaveMagHeading;
-  bool                bHavePitchRoll;
-  bool                bHaveAOA;
-  bool                bHaveThrottle;
+  enum EnInputType 
+  {
+    InputUnknown, 
+    InputBMSqlite, 
+    InputBMText, 
+    InputNasaCsv, 
+    InputNasaSqlite
+  } enInputType;
 
   // Methods
 public:
