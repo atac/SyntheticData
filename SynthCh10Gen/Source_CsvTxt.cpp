@@ -288,8 +288,6 @@ bool ClSource_CsvTxt::ReadNextLine()
       dataAvailable = true;
     }
 
-    pclSimState->updateReady(this->sPrefix, dataAvailable);
-
     return dataAvailable;
     } // end ReadNextLine()
 
@@ -322,6 +320,8 @@ bool ClSource_CsvTxt::UpdateSimState(double fSimElapsedTime)
 
     // Get the next line of data
     bStatus = ReadNextLine();
+
+    pclSimState->updateReady(this->sPrefix, bStatus);
   }
 
   return bStatus;

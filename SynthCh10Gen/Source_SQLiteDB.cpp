@@ -208,8 +208,6 @@ bool ClSource_SQLiteDB::ReadNextLine()
   else if (status == SQLITE_DONE)
     eof = true;
 
-  pclSimState->updateReady(sPrefix, dataAvailable);
-
   return dataAvailable;
 }
 
@@ -263,6 +261,8 @@ bool ClSource_SQLiteDB::UpdateSimState(double fSimElapsedTime)
 
     // Get the next line of data
     bStatus = ReadNextLine();
+
+    pclSimState->updateReady(sPrefix, bStatus);
   }
 
 
