@@ -45,7 +45,7 @@ Sources are data files containing timestamped telemetry or other flight data. Th
 |-|-|-|-|-|
 |-|-|-|-|-|
 
-##### Tab-Separated Value (.txt)
+##### Tab-Separated Value (.txt, .tsv)
 |  Key  | Type  | Required | Description | Default |
 |-|-|-|-|-|
 |-|-|-|-|-|

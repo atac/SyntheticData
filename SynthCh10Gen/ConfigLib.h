@@ -116,7 +116,7 @@ namespace GenerationConfig {
       sft = SourceFileType::CSV;
     else if (ext == "sql")
       sft = SourceFileType::SQLITE;
-    else if (ext == "txt")
+    else if (ext == "txt" || ext == "tsv")
       sft = SourceFileType::TSV;
 
     return sft;
