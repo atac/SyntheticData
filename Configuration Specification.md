@@ -35,7 +35,7 @@ The left-most column of any data source is always expected to contain a [Timesta
 | ------------ | ------------ | ------------ | ------------ | ------------ |
 | `pathname` | `string` | Yes | Pathname of a data file used as the source for packet generation. Additional properties may be required depending on the source file type. (See below) | |
 | `mapping` | `string` | | Name of a field name mapping set from the [mappings](#mappings-description) property | No mapping |
-| `timeShift` | `float` | | Value (in seconds) to shift the source for data alignment. Positive values shift forward relative to the basis (right on timeline), and negative values shift backward relative to the basis (left on timeline). | No bias |
+| `timeShift` | `float` | | Value (in seconds) to shift the source for data alignment. Positive values shift forward relative to the basis (right on timeline), and negative values shift backward relative to the basis (left on timeline). <br><br> *Note: Shifting the basis will only shift that source; other sources are shifted relative to the origin of the unshifted basis.* | No bias |
 
 ##### SQLite Database (.sql)
 |  Key  | Type  | Required | Description | Default |
