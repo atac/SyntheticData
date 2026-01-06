@@ -64,8 +64,12 @@ void Config::ParseGeneralInfo() {
 
   // startTime
   auto st = config.find("startTime");
-  if (st != config.end() && st->is_string())
-    startTime = st.value();
+  if (st != config.end()) {
+    if (st->is_string())
+      startTime = st->get<string>();
+    else if (st->is_number())
+      startTime = to_string(st->get<double>());
+  }
   else
     startTime = "";
 

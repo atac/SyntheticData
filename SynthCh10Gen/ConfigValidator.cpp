@@ -81,6 +81,31 @@ bool ConfigValidator::GeneralInfoIsValid(json& config) {
     );
   }
 
+  json startTime = config["startTime"];
+  if (!startTime.is_null()) {
+    TimeParser tp = TimeParser();
+    string st = "";
+
+    if (startTime.is_string())
+      st = startTime.get<string>();
+    else if (startTime.is_number())
+      st = to_string(startTime.get<double>());
+    else {
+      LogError("'startTime' property is not a valid type");
+      valid = false;
+    }
+
+    if (!st.empty()) {
+      tp.Init(st);
+      if (!tp.Valid()) {
+        LogError("'startTime' property value is not in a valid timestamp format");
+        valid = false;
+      }
+    }
+
+    state.startTime = st;
+  }
+
   return valid;
 }
 

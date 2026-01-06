@@ -118,5 +118,6 @@ public:
 struct ControllerTime {
   double startSimClockTime;    // Starting simulation Date/Time
   double currSimClockTime;     // Current simulation Data/Time
+  double startSimTimeOffset;   // Offset from the start time
   double nextPrintTime;
 };

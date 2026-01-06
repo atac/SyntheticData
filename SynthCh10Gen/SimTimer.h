@@ -31,8 +31,17 @@ private:
 
   // Methods
 public:
-  static void Tick() { lSimClockTicks += lTicksPerStep; fSimElapsedTime = (double)lSimClockTicks / (double)lTicksPerSecond; }
-  static void Tick(int64_t lStep) { lSimClockTicks += lStep; }
+  static void SetTimeStart(double timeElapsed) { 
+    lSimClockTicks = (int64_t)(timeElapsed * lTicksPerSecond);
+    Tick(0.0);
+  }
+  static void Tick() { 
+    Tick(lTicksPerStep); 
+  }
+  static void Tick(int64_t lStep) { 
+    lSimClockTicks += lStep; 
+    fSimElapsedTime = (double)lSimClockTicks / (double)lTicksPerSecond;
+  }
 
   void InitToSimClock()
   {

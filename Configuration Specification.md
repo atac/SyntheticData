@@ -9,7 +9,7 @@ Configuration files for SynthCh10Gen provide the application with data source an
 | `outputDirectory` | `string` | Yes | Output location of the generated Chapter 10 data file | |
 | `outputFilename` | `string` | | Name of the generated Chapter 10 data file | "synthetic_data_yyyymmdd_hhmmss.ch10" |
 | `timeBasis` | `string` | | Name of the channel from which to derive simulation clock time | The first channel defined in the channels array |
-| `timeStart` | `string` | | ??? | ??? |
+| `startTime` | `string` | | The [Timestamp](#timestamps) of a row in the time basis data source from where the system should begin processing data. Data before this timestamp is ignored in all aligned data sources. | The first row of the time basis data source |
 | `sources` | `object` | | Contains single-definition sources as an alternative to defining a [Source](#source-description) within each [Channel](#channel-description) object | |
 | `channels` | `array` | Yes | Contains one or more [Channel](#channel-description) objects | |
 | `mappings` | `object` | | Name mappings used for associating source columns with fields in built-in output formats | |
@@ -28,6 +28,8 @@ Configuration files for SynthCh10Gen provide the application with data source an
 
 ### Source Description
 Sources are data files containing timestamped telemetry or other flight data. This data is converted to the Chapter 10 format specified by any referencing channel. When multiple sources are defined, start times are aligned to coincide with the start time of the [`timeBasis`](#configuration-file-description) channel. Use the `timeShift` property to shift times left or right on the data timeline relative to the basis.
+
+The left-most column of any data source is always expected to contain a [Timestamp](#timestamps).
 
 |  Key  | Type  | Required | Description | Default |
 | ------------ | ------------ | ------------ | ------------ | ------------ |
@@ -105,6 +107,19 @@ mappings : {
 }
 ```
 
+## Timestamps
+Supported timestamp formats are shown in the following table. Any references to timestamp fields in this document imply required adherance to one of these formats.
+
+| Format | Description | Example |
+|-|-|-|
+| seconds | Float value with seconds units | 1234.56 |
+| mm:ss | String value for minutes and seconds (float) | 12:34.56
+| hh:mm:ss | String value for hours, minutes, and seconds (float) | 12:34:56.78 |
+| ddd hh:mm:ss <br> ddd:hh:mm:ss | String value for days (DoY), hours, minutes, and seconds (float) | 012:12:34:56.78 |
+| MM-dd hh:mm:ss <br> MM dd hh:mm:ss <br> MM:dd:hh:mm:ss | String value for months, days (DoM), hours, minutes, and seconds (float) | 01-23 12:34:56.78 |
+| yyyy-ddd hh:mm:ss <br> yyyy ddd hh:mm:ss <br> yyyy:ddd:hh:mm:ss | String value for year, days (DoY), hours, minutes, seconds (float) | 2031-012 12:34:56.78 |
+| yyyy-MM-dd hh:mm:ss <br> yyyy MM dd hh:mm:ss <br> yyyy:MM:dd:hh:mm:ss | String value for year, months, days (DoM), hours, minutes, seconds (float) | 2031-01-02 12:34:56.78 |
+
 ##  Example Configuration
 
 ```
@@ -112,8 +127,8 @@ mappings : {
 	"programName" : "Sample Data Generation",
 	"outputDirectory" : "C:/data/output/",
 	"outputFilename" : "SampleDataGen.ch10",
-	"timeSource" : "PCMin20",
-	"timeStart" : ???,
+	"timeBasis" : "PCMin20",
+	"startTime" : 120.00,
 	
 	"sources" : {
 		"flight42" : {

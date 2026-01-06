@@ -2,6 +2,7 @@
 
 #include "ConfigLib.h"
 #include "Logger.h"
+#include "TimeParser.h"
 
 #include "nlohmann/json.hpp"
 
@@ -24,6 +25,7 @@ private:
     vector<string> validMappingNames;
     vector<string> validSingleDefSourceNames;
     string timeBasisChannelName;
+    string startTime;
     bool foundTimeBasisChannel;
     bool foundValidChannel;
     bool foundInvalidChannel;

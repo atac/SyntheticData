@@ -60,9 +60,14 @@ ControllerStatus ControllerState::Configure(string configFilepath, bool validate
   if (time.startSimClockTime < 0.0)
     return ControllerStatus::INVALID_START_TIME;
 
+  ConfigureStartTimeOffset(config.startTime);
 
-  timeWriter->SetRelTime(ClSimTimer::lSimClockTicks, this->time.startSimClockTime);
-  this->time.currSimClockTime = this->time.startSimClockTime;
+  ClSimTimer::SetTimeStart(time.startSimTimeOffset);
+
+  double startClockTime = time.startSimClockTime + time.startSimTimeOffset;
+  time.currSimClockTime = startClockTime;
+  timeWriter->SetRelTime(ClSimTimer::lSimClockTicks, time.currSimClockTime);
+
   InitTimers();
 
   TmatsFormatter::WriteTMATS(i106OutFileHandle, programName, this->time.currSimClockTime, this->channels);
@@ -230,6 +235,26 @@ ControllerStatus ControllerState::AddDataChannel(ConfigChannel config) {  // FOR
   AddTimedChannelAction(channel, config.packetRate, ChannelActionType::COMMIT);
 
   return ControllerStatus::OK;
+}
+
+void ControllerState::ConfigureStartTimeOffset(string startTime) {
+  if (startTime.empty())
+    return;
+
+  TimeParser tp = TimeParser();
+  tp.Init(startTime);
+
+  if (!tp.Valid())
+    return;
+
+  double start = 0.0;
+  tp.Parse(startTime, start);
+
+  double offset = start - time.startSimClockTime;
+  if (offset < 0.0)
+    offset = 0.0;
+
+  time.startSimTimeOffset = offset;
 }
 
 void ControllerState::AddTimedChannelAction(Ch10Channel* channel, Rate rate, ChannelActionType actionType, bool fireImmediately) {

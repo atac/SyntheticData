@@ -71,6 +71,8 @@ private:
   ClCh10Writer_Time*  AddTimeChannel();
   ControllerStatus    AddDataChannel(ConfigChannel channel);
 
+  void ConfigureStartTimeOffset(string startTime);
+
   void AddTimedChannelAction(Ch10Channel* channel, Rate rate, ChannelActionType action, bool fireImmediately = false);
   ClSimTimer* GetTimer(Rate rate, bool startExpired);
   ClSimTimer* GetExistingTimer(int64_t msTimeout, bool startExpired);
