@@ -105,12 +105,13 @@ void GenerationController::UpdateProgressBar()
 }
 
 void GenerationController::InitProgressBar() {
-  double startTime = state->time.startSimClockTime;
+  double startTime = state->time.startSimClockTime + state->time.startSimTimeOffset;
   double endTime = 0.0;
 
   for (auto src : (*state->sources)) {
-    if (src->fEndTime > endTime)
-      endTime = src->fEndTime;
+    double srcEndTime = src->fEndTime + src->fTimeShift;
+    if (srcEndTime > endTime)
+      endTime = srcEndTime;
   }
 
   progressBar = new ConsoleProgressBar(startTime, endTime);
