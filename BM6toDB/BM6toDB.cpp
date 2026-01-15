@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <filesystem>
 
 #include "SimState.h"
 #include "Source_TsvTxt.h"
@@ -75,6 +76,17 @@ int main(int iArgc, char* aszArgv[])
 
 // Open input and output files
 // ---------------------------
+  if (!std::filesystem::exists(szInFile)) {
+    printf("Error: Input file not found\n");
+    return 1;
+  }
+  std::filesystem::path p = filesystem::path(szOutFile);
+  p.remove_filename();
+  if (!std::filesystem::exists(p)) {
+    printf("Error: Output directory does not exist\n");
+    return 1;
+  }
+
 
 // Open Bluemax XLS file
   bStatus = pSource_BMNav->Open(szInFile);
