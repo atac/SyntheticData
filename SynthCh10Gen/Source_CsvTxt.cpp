@@ -348,7 +348,8 @@ bool ClSource_CsvTxt::ParseLine(char* szLine, StringList& values)
 bool ClSource_CsvTxt::ParseLineToMap(char* szLine, KEY_VAL_FIELDS& valueMap)
 {
   valueMap.clear();
-  return CsvParser.parse_line(szLine, fields.getFieldIDs(), valueMap);
+  CSV_FIELDS ids = fields.getFieldIDs();
+  return CsvParser.parse_line(szLine, ids, valueMap);
 }
 
 

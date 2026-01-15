@@ -40,8 +40,6 @@ int main(int iArgc, char* aszArgv[])
   ClSimState          clSimState;
   ClSource_TsvTxt*    pSource_BMNav;
 
-  std::vector<std::string>::iterator itDataLabel;
-
   // Database
 #ifdef SQLITE
   int                 iStatus;
@@ -107,20 +105,6 @@ int main(int iArgc, char* aszArgv[])
   }
 
 
-#if 0
-  // Get the list of available data items
-  // BM/actime BM/aclatd BM/aclond BM/acaltf BM/acktas BM/acvifps BM/acvxi 
-  // BM/acvyi BM/acvzi BM/acaxi BM/acayi BM/acazi BM/acphid BM/acthtad BM/acpsid 
-  // BM/acmagd BM/acaoad BM/acthro BM/acnzb BM/acvzi BM/acazb BM/acgear
-  auto    itDataLabel = std::begin(pSource_BMNav->DataLabel);
-  while (itDataLabel != std::end(pSource_BMNav->DataLabel))
-  {
-    std::cout << *itDataLabel << " ";
-    itDataLabel++;
-  } // end while listing data labels
-  std::cout << "\n";
-#endif
-
   // Open the output database file and init it
 #ifdef SQLITE
 //    strcpy(&(szOutFile[strlen(szOutFile)]), ".db");
@@ -136,12 +120,12 @@ int main(int iArgc, char* aszArgv[])
   std::string     sColumnNames;
 
   sSQL = "CREATE TABLE " TABLE_NAME_BLUEMAX "(RowNum INT PRIMARY KEY ASC, ";
-  itDataLabel = std::begin(pSource_BMNav->DataLabels);
-  while (itDataLabel != std::end(pSource_BMNav->DataLabels))
+  auto itFields = std::begin(pSource_BMNav->fields);
+  while (itFields != std::end(pSource_BMNav->fields))
   {
-    sSQL += *itDataLabel + " REAL";
-    itDataLabel++;
-    if (itDataLabel != std::end(pSource_BMNav->DataLabels))
+    sSQL += itFields->getName() + " REAL";
+    itFields++;
+    if (itFields != std::end(pSource_BMNav->fields))
       sSQL += ", ";
     else
       sSQL += ");";
@@ -152,14 +136,8 @@ int main(int iArgc, char* aszArgv[])
   iStatus = sqlite3_exec(pDB, sSQL.c_str(), NULL, NULL, NULL);
   if (iStatus != SQLITE_OK)
     printf("SQLite CREATE TABLE error - %s\n", sqlite3_errmsg(pDB));
+#endif
 
-#if 0
-  sSQL = "CREATE INDEX MissionTimeOffset ON BlueMax(IDX, BM_actime);";
-  iStatus = sqlite3_exec(pDB, sSQL.c_str(), NULL, NULL, NULL);
-  if (iStatus != SQLITE_OK)
-    printf("SQLite CREATE INDEX error - %s\n", sqlite3_errmsg(pDB));
-#endif
-#endif
 #ifdef HDF5
   strcpy(&(szOutFile[strlen(szOutFile)]), ".h5");
   hdfFileId = H5Fcreate(szOutFile, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
@@ -189,16 +167,16 @@ int main(int iArgc, char* aszArgv[])
 
 
     // Loop on individual data labels
-    itDataLabel = std::begin(pSource_BMNav->DataLabels);
+    itFields = std::begin(pSource_BMNav->fields);
 #ifdef SQLITE
     sSQL = "INSERT INTO " TABLE_NAME_BLUEMAX " VALUES(" + std::to_string(lRowIdx) + ", ";
 #endif
-    while (itDataLabel != std::end(pSource_BMNav->DataLabels))
+    while (itFields != std::end(pSource_BMNav->fields))
     {
 #ifdef SQLITE
-      sSQL += std::to_string(clSimState.fState[*itDataLabel]);
-      itDataLabel++;
-      if (itDataLabel != std::end(pSource_BMNav->DataLabels))
+      sSQL += std::to_string(clSimState.fState[itFields->getID()]);
+      itFields++;
+      if (itFields != std::end(pSource_BMNav->fields))
         sSQL += ", ";
       else
         sSQL += ");";

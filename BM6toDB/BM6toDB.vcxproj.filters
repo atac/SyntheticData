@@ -51,6 +51,12 @@
     <ClInclude Include="..\3rdParty\atac\TimeEstimator.h">
       <Filter>ProgressBar</Filter>
     </ClInclude>
+    <ClInclude Include="..\SynthCh10Gen\FieldDescriptor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SynthCh10Gen\FieldSet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BM6toDB.cpp">
@@ -76,6 +82,12 @@
     </ClCompile>
     <ClCompile Include="..\3rdParty\atac\TimeEstimator.cpp">
       <Filter>ProgressBar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SynthCh10Gen\FieldDescriptor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SynthCh10Gen\FieldSet.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
