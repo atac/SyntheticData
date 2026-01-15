@@ -165,6 +165,8 @@
     <ClCompile Include="..\3rdParty\atac\TimeEstimator.cpp" />
     <ClCompile Include="..\3rdParty\csv-parser\csv_parser.cpp" />
     <ClCompile Include="..\3rdParty\SQLite\sqlite3.c" />
+    <ClCompile Include="..\SynthCh10Gen\FieldDescriptor.cpp" />
+    <ClCompile Include="..\SynthCh10Gen\FieldSet.cpp" />
     <ClCompile Include="..\SynthCh10Gen\Source_CsvTxt.cpp" />
     <ClCompile Include="..\SynthCh10Gen\Source_SQLiteDB.cpp" />
     <ClCompile Include="..\SynthCh10Gen\Source_TsvTxt.cpp" />
@@ -182,6 +184,8 @@
     <ClInclude Include="..\3rdParty\atac\TimeEstimator.h" />
     <ClInclude Include="..\3rdParty\csv-parser\csv_parser.hpp" />
     <ClInclude Include="..\3rdParty\SQLite\sqlite3.h" />
+    <ClInclude Include="..\SynthCh10Gen\FieldDescriptor.h" />
+    <ClInclude Include="..\SynthCh10Gen\FieldSet.h" />
     <ClInclude Include="..\SynthCh10Gen\SimState.h" />
     <ClInclude Include="..\SynthCh10Gen\Source_CsvTxt.h" />
     <ClInclude Include="..\SynthCh10Gen\Source_Nav.h" />
