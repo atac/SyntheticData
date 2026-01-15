@@ -422,12 +422,11 @@ Ch10Formatter_PCM* ControllerState::CreatePcmFormatter(Ch10Channel::ChannelDataF
 
   case Ch10Channel::ChannelDataFormat::UNFORMATTED:
   {
-    // for unformatted channels, get field labels and types directly from source
+    // for unformatted channels, get field IDs and types directly from source
     ClCh10Format_PCM_CSV* formatCsv =
       new ClCh10Format_PCM_CSV(
         framerate.value,
-        src->DataLabels,
-        src->DataTypes
+        src->fields
       );
     formatter = dynamic_cast<Ch10Formatter_PCM*>(formatCsv);
     break;
@@ -517,7 +516,7 @@ Ch10Formatter_Video* ControllerState::CreateVideoFormatter(Ch10Channel::ChannelD
   case Ch10Channel::ChannelDataFormat::SYNTHFORMAT1:
   default:
   {
-    Ch10Format_Video* formatVideo = new Ch10Format_Video(src->DataLabels, src->DataTypes);
+    Ch10Format_Video* formatVideo = new Ch10Format_Video(src->fields);
     formatter = dynamic_cast<Ch10Formatter_Video*>(formatVideo);
     break;
   }

@@ -54,7 +54,7 @@ ClCh10Format_PCM_SynthFmt1::ClCh10Format_PCM_SynthFmt1(float fFrameRate, string 
 
     pFrame = (uint32_t*)&suPcmFrame_Fmt1;
 
-    InitStateFieldPrefixes(stateFieldPrefix);
+    InitFieldSet(stateFieldPrefix);
     }
 
 // ----------------------------------------------------------------------------
@@ -75,56 +75,58 @@ ClCh10Format_PCM_SynthFmt1::~ClCh10Format_PCM_SynthFmt1()
 
 void ClCh10Format_PCM_SynthFmt1::FormatMsg(ClSimState* pclSimState)
 {
-  int i = 0;
+  //int i = 0;
+
+  auto i = fields.begin();
 
   // Standard nav data source values that should be in every simulation
-  suPcmFrame_Fmt1.lLATP = int32_t(FLOAT2SEMICIR32(pclSimState->fState[fields[i++]]));
-  suPcmFrame_Fmt1.lLONP = int32_t(FLOAT2SEMICIR32(pclSimState->fState[fields[i++]]));
-  suPcmFrame_Fmt1.uALT = uint16_t(pclSimState->fState[fields[i++]]) + 1000;
-  suPcmFrame_Fmt1.uTAS = uint16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.uTH = uint16_t(FLOAT2SEMICIR16(pclSimState->fState[fields[i++]]));
-  suPcmFrame_Fmt1.uMH = uint16_t(FLOAT2SEMICIR16(pclSimState->fState[fields[i++]]));
-  suPcmFrame_Fmt1.iPTCH = int16_t(FLOAT2SEMICIR16(pclSimState->fState[fields[i++]]));
-  suPcmFrame_Fmt1.iROLL = int16_t(FLOAT2SEMICIR16(pclSimState->fState[fields[i++]]));
-  suPcmFrame_Fmt1.iAOAC = int16_t(FLOAT2SEMICIR16(pclSimState->fState[fields[i++]]));
-  suPcmFrame_Fmt1.iVRTG = int16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.lLATP = int32_t(FLOAT2SEMICIR32(pclSimState->fState[(i++)->getID()]));
+  suPcmFrame_Fmt1.lLONP = int32_t(FLOAT2SEMICIR32(pclSimState->fState[(i++)->getID()]));
+  suPcmFrame_Fmt1.uALT = uint16_t(pclSimState->fState[(i++)->getID()]) + 1000;
+  suPcmFrame_Fmt1.uTAS = uint16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.uTH = uint16_t(FLOAT2SEMICIR16(pclSimState->fState[(i++)->getID()]));
+  suPcmFrame_Fmt1.uMH = uint16_t(FLOAT2SEMICIR16(pclSimState->fState[(i++)->getID()]));
+  suPcmFrame_Fmt1.iPTCH = int16_t(FLOAT2SEMICIR16(pclSimState->fState[(i++)->getID()]));
+  suPcmFrame_Fmt1.iROLL = int16_t(FLOAT2SEMICIR16(pclSimState->fState[(i++)->getID()]));
+  suPcmFrame_Fmt1.iAOAC = int16_t(FLOAT2SEMICIR16(pclSimState->fState[(i++)->getID()]));
+  suPcmFrame_Fmt1.iVRTG = int16_t(pclSimState->fState[(i++)->getID()]);
 
   // Additional data values from NASA data
-  suPcmFrame_Fmt1.uGS = uint16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.iIVV = int16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.iFPAC = int16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.iPLA_1 = int16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.iPLA_2 = int16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.iEGT_1 = int16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.iEGT_2 = int16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.iOIT_1 = int16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.iOIT_2 = int16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.uFF_1 = uint16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.uFF_2 = uint16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.iN1_1 = int16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.iN1_2 = int16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.iN2_1 = int16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.iN2_2 = int16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.iVIB_1 = int16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.iVIB_2 = int16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.iOIP_1 = int16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.iOIP_2 = int16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.iAOA1 = int16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.iAOA2 = int16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.bWOW = pclSimState->fState[fields[i++]] == 0.0 ? 0 : 1;
-  suPcmFrame_Fmt1.bLGDN = pclSimState->fState[fields[i++]] == 0.0 ? 0 : 1;
-  suPcmFrame_Fmt1.bLGUP = pclSimState->fState[fields[i++]] == 0.0 ? 0 : 1;
-  suPcmFrame_Fmt1.iAIL_1 = int16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.iAIL_2 = int16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.iELEV_1 = int16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.iELEV_2 = int16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.iRUDD = int16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.uCWPC = uint16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.uCWPF = uint16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.uCCPC = uint16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.uCCPF = uint16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.uRUDP = uint16_t(pclSimState->fState[fields[i++]]);
-  suPcmFrame_Fmt1.uFLAP = uint16_t(pclSimState->fState[fields[i++]]);
+  suPcmFrame_Fmt1.uGS = uint16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.iIVV = int16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.iFPAC = int16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.iPLA_1 = int16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.iPLA_2 = int16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.iEGT_1 = int16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.iEGT_2 = int16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.iOIT_1 = int16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.iOIT_2 = int16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.uFF_1 = uint16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.uFF_2 = uint16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.iN1_1 = int16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.iN1_2 = int16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.iN2_1 = int16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.iN2_2 = int16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.iVIB_1 = int16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.iVIB_2 = int16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.iOIP_1 = int16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.iOIP_2 = int16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.iAOA1 = int16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.iAOA2 = int16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.bWOW = pclSimState->fState[(i++)->getID()] == 0.0 ? 0 : 1;
+  suPcmFrame_Fmt1.bLGDN = pclSimState->fState[(i++)->getID()] == 0.0 ? 0 : 1;
+  suPcmFrame_Fmt1.bLGUP = pclSimState->fState[(i++)->getID()] == 0.0 ? 0 : 1;
+  suPcmFrame_Fmt1.iAIL_1 = int16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.iAIL_2 = int16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.iELEV_1 = int16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.iELEV_2 = int16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.iRUDD = int16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.uCWPC = uint16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.uCWPF = uint16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.uCCPC = uint16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.uCCPF = uint16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.uRUDP = uint16_t(pclSimState->fState[(i++)->getID()]);
+  suPcmFrame_Fmt1.uFLAP = uint16_t(pclSimState->fState[(i++)->getID()]);
 }
 
 // ----------------------------------------------------------------------------
@@ -346,51 +348,52 @@ std::string ClCh10Format_PCM_SynthFmt1::TMATS(ClTmatsIndexes & TmatsIndex, std::
     }
 
 
-void ClCh10Format_PCM_SynthFmt1::InitStateFieldPrefixes(string prefix)
+void ClCh10Format_PCM_SynthFmt1::InitFieldSet(string prefix)
 {
-  fields.push_back(prefix + "AC_LAT");
-  fields.push_back(prefix + "AC_LON");
-  fields.push_back(prefix + "AC_ALT");
-  fields.push_back(prefix + "AC_TAS");
-  fields.push_back(prefix + "AC_TRUE_HDG");
-  fields.push_back(prefix + "AC_MAG_HDR");
-  fields.push_back(prefix + "AC_PITCH");
-  fields.push_back(prefix + "AC_ROLL");
-  fields.push_back(prefix + "AC_AOA");
-  fields.push_back(prefix + "AC_ACCEL_DOWN");
-  fields.push_back(prefix + "GS");
-  fields.push_back(prefix + "IVV");
-  fields.push_back(prefix + "FPAC");
-  fields.push_back(prefix + "PLA_1");
-  fields.push_back(prefix + "PLA_2");
-  fields.push_back(prefix + "EGT_1");
-  fields.push_back(prefix + "EGT_2");
-  fields.push_back(prefix + "OIT_1");
-  fields.push_back(prefix + "OIT_2");
-  fields.push_back(prefix + "FF_1");
-  fields.push_back(prefix + "FF_2");
-  fields.push_back(prefix + "N1_1");
-  fields.push_back(prefix + "N1_2");
-  fields.push_back(prefix + "N2_1");
-  fields.push_back(prefix + "N2_2");
-  fields.push_back(prefix + "VIB_1");
-  fields.push_back(prefix + "VIB_2");
-  fields.push_back(prefix + "OIP_1");
-  fields.push_back(prefix + "OIP_2");
-  fields.push_back(prefix + "AOA1");
-  fields.push_back(prefix + "AOA2");
-  fields.push_back(prefix + "WOW");
-  fields.push_back(prefix + "LGDN");
-  fields.push_back(prefix + "LGUP");
-  fields.push_back(prefix + "AIL_1");
-  fields.push_back(prefix + "AIL_2");
-  fields.push_back(prefix + "ELEV_1");
-  fields.push_back(prefix + "ELEV_2");
-  fields.push_back(prefix + "RUDD");
-  fields.push_back(prefix + "CWPC");
-  fields.push_back(prefix + "CWPF");
-  fields.push_back(prefix + "CCPC");
-  fields.push_back(prefix + "CCPF");
-  fields.push_back(prefix + "RUDP");
-  fields.push_back(prefix + "FLAP");
+  fields.addField(FieldDescriptor(prefix + "AC_LAT", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "AC_LAT", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "AC_LON", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "AC_ALT", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "AC_TAS", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "AC_TRUE_HDG", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "AC_MAG_HDR", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "AC_PITCH", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "AC_ROLL", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "AC_AOA", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "AC_ACCEL_DOWN", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "GS", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "IVV", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "FPAC", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "PLA_1", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "PLA_2", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "EGT_1", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "EGT_2", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "OIT_1", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "OIT_2", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "FF_1", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "FF_2", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "N1_1", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "N1_2", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "N2_1", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "N2_2", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "VIB_1", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "VIB_2", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "OIP_1", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "OIP_2", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "AOA1", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "AOA2", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "WOW", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "LGDN", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "LGUP", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "AIL_1", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "AIL_2", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "ELEV_1", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "ELEV_2", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "RUDD", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "CWPC", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "CWPF", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "CCPC", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "CCPF", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "RUDP", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor(prefix + "FLAP", FieldType::INTEGER_FIELD));
 }

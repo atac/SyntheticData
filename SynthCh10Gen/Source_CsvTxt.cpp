@@ -41,16 +41,16 @@ ClSource_CsvTxt::~ClSource_CsvTxt()
 
 // These are useful for debugging
 
-void display_vector_contents(const STR& input_line, const CSV_FIELDS& output_fields)
-    {
-    CONST_VECTOR_ITR it = output_fields.begin();
-    int i = 0;
+void display_vector_contents(const STR& input_line, const StringList& output_fields)
+{
+  auto it = output_fields.begin();
+  int i = 0;
 
-    for ( ; it != output_fields.end(); ++it)
-        {
-        std :: cout << "Field [" << i++ << "] - " << *it << "\n";
-        }
-    }
+  for (; it != output_fields.end(); ++it)
+  {
+    std::cout << "Field [" << i++ << "] - " << *it << "\n";
+  }
+}
 
 void display_map_contents(const STR& input_line, const KEY_VAL_FIELDS& output_map)
     {
@@ -81,7 +81,7 @@ bool ClSource_CsvTxt::ReadLineToBuffer(char* buf, size_t bufLen, fpos_t* lastPos
   return true;
 }
 
-bool ClSource_CsvTxt::HasNumericData(CSV_FIELDS &values) {
+bool ClSource_CsvTxt::HasNumericData(StringList &values) {
   bool foundNumber = false;
   for (auto i = values.begin(); i != values.end(); i++) {
     try {
@@ -127,19 +127,14 @@ bool ClSource_CsvTxt::Init()
     return false;
 
   // Parse the header line
-  DataLabels.clear();
-  bCsvStatus = ParseLine(szLine, DataLabels);
-  if (!bCsvStatus || DataLabels.empty())
+  StringList fieldNames;
+  bCsvStatus = ParseLine(szLine, fieldNames);
+  if (!bCsvStatus || fieldNames.empty())
     return false;
 
-  // Apply any field name mapping
-  ApplyMapping();
-
-  // Add prefix to data labels
-  ApplyPrefix();
-
   // Look for column types within the next two lines
-  CSV_FIELDS tmpFields;
+  StringList fieldTypes;
+  StringList tmpFields;
   fpos_t lastLinePos;
   for (int i = 2; i > 0; i--)
   {
@@ -156,17 +151,30 @@ bool ClSource_CsvTxt::Init()
       break;
     }
     else
-      DataTypes = tmpFields;
+      fieldTypes = tmpFields;
   }
+
+  if (!fieldTypes.empty()) {
+    FieldTypeList types;
+    for (string t : fieldTypes) {
+      types.push_back(GetFieldType(t));
+    }
+    fields = FieldSet(fieldNames, types);
+  }
+  else
+    fields = FieldSet(fieldNames);
+
+  fields.applyMapping(this->mapping);
+  fields.applyPrefix(this->sPrefix);
 
 
   // Step through all the header labels found
-  for (VECTOR_ITR itLabel = DataLabels.begin(); itLabel != DataLabels.end(); ++itLabel)
+  for (auto f = fields.begin(); f != fields.end(); ++f)
   {
     // Insert an initial placeholder into SimState map
     // Note that it is assumed the data can be represented with a floating point. If this
     // isn't the case it needs to be fixed in a derived class.
-    pclSimState->insert((*itLabel), -1.0);
+    pclSimState->insert((f->getID()), -1.0);
   } // end for all header labels
 
   if (!sPrefix.empty())
@@ -191,7 +199,7 @@ bool ClSource_CsvTxt::GetTimes() {
   if (!ReadLineToBuffer(szLine, maxLength, &startPos))
     return false;
 
-  CSV_FIELDS tmpFields;
+  StringList tmpFields;
   bool status = ParseLine(szLine, tmpFields);
   if (!status || tmpFields.empty())
     return false;
@@ -272,9 +280,8 @@ bool ClSource_CsvTxt::ReadNextLine()
 
     if (bStatus) {
       // Parse the input data line
-      CsvMap.clear();
-      bStatus = ParseLine(szLine, DataLabels, CsvMap);
-      if (CsvMap.empty())
+      bStatus = ParseLineToMap(szLine, fieldValueMap);
+      if (fieldValueMap.empty())
         bStatus = false;
     }
     else
@@ -282,7 +289,7 @@ bool ClSource_CsvTxt::ReadNextLine()
 
     if (bStatus) {
       // Decode the current data time
-      bStatus = timeParser.Parse(CsvMap[DataLabels[0]], fDecodedTime);
+      bStatus = timeParser.Parse(fieldValueMap[fields.begin()->getID()], fDecodedTime);
       assert(bStatus == true);
       fRelTime = fDecodedTime - fStartTime;
       dataAvailable = true;
@@ -301,6 +308,7 @@ bool ClSource_CsvTxt::ReadNextLine()
 bool ClSource_CsvTxt::UpdateSimState(double fSimElapsedTime)
 {
   bool bStatus = true;
+  string timeFieldID = fields.begin()->getID();
 
   fSimElapsedTime -= fTimeShift; // apply shift by changing the apparent elapsed time
 
@@ -310,12 +318,12 @@ bool ClSource_CsvTxt::UpdateSimState(double fSimElapsedTime)
       return false;
 
     // Copy current data row into the SimState
-    for (CONST_MAP_ITR itCsvMap = CsvMap.begin(); itCsvMap != CsvMap.end(); ++itCsvMap)
+    for (CONST_MAP_ITR itValueMap = fieldValueMap.begin(); itValueMap != fieldValueMap.end(); ++itValueMap)
     {
-      if (itCsvMap->first == DataLabels[0])
-        pclSimState->update(DataLabels[0], fRelTime);
+      if (itValueMap->first == timeFieldID)
+        pclSimState->update(timeFieldID, fRelTime);
       else
-        pclSimState->update(itCsvMap->first, std::stod(itCsvMap->second));
+        pclSimState->update(itValueMap->first, std::stod(itValueMap->second));
     }
 
     // Get the next line of data
@@ -332,25 +340,23 @@ void ClSource_CsvTxt::SetMapping(ConfigMapping map) {
   this->mapping = map;
 }
 
-void ClSource_CsvTxt::ApplyMapping() {
-  for (auto& [from, to] : this->mapping) {
-    auto i = find(DataLabels.begin(), DataLabels.end(), from);
-    if (i != DataLabels.end())
-      (*i) = to;
-  }
-}
-
-void ClSource_CsvTxt::ApplyPrefix() {
-  for (auto i = DataLabels.begin(); i != DataLabels.end(); i++)
-    (*i) = sPrefix + (*i);
-}
-
-bool ClSource_CsvTxt::ParseLine(char* szLine, CSV_FIELDS& fields)
+bool ClSource_CsvTxt::ParseLine(char* szLine, StringList& values)
 {
-  return CsvParser.parse_line(szLine, fields);
+  return CsvParser.parse_line(szLine, values);
 }
 
-bool ClSource_CsvTxt::ParseLine(char* szLine, CSV_FIELDS& labels, KEY_VAL_FIELDS& fieldMap)
+bool ClSource_CsvTxt::ParseLineToMap(char* szLine, KEY_VAL_FIELDS& valueMap)
 {
-  return CsvParser.parse_line(szLine, labels, fieldMap);
+  valueMap.clear();
+  return CsvParser.parse_line(szLine, fields.getFieldIDs(), valueMap);
+}
+
+
+FieldType ClSource_CsvTxt::GetFieldType(string typeString) {
+  transform(typeString.begin(), typeString.end(), typeString.begin(), ::tolower);
+
+  if (typeString == "integer")
+    return FieldType::INTEGER_FIELD;
+  else
+    return FieldType::FLOAT_FIELD;
 }

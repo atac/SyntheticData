@@ -88,23 +88,28 @@ void ClSource_SQLiteDB::Init()
   iStatus = sqlite3_prepare_v2(pDB, sSQL.c_str(), -1, &pSqlStmt, NULL);
   if (iStatus == SQLITE_OK)
   {
+    StringList fieldNames;
+    FieldTypeList fieldTypes;
+
     // Read column labels and types from DB
     while (sqlite3_step(pSqlStmt) == SQLITE_ROW)
     {
-      this->DataLabels.push_back((char*)sqlite3_column_text(pSqlStmt, 1));
-      this->DataTypes.push_back((char*)sqlite3_column_text(pSqlStmt, 2));
+      fieldNames.push_back((char*)sqlite3_column_text(pSqlStmt, 1));
+      fieldTypes.push_back(GetFieldType((char*)sqlite3_column_text(pSqlStmt, 2)));
     }
 
     // Make column list for SELECT statement
-    for (auto i = DataLabels.begin(); i != DataLabels.end(); i++)
+    for (auto i = fieldNames.begin(); i != fieldNames.end(); i++)
     {
       if (!sSQLCols.empty())
         sSQLCols.append(", ");
       sSQLCols.append(*i);
     }
 
-    ApplyMapping();
-    ApplyPrefix();
+    fields = FieldSet(fieldNames, fieldTypes);
+    fields.applyMapping(this->mapping);
+    fields.applyPrefix(this->sPrefix);
+
     InitSimStateFields();
   }
   sqlite3_finalize(pSqlStmt);
@@ -171,18 +176,16 @@ bool ClSource_SQLiteDB::GetTimes()
 
 void ClSource_SQLiteDB::InitSimStateFields() 
 {
-  assert(DataLabels.size() == DataTypes.size());
-
-  for (int i = 0; i < DataLabels.size(); i++)
+  for (auto i = fields.begin(); i != fields.end(); i++)
   {
-    string type = DataTypes[i];
-    
-    if (type == "INT")
-      pclSimState->insert(DataLabels[i], (long)0);
-    else if (type == "REAL")
-      pclSimState->insert(DataLabels[i], 0.0);
-    else if (type == "BLOB")
-      pclSimState->insert(DataLabels[i], nullptr);
+    switch (i->getType()) {
+    case FieldType::INTEGER_FIELD:
+      pclSimState->insert(i->getID(), (long)0);
+    case FieldType::FLOAT_FIELD:
+      pclSimState->insert(i->getID(), 0.0);
+    case FieldType::BLOB_FIELD:
+      pclSimState->insert(i->getID(), nullptr);
+    }
   }
 
   if (!sPrefix.empty())
@@ -216,8 +219,6 @@ bool ClSource_SQLiteDB::ReadNextLine()
 
 bool ClSource_SQLiteDB::UpdateSimState(double fSimElapsedTime)
 {
-  unsigned uColIdx;
-
   bool bStatus = true;
 
   fSimElapsedTime -= fTimeShift; // apply shift by changing the apparent elapsed time
@@ -228,16 +229,16 @@ bool ClSource_SQLiteDB::UpdateSimState(double fSimElapsedTime)
       return false;
 
     // Get the individual column values
-    for (uColIdx = 0; uColIdx < DataLabels.size(); uColIdx++)
+    for (int uColIdx = 0; uColIdx < fields.size(); uColIdx++)
     {
       // Read column based on column type
       switch (sqlite3_column_type(pSqlStmt, uColIdx))
       {
       case SQLITE_INTEGER:
-        pclSimState->update(DataLabels[uColIdx], (long)sqlite3_column_int64(pSqlStmt, uColIdx));
+        pclSimState->update(fields[uColIdx].getID(), (long)sqlite3_column_int64(pSqlStmt, uColIdx));
         break;
       case SQLITE_FLOAT:
-        pclSimState->update(DataLabels[uColIdx], sqlite3_column_double(pSqlStmt, uColIdx));
+        pclSimState->update(fields[uColIdx].getID(), sqlite3_column_double(pSqlStmt, uColIdx));
         break;
       case SQLITE_BLOB:
       {
@@ -251,7 +252,7 @@ bool ClSource_SQLiteDB::UpdateSimState(double fSimElapsedTime)
         else
           data = new vector<uint8_t>(blob, blob + size);
 
-        pclSimState->update(DataLabels[uColIdx], data);
+        pclSimState->update(fields[uColIdx].getID(), data);
         break;
       }
       default:
@@ -274,15 +275,12 @@ void ClSource_SQLiteDB::SetMapping(ConfigMapping map) {
   this->mapping = map;
 }
 
-void ClSource_SQLiteDB::ApplyMapping() {
-  for (auto& [from, to] : this->mapping) {
-    auto i = find(DataLabels.begin(), DataLabels.end(), from);
-    if (i != DataLabels.end())
-      (*i) = to;
-  }
-}
 
-void ClSource_SQLiteDB::ApplyPrefix() {
-  for (auto i = DataLabels.begin(); i != DataLabels.end(); i++)
-    (*i) = sPrefix + (*i);
+FieldType ClSource_SQLiteDB::GetFieldType(string typeString) {
+  if (typeString == "INT")
+    return FieldType::INTEGER_FIELD;
+  else if (typeString == "BLOB")
+    return FieldType::BLOB_FIELD;
+  else // "REAL"
+    return FieldType::FLOAT_FIELD;
 }

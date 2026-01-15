@@ -31,7 +31,7 @@ public:
   // Class variables
 protected:
   FILE*           hCsvInput;
-  KEY_VAL_FIELDS  CsvMap;
+  KEY_VAL_FIELDS  fieldValueMap;
 
 private:
   CSV_Parser      CsvParser;
@@ -51,12 +51,11 @@ protected:
   bool GetTimes();
 
   bool ReadLineToBuffer(char* buf, size_t bufLen, fpos_t* lastPosition = nullptr);
-  bool HasNumericData(CSV_FIELDS& values);
+  bool HasNumericData(StringList& values);
 
-  virtual void ApplyMapping();
-  virtual void ApplyPrefix();
+  virtual bool ParseLine(char* szLine, StringList& values);
+  virtual bool ParseLineToMap(char* szLine, KEY_VAL_FIELDS& valueMap);
 
-  virtual bool ParseLine(char* szLine, CSV_FIELDS& fields);
-  virtual bool ParseLine(char* szLine, CSV_FIELDS& labels, KEY_VAL_FIELDS& fieldMap);
+  FieldType GetFieldType(string typeString);
 };
 

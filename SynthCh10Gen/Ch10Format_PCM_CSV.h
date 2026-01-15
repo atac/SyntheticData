@@ -44,7 +44,7 @@ class ClCh10Format_PCM_CSV : public Ch10Formatter_PCM
 {
 
 public:
-  ClCh10Format_PCM_CSV(float fFrameRate, CSV_FIELDS fields, CSV_FIELDS types);
+  ClCh10Format_PCM_CSV(float fFrameRate, FieldSet fields);
   ~ClCh10Format_PCM_CSV();
 
   // Class variables
@@ -59,7 +59,7 @@ public:
 
 private:
   uint32_t  GetFrameLength(size_t numFields);
-  void      InitFrameFieldPointers(CSV_FIELDS fields, CSV_FIELDS types);
+  void      InitFrameFieldPointers(FieldSet fields);
   uint32_t  WordSwap(uint32_t value);
   void      ToLower(STR& str);
 };

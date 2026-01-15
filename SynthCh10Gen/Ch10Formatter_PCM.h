@@ -22,6 +22,7 @@
 #include "SimState.h"
 
 #include "Ch10Formatter.h"
+#include "FieldSet.h"
 
 #include <vector>
 
@@ -38,15 +39,11 @@ public:
 
   typedef unsigned char byte;
 
-  enum class FieldType {
-    FLOAT_FIELD = 0,
-    INTEGER_FIELD
-  };
-
   struct PcmField {
+    PcmField(uint32_t* pValue, FieldDescriptor descriptor) : pValue(pValue), descriptor(descriptor) {};
+
     uint32_t* pValue;
-    FieldType type;
-    std::string name;
+    FieldDescriptor descriptor;
   };
 
   // Class variables

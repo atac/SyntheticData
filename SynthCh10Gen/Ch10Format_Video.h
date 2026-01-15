@@ -7,7 +7,7 @@ class Ch10Format_Video :
     public Ch10Formatter_Video
 {
 public:
-  Ch10Format_Video(CSV_FIELDS dataLabels, CSV_FIELDS dataTypes);
+  Ch10Format_Video(FieldSet fields);
   ~Ch10Format_Video() {};
 
   void SetRTC(int64_t relTime);
@@ -15,7 +15,7 @@ public:
   std::string TMATS(ClTmatsIndexes& tmatsIndex, std::string sCDLN);
 
 private:
-  std::string fieldName;
-  void FilterFields(CSV_FIELDS labels, CSV_FIELDS types);
+  FieldDescriptor videoField;
+  void FilterFields(FieldSet fields);
 };
 

@@ -12,8 +12,8 @@ of time.
 
 #include "SimState.h"
 #include "SimTimer.h"
-#include "ConfigLib.h"
 #include "TimeParser.h"
+#include "FieldSet.h"
 
 // https://github.com/rakeshgk/csv-parser
 #include "csv_parser.hpp"
@@ -60,8 +60,7 @@ public:
 
   bool timeBasis;
 
-  CSV_FIELDS DataLabels;
-  CSV_FIELDS DataTypes;
+  FieldSet fields;
 
   enum EnInputType 
   {
@@ -82,8 +81,6 @@ public:
 
 
 protected:
-  virtual void ApplyMapping()                         = 0; // Apply the mapping to the instance's labels
-  virtual void ApplyPrefix()                          = 0; // Apply the data source prefix to the instance's labels (do not call before mapping)
   virtual bool GetTimes()                             = 0; // Find the first and last time stamp in the source and assign to instance data
 };
 

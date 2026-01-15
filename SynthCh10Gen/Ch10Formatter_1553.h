@@ -21,6 +21,7 @@
 #include "SimState.h"
 
 #include "Ch10Formatter.h"
+#include "FieldSet.h"
 
 using namespace Irig106;
 

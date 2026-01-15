@@ -58,6 +58,8 @@
     <ClCompile Include="Configuration.cpp" />
     <ClCompile Include="ConfigValidator.cpp" />
     <ClCompile Include="ControllerState.cpp" />
+    <ClCompile Include="FieldDescriptor.cpp" />
+    <ClCompile Include="FieldSet.cpp" />
     <ClCompile Include="GenerationController.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="Program.cpp" />
@@ -114,6 +116,8 @@
     <ClInclude Include="Configuration.h" />
     <ClInclude Include="ConfigValidator.h" />
     <ClInclude Include="ControllerState.h" />
+    <ClInclude Include="FieldDescriptor.h" />
+    <ClInclude Include="FieldSet.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="LoggerTypes.h" />
     <ClInclude Include="Source_SQLiteDB.h" />

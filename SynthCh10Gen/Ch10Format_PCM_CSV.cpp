@@ -32,7 +32,7 @@ using namespace Irig106;
 // ----------------------------------------------------------------------------
 
 // Construct PCM packet
-ClCh10Format_PCM_CSV::ClCh10Format_PCM_CSV(float fFrameRate, CSV_FIELDS fields, CSV_FIELDS types)
+ClCh10Format_PCM_CSV::ClCh10Format_PCM_CSV(float fFrameRate, FieldSet fields)
 {
   this->uWordLen = 32;  // bits
   this->uIPHLen = 10;  // bytes
@@ -52,7 +52,7 @@ ClCh10Format_PCM_CSV::ClCh10Format_PCM_CSV(float fFrameRate, CSV_FIELDS fields, 
   pFrame = &pcmFrame[0];
 
   // Init frame field pointers
-  InitFrameFieldPointers(fields, types);
+  InitFrameFieldPointers(fields);
 }
 
 // ----------------------------------------------------------------------------
@@ -74,9 +74,9 @@ ClCh10Format_PCM_CSV::~ClCh10Format_PCM_CSV()
 void ClCh10Format_PCM_CSV::FormatMsg(ClSimState* simState)
 {
   for (auto iter = pcmFields.begin(); iter != pcmFields.end(); iter++) {
-    float v = (float)simState->fState[iter->name];
+    float v = (float)simState->fState[iter->descriptor.getName()];
 
-    switch (iter->type) {
+    switch (iter->descriptor.getType()) {
     case FieldType::INTEGER_FIELD:
       *iter->pValue = (int32_t)v;
       break;
@@ -91,28 +91,10 @@ void ClCh10Format_PCM_CSV::FormatMsg(ClSimState* simState)
 }
 
 
-void ClCh10Format_PCM_CSV::InitFrameFieldPointers(CSV_FIELDS fields, CSV_FIELDS types) {
-  bool useTypes = (fields.size() == types.size());
-
-  int i = 1;
-  for (auto iter = fields.begin() + 1; iter != fields.end(); iter++) {
-    PcmField field;
-
-    field.type = FieldType::FLOAT_FIELD;
-
-    if (useTypes) {
-      STR typeStr = types[i];
-      ToLower(typeStr);
-      if (typeStr == "integer")
-        field.type = FieldType::INTEGER_FIELD;
-    }
-
-    field.name = (*iter);
-    field.pValue = &pcmFrame[i];
-
+void ClCh10Format_PCM_CSV::InitFrameFieldPointers(FieldSet fields) {
+  for (int i = 0; i < fields.size(); i++) {
+    PcmField field = PcmField(&pcmFrame[i], fields[i]);
     pcmFields.push_back(field);
-
-    i++;
   }
 }
 
@@ -197,13 +179,13 @@ std::string ClCh10Format_PCM_CSV::TMATS(ClTmatsIndexes & TmatsIndex, std::string
     iMeasIdx = 1;
 
     for (auto iter = pcmFields.begin(); iter != pcmFields.end(); iter++) {
-      D_MEASURAND_1WORD_GENERIC(iter->name, iMeasIdx, iMeasIdx, "FW")
+      D_MEASURAND_1WORD_GENERIC(iter->descriptor.getName(), iMeasIdx, iMeasIdx, "FW")
     }
 
     assert(iMeasIdx == pcmFields.size() + 1);
 
     for (auto iter = pcmFields.begin(); iter != pcmFields.end(); iter++) {
-      C_CONVERSION_OFFSET_SCALE_GENERIC(iter->name, iter->name, "", "FPT", 0.0, 1.0);
+      C_CONVERSION_OFFSET_SCALE_GENERIC(iter->descriptor.getName(), iter->descriptor.getName(), "", "FPT", 0.0, 1.0);
     }
 
     return ssTMATS.str();

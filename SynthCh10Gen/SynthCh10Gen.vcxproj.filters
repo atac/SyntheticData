@@ -169,6 +169,12 @@
     <ClCompile Include="Configuration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FieldDescriptor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FieldSet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\3rdParty\csv-parser\csv_parser.hpp">
@@ -349,6 +355,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Configuration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FieldSet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FieldDescriptor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -34,12 +34,11 @@ public:
   void Config(string tableName);
 
 private:
-  virtual void ApplyMapping();
-  virtual void ApplyPrefix();
-
   void InitSimStateFields();
   void Init();
   bool GetTimes();
+
+  FieldType GetFieldType(string typeString);
 
   string tableName;
 };

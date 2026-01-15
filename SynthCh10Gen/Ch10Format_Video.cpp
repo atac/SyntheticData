@@ -1,10 +1,10 @@
 #include "Ch10Format_Video.h"
 
-Ch10Format_Video::Ch10Format_Video(CSV_FIELDS dataLabels, CSV_FIELDS dataTypes)
+Ch10Format_Video::Ch10Format_Video(FieldSet fields)
 {
   // This module is designed to format a single video stream and will use the
   // first BLOB column encountered.
-  FilterFields(dataLabels, dataTypes);
+  FilterFields(fields);
 }
 
 
@@ -23,15 +23,12 @@ std::string Ch10Format_Video::TMATS(ClTmatsIndexes& tmatsIndex, std::string sCDL
   return "";
 }
 
-void Ch10Format_Video::FilterFields(CSV_FIELDS labels, CSV_FIELDS types)
+void Ch10Format_Video::FilterFields(FieldSet fields)
 {
-  if (labels.size() != types.size())
-    return;
-
-  for (int i = 0; i < labels.size(); i++) {
-    if (types[i] == "BLOB")
+  for (auto f = fields.begin(); f != fields.end(); f++) {
+    if (f->getType() == FieldType::BLOB_FIELD)
     {
-      fieldName = labels[i];
+      videoField = (*f);
       break;
     }
   }

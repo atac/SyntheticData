@@ -1,5 +1,6 @@
 #pragma once
 #include "Ch10Formatter.h"
+#include "FieldSet.h"
 
 class Ch10Formatter_Video :
     public Ch10Formatter

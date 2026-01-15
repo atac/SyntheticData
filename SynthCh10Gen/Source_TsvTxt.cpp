@@ -10,7 +10,7 @@ ClSource_TsvTxt::~ClSource_TsvTxt()
 {
 }
 
-bool ClSource_TsvTxt::ParseLine(char* szLine, CSV_FIELDS& fields)
+bool ClSource_TsvTxt::ParseLine(char* szLine, StringList& values)
 {
   // Tokenize line and store in fields
 
@@ -23,7 +23,7 @@ bool ClSource_TsvTxt::ParseLine(char* szLine, CSV_FIELDS& fields)
   {
     iTokens = sscanf(szToken, "%s", &szTrimmedToken);
     if (iTokens == 1)
-      fields.push_back(szTrimmedToken);
+      values.push_back(szTrimmedToken);
 
     szToken = strtok(NULL, "\t");
   }
@@ -31,16 +31,17 @@ bool ClSource_TsvTxt::ParseLine(char* szLine, CSV_FIELDS& fields)
   return true;
 }
 
-bool ClSource_TsvTxt::ParseLine(char* szLine, CSV_FIELDS& labels, KEY_VAL_FIELDS& fieldMap)
+bool ClSource_TsvTxt::ParseLineToMap(char* szLine, KEY_VAL_FIELDS& valueMap)
 {
-  CSV_FIELDS fields;
-  bool status = ParseLine(szLine, fields);
+  StringList values;
+  bool status = ParseLine(szLine, values);
 
-  if (!status || labels.size() != fields.size())
+  if (!status || fields.size() != values.size())
     return false;
 
-  for (int i = 0; i < labels.size(); i++)
-    fieldMap.insert(pair(labels[i], fields[i]));
+  for (int i = 0; i < values.size(); i++) {
+    valueMap.insert(pair(fields[i].getID(), values[i]));
+  }
 
   return true;
 }

@@ -117,8 +117,8 @@ public:
   virtual std::string TMATS(ClTmatsIndexes& TmatsIndex, std::string sCDLN);
 
 private:
-  void InitStateFieldPrefixes(string prefix);
+  void InitFieldSet(string prefix);
 
-  CSV_FIELDS fields;
+  FieldSet fields;
 };
 
