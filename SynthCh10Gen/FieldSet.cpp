@@ -33,7 +33,7 @@ void FieldSet::applyMapping(GenerationConfig::ConfigMapping mapping)
 
 void FieldSet::applyPrefix(string prefix)
 {
-  for (auto f : fields) {
+  for (auto& f : fields) {
     f.setIdPrefix(prefix);
   }
 }
