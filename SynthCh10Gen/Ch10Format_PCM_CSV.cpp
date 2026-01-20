@@ -74,7 +74,7 @@ ClCh10Format_PCM_CSV::~ClCh10Format_PCM_CSV()
 void ClCh10Format_PCM_CSV::FormatMsg(ClSimState* simState)
 {
   for (auto iter = pcmFields.begin(); iter != pcmFields.end(); iter++) {
-    float v = (float)simState->fState[iter->descriptor.getName()];
+    float v = (float)simState->fState[iter->descriptor.getID()];
 
     switch (iter->descriptor.getType()) {
     case FieldType::INTEGER_FIELD:
@@ -92,8 +92,9 @@ void ClCh10Format_PCM_CSV::FormatMsg(ClSimState* simState)
 
 
 void ClCh10Format_PCM_CSV::InitFrameFieldPointers(FieldSet fields) {
+  int frameIndex = 1;
   for (int i = 0; i < fields.size(); i++) {
-    PcmField field = PcmField(&pcmFrame[i], fields[i]);
+    PcmField field = PcmField(&pcmFrame[frameIndex++], fields[i]);
     pcmFields.push_back(field);
   }
 }

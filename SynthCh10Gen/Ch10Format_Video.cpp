@@ -15,7 +15,7 @@ void Ch10Format_Video::SetRTC(int64_t relTime)
 
 void Ch10Format_Video::FormatMsg(ClSimState* simState) 
 {
-  videoData = simState->blobState.at(fieldName);
+  videoData = simState->blobState.at(videoField.getID());
 }
 
 std::string Ch10Format_Video::TMATS(ClTmatsIndexes& tmatsIndex, std::string sCDLN) 

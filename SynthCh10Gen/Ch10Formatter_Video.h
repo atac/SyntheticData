@@ -8,7 +8,7 @@ class Ch10Formatter_Video :
 
 public:
 
-  std::string fieldName;
+  FieldDescriptor videoField;
   std::vector<uint8_t>* videoData;
 
 

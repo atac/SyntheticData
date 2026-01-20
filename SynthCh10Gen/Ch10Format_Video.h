@@ -15,7 +15,6 @@ public:
   std::string TMATS(ClTmatsIndexes& tmatsIndex, std::string sCDLN);
 
 private:
-  FieldDescriptor videoField;
   void FilterFields(FieldSet fields);
 };
 
