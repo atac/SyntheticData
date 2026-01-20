@@ -366,7 +366,7 @@ int main(int iArgc, char* aszArgv[])
     // ---------------
 
     // Bluemax XLS input data
-    while (primarySrc->fRelTime + TIME_COMPARE_MARGIN < ClSimTimer::fSimElapsedTime)
+    while (ClSimTimer::fSimElapsedTime + TIME_COMPARE_MARGIN >= primarySrc->fRelTime)
     {
 
       switch (enInputType)
