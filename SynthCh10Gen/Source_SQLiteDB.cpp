@@ -181,10 +181,14 @@ void ClSource_SQLiteDB::InitSimStateFields()
     switch (i->getType()) {
     case FieldType::INTEGER_FIELD:
       pclSimState->insert(i->getID(), (long)0);
-    case FieldType::FLOAT_FIELD:
-      pclSimState->insert(i->getID(), 0.0);
+      break;
     case FieldType::BLOB_FIELD:
       pclSimState->insert(i->getID(), nullptr);
+      break;
+    case FieldType::FLOAT_FIELD:
+    default:
+      pclSimState->insert(i->getID(), 0.0);
+      break;
     }
   }
 

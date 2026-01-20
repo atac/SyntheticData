@@ -167,7 +167,17 @@ bool ClSource_CsvTxt::Init()
   fields.applyMapping(this->mapping);
   fields.applyPrefix(this->sPrefix);
 
+  InitSimStateFields();
 
+  if (!GetTimes())
+    return false;
+
+  ReadNextLine(); // prep the data for the first iteration
+
+  return true;
+}
+
+void ClSource_CsvTxt::InitSimStateFields() {
   // Step through all the header labels found
   for (auto f = fields.begin(); f != fields.end(); ++f)
   {
@@ -179,14 +189,6 @@ bool ClSource_CsvTxt::Init()
 
   if (!sPrefix.empty())
     pclSimState->insertReady(sPrefix);
-
-
-  if (!GetTimes())
-    return false;
-
-  ReadNextLine(); // prep the data for the first iteration
-
-  return true;
 }
 
 bool ClSource_CsvTxt::GetTimes() {

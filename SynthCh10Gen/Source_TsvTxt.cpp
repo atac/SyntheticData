@@ -40,7 +40,7 @@ bool ClSource_TsvTxt::ParseLineToMap(char* szLine, KEY_VAL_FIELDS& valueMap)
     return false;
 
   for (int i = 0; i < values.size(); i++) {
-    valueMap.insert(pair(fields[i].getID(), values[i]));
+    valueMap.insert_or_assign(fields[i].getID(), values[i]);
   }
 
   return true;

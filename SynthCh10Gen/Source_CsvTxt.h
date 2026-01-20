@@ -47,6 +47,7 @@ public:
   virtual void    SetMapping(ConfigMapping map);
 
 protected:
+  void InitSimStateFields();
   bool Init();
   bool GetTimes();
 
