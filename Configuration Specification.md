@@ -29,7 +29,7 @@ Configuration files for SynthCh10Gen provide the application with data source an
 ### Source Description
 Sources are data files containing timestamped telemetry or other flight data. This data is converted to the Chapter 10 format specified by any referencing channel. When multiple sources are defined, start times are aligned to coincide with the start time of the [`timeBasis`](#configuration-file-description) channel. Use the `timeShift` property to shift times left or right on the data timeline relative to the basis.
 
-The left-most column of any data source is always expected to contain a [Timestamp](#timestamps).
+The left-most column of any text-based data source is always expected to contain a [Timestamp](#timestamps). SQL data sources should have a RowNum index column followed by a timestamp column.
 
 |  Key  | Type  | Required | Description | Default |
 | ------------ | ------------ | ------------ | ------------ | ------------ |
