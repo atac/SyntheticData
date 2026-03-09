@@ -175,13 +175,15 @@ class NasaMat:
         # For now just get time out of the middle of the data and hope for the best
         try:
             middle_date_index = int(self.var_array_len('DATE_YEAR') / 2)
-            middle_time       = datetime.datetime.fromisoformat(self.make_date_time(middle_date_index))
+            date_time = self.make_date_time(middle_date_index)
+            middle_time       = datetime.datetime.fromisoformat(date_time)
             start_time_offset = datetime.timedelta(seconds = middle_date_index * 4)
             start_time        = middle_time - start_time_offset
             return start_time.isoformat(sep=" ")
 
         # Error so return a null object
-        except:
+        except Exception as ex:
+             print(ex)
              return None
 
 # -----------------------------------------------------------------------------
@@ -189,7 +191,7 @@ class NasaMat:
     def make_time_series(self, key):
         """ Make a pandas time series of data from the matlab data variable passed in """
         
-        data_period = "{0}L".format(1000 / var_rate(self.nasa_mat[key]))
+        data_period = "{0}ms".format(1000 / var_rate(self.nasa_mat[key]))
 
         data_array   = var_data_array_np(self.nasa_mat[key])
         data_idx     = pd.date_range(start=self.start_date_time, periods=data_array.size, freq=data_period)
@@ -259,7 +261,8 @@ class NasaMat:
                 self.nasa_frame = self.nasa_frame[first_valid_data_timestamp:last_valid_data_timestamp]
     
         # Error so return a null object
-        except:
+        except Exception as ex:
+             print(ex)
              self.nasa_frame = None
 
 # -----------------------------------------------------------------------------

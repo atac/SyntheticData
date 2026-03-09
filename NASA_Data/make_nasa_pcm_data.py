@@ -11,6 +11,8 @@ Created on Tue May 26
 import sys
 import os
 
+import pathlib
+
 import nasa_mat
 
 # ---------------------------------------------------------------------------
@@ -29,23 +31,30 @@ if __name__=='__main__':
     nm = nasa_mat.NasaMat()
     
     # Setup directories and file names
-    root_data_dir  = "./"
+    root_data_dir  = None
     dataset_dir    = None
     data_file_list = None
  
     # If no command line parameters then use these
     if len(sys.argv) < 2:
-        dataset_dir = "Tail_652_1/"
-        data_file_list = ("652200101120916.mat",)   # File OK
+        print("No argument provided")
+        exit(0)
+        #dataset_dir = "Tail_652_1/"
+        #data_file_list = ("652200101120916.mat",)   # File OK
 #        dataset_dir = "Tail_652_2/"
 #        data_file_list = ("652200108031352.mat",)   # File Broken
 
+    arg_path = pathlib.Path(sys.argv[1])
+
     # Get the working directory name
-    if len(sys.argv) >= 2:
-        dataset_dir = sys.argv[1] + "/"
+    #if len(sys.argv) >= 2:
+        #dataset_dir = sys.argv[1] + "/"
+
+    dataset_dir = arg_path.name
+    root_data_dir = arg_path.parent
         
-    matlab_data_dir = root_data_dir + "Matlab/" + dataset_dir
-    csv_data_dir    = root_data_dir + "CSV/"    + dataset_dir
+    matlab_data_dir = root_data_dir / "Matlab" / dataset_dir
+    csv_data_dir    = root_data_dir / "CSV" / dataset_dir
     
     # Get the file names list
     if len(sys.argv) >= 3:
@@ -53,7 +62,7 @@ if __name__=='__main__':
 
     # If there is no file names list then make one
     if data_file_list == None:
-        data_file_list = os.listdir(matlab_data_dir)
+        data_file_list = os.listdir(str(matlab_data_dir))
 
     # Set the output filename extension. Necessary to check if output file
     # has already been generated so we can skip in that case. Don't forget to
@@ -78,21 +87,21 @@ if __name__=='__main__':
 
         # Split the file name into various components
         (data_filename_base, data_filename_ext) = os.path.splitext(data_filename)
-        input_data_filename  = matlab_data_dir + data_filename
-        output_data_filename = csv_data_dir + data_filename_base + "_pcm.csv"
+        input_data_filename  = matlab_data_dir / data_filename
+        output_data_filename = csv_data_dir / (data_filename_base + "_pcm.csv")
  
         # Only process if the file is a ".mat"
         if data_filename.endswith(".mat"):
 
-            print("File {0} - {1}".format(file_num, matlab_data_dir + data_filename), end = '')
+            print("File {0} - {1}".format(file_num, str(matlab_data_dir / data_filename)), end = '')
           # print("File {0} - {1}".format(file_num, matlab_data_dir + data_filename))
             file_num += 1
 
             # Only process if output file does not exist yet
-            if not os.path.isfile(output_data_filename):
+            if not output_data_filename.exists():
 
                 # Read the matlab data and put it into a dictionary
-                nm.read_nasa_matlab(input_data_filename, var_names=write_cols)
+                nm.read_nasa_matlab(str(input_data_filename), var_names=write_cols)
 
                 # Make a pandas dataframe of flight test data
                 nm.make_flight_dataframe()
@@ -159,9 +168,9 @@ if __name__=='__main__':
                         os.mkdir(csv_data_dir)
                     
                     # Rearrange the columns and write it out
-                    print(" - write {0}".format(output_data_filename))
+                    print(" - write {0}".format(str(output_data_filename)))
                     output_frame = nm.nasa_frame[write_cols]
-                    output_frame.to_csv(output_data_filename,index_label="DATE_TIME")
+                    output_frame.to_csv(str(output_data_filename),index_label="DATE_TIME")
 #                    nm.nasa_frame.to_csv(output_data_filename,index_label="DATE_TIME", columns=write_cols)
 #                   nm.nasa_frame.to_parquet(data_filename_root+output_filename_ext)
 #                   nm.nasa_frame.to_hdf(data_filename_root+output_filename_ext, "data_"+data_filename_base, mode="w", complevel=1)
