@@ -160,7 +160,7 @@ bool TimeParser::Parse_DDD_HH_MM_SS(std::string sTime, double& time)
   double sec;
   int tok;
 
-  tok = sscanf(sTime.c_str(), "%03d[: ]%02d:%02d:%lf",
+  tok = sscanf(sTime.c_str(), "%03d%*1[: ]%02d:%02d:%lf",
     &t.tm_yday, &t.tm_hour, &t.tm_min, &sec);
 
   if (tok != 4)
@@ -182,7 +182,7 @@ bool TimeParser::Parse_MM_DD_HH_MM_SS(std::string sTime, double& time)
   double sec;
   int tok;
 
-  tok = sscanf(sTime.c_str(), "%02d[-: ]%02d[: ]%02d:%02d:%lf",
+  tok = sscanf(sTime.c_str(), "%02d%*1[-: ]%02d%*1[: ]%02d:%02d:%lf",
     &t.tm_mon, &t.tm_mday, &t.tm_hour, &t.tm_min, &sec);
 
   if (tok != 5)
@@ -206,7 +206,7 @@ bool TimeParser::Parse_YYYY_DDD_HH_MM_SS(std::string sTime, double& time)
   double sec;
   int tok;
 
-  tok = sscanf(sTime.c_str(), "%04d[-: ]%03d[: ]%02d:%02d:%lf",
+  tok = sscanf(sTime.c_str(), "%04d%*1[-: ]%03d%*1[: ]%02d:%02d:%lf",
     &t.tm_year, &t.tm_yday, &t.tm_hour, &t.tm_min, &sec);
 
   if (tok != 5)
@@ -229,7 +229,7 @@ bool TimeParser::Parse_YYYY_MM_DD_HH_MM_SS(std::string sTime, double& time)
   double sec;
   int tok;
 
-  tok = sscanf(sTime.c_str(), "%04d[-: ]%02d[-: ]%02d[: ]%02d:%02d:%lf",
+  tok = sscanf(sTime.c_str(), "%04d%*1[-: ]%02d%*1[-: ]%02d%*1[: ]%02d:%02d:%lf",
     &t.tm_year, &t.tm_mon, &t.tm_mday, &t.tm_hour, &t.tm_min, &sec);
 
   if (tok != 6)
