@@ -21,20 +21,30 @@ public:
     YYYY_MM_DD_HH_MM_SS
   };
 
+  enum class Units {
+    INVALID,
+    SECONDS,
+    DAYS
+  };
+
 public:
   TimeParser();
   ~TimeParser();
 
   bool Valid();
 
-  void Init(std::string timeString);
-  void Init(Format format);
+  void Init(std::string timeString, Units units = Units::SECONDS);
+  void Init(Format format, Units units);
 
   bool Parse(std::string timeString, double& timeSeconds);
   Format GetFormat();
 
+
+  static TimeParser::Units GetTimeUnitFromString(std::string unitStr);
+
 private:
   Format format;
+  Units units;
 
   bool (TimeParser::*DoParse)(std::string timeString, double& time);
 

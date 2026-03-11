@@ -372,6 +372,22 @@ bool ConfigValidator::SourceIsValid(json& source) {
     }
   }
 
+  auto tu = source["timeUnits"];
+  if (!tu.is_null()) {
+    if (!tu.is_string()) {
+      LogError("Source 'timeShift' property is not a string");
+      valid = false;
+    }
+    else {
+      string unit = tu.get<string>();
+      if (TimeParser::GetTimeUnitFromString(unit) == TimeParser::Units::INVALID) {
+        LogError("Source time unit (" + unit + ") is invalid");
+        valid = false;
+      }
+    }
+
+  }
+
   auto ts = source["timeShift"];
   if (!ts.is_null() && !ts.is_number()) {
     LogError("Source 'timeShift' property is not a number");

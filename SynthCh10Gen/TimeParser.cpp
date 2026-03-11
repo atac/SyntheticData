@@ -16,14 +16,16 @@ bool TimeParser::Valid()
   return format != Format::INVALID;
 }
 
-void TimeParser::Init(std::string timeString)
+void TimeParser::Init(std::string timeString, Units units)
 {
+  this->units = units;
   format = DetermineFormat(timeString);
   SetParseMethod();
 }
 
-void TimeParser::Init(Format format)
+void TimeParser::Init(Format format, Units units)
 {
+  this->units = units;
   this->format = format;
 }
 
@@ -85,6 +87,15 @@ bool TimeParser::Parse_Double(std::string sTime, double& time)
 {
   try {
     time = std::stod(sTime);
+
+    switch (this->units) {
+    case Units::DAYS:
+      time *= 86400;
+      break;
+    case Units::SECONDS:
+    default:
+      break;
+    }
   }
   catch (...) {
     return false;
@@ -236,7 +247,18 @@ bool TimeParser::Parse_YYYY_MM_DD_HH_MM_SS(std::string sTime, double& time)
 }
 
 
+TimeParser::Units TimeParser::GetTimeUnitFromString(std::string unitStr) {
+  TimeParser::Units u = TimeParser::Units::INVALID;
 
+  transform(unitStr.begin(), unitStr.end(), unitStr.begin(), ::tolower);
+
+  if (unitStr == "s" || unitStr == "sec" || unitStr == "seconds")
+    u = TimeParser::Units::SECONDS;
+  else if (unitStr == "d" || unitStr == "day" || unitStr == "days")
+    u = TimeParser::Units::DAYS;
+
+  return u;
+}
 
 TimeParser::Format TimeParser::DetermineFormat(std::string timeString)
 {

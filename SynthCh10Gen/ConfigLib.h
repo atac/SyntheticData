@@ -6,6 +6,7 @@
 #include "GenerationControllerTypes.h"
 
 #include "LoggerTypes.h"
+#include "TimeParser.h"
 
 
 using namespace std;
@@ -22,12 +23,13 @@ namespace GenerationConfig {
   struct ConfigDataSource
   {
     ConfigDataSource() 
-      : type(SourceFileType::INVALID), timeShift(0.0)
+      : type(SourceFileType::INVALID), timeUnits(TimeParser::Units::SECONDS), timeShift(0.0)
     {};
 
     string pathname;
     SourceFileType type;
     ConfigMapping mapping;
+    TimeParser::Units timeUnits;
     double timeShift;
     map<string, string> properties;
   };

@@ -57,6 +57,7 @@ public:
   double              fEndTime;       // Data end clock time (seconds)
   double              fRelTime;       // Current data time offset (seconds) since fStartTime
   double              fTimeShift;     // Shift (in seconds) to apply to source data (relative to time basis)
+  TimeParser::Units   timeUnits;      // Placeholder for the units of the TimeParser
 
   bool timeBasis;
 

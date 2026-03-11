@@ -206,7 +206,7 @@ bool ClSource_CsvTxt::GetTimes() {
   if (!status || tmpFields.empty())
     return false;
 
-  timeParser.Init(tmpFields.at(0));
+  timeParser.Init(tmpFields.at(0), timeUnits);
   assert(timeParser.Valid());
 
   // parse start time

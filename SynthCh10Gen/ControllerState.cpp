@@ -407,6 +407,7 @@ ClSource_Nav* ControllerState::CreateSource(ConfigDataSource config, int channel
       src = nullptr;
     }
     else {
+      src->timeUnits = config.timeUnits;
       src->fTimeShift = config.timeShift;
       sources->push_back(src);
     }
