@@ -32,6 +32,9 @@ using namespace Irig106;
 #define SEMICIR162FLOAT(angle)  ((angle) * 90.0 / 0x4000    )
 #define SEMICIR322FLOAT(angle)  ((angle) * 90.0 / 0x40000000)
 
+// Gs to Ft/Sec^2
+#define G2FPS2(accel)       (accel * 32.17)
+
 
 // ----------------------------------------------------------------------------
 // ClCh10Format_PCM_SynthFmt1 - PCM Synthetic Data Format 1
