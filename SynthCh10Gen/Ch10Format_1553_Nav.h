@@ -22,6 +22,20 @@
 #include "SimState.h"
 #include "Ch10Formatter_1553.h"
 
+
+// Here are some conversions useful for anyone doing nav math
+// ----------------------------------------------------------
+
+// Heading to radians
+#define HDG2RAD(heading)    ((90.0 - heading) * M_PI / 180.0l)
+
+// Gs to Ft/Sec^2
+#define G2FPS2(accel)       (accel * 32.17)
+
+// Knots to Ft/Sec
+#define KTS2FPS(speed)      (speed * 6076.0 / 3600.0)
+
+
 using namespace Irig106;
 
 
@@ -78,6 +92,7 @@ public:
   std::string TMATS(ClTmatsIndexes& TmatsIndex, std::string sCDLN);
 
 private:
+  void ComputeDerivedParameters(ClSimState* pclSimState);
   void InitFieldSet(string prefix);
 
   FieldSet fields;

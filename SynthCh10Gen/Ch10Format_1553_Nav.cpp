@@ -52,6 +52,8 @@ void ClCh10Format_1553_Nav::FormatMsg(ClSimState* pclSimState)
   int32_t     lTempVel;
   uint32_t    ulTempLatLon;
 
+  ComputeDerivedParameters(pclSimState);
+
   auto i = fields.begin();
 
   // Zero everthing out
@@ -78,7 +80,8 @@ void ClCh10Format_1553_Nav::FormatMsg(ClSimState* pclSimState)
   psuInsData->uMagHeading = (uint16_t)(pclSimState->fState[(i++)->getID()] / 180.0 * (double)0x7fff);
   psuInsData->sAccX = (int16_t)(pclSimState->fState[(i++)->getID()] * 32.0);
   psuInsData->sAccY = (int16_t)(pclSimState->fState[(i++)->getID()] * 32.0);
-  psuInsData->sAccZ = (int16_t)(pclSimState->fState[(i++)->getID()] * 32.0);
+  psuInsData->sAccZ = (int16_t)(G2FPS2(pclSimState->fState[(i++)->getID()]) * 32.0); // AC_ACCEL_DOWN
+
   //psuInsData->sCXX_MSW
   //psuInsData->uCXX_LSW
   //psuInsData->sCXY_MSW
@@ -187,20 +190,42 @@ std::string ClCh10Format_1553_Nav::TMATS(ClTmatsIndexes & TmatsIndex, std::strin
     return ssTMATS.str();
     } // end TMATS()
 
+void ClCh10Format_1553_Nav::ComputeDerivedParameters(ClSimState* pclSimState) {
+  // Get operands
+  double trueHdg = pclSimState->fState[fields[5].getID()]; // AC_TRUE_HDG
+  double gs = pclSimState->fState[fields[13].getID()]; // GS
+  double ivv = pclSimState->fState[fields[14].getID()]; // IVV
+  double fpac = pclSimState->fState[fields[15].getID()]; // FPAC
+  
+  // Computer derived parameters
+  pclSimState->update(fields[0].getID(), (double)(KTS2FPS(gs) * sin(HDG2RAD(trueHdg)))); // AC_VEL_NORTH
+  pclSimState->update(fields[1].getID(), (double)(KTS2FPS(gs) * cos(HDG2RAD(trueHdg)))); // AC_VEL_EAST
+  pclSimState->update(fields[2].getID(), (double)(-1.0 * ivv / 60.0));// AC_VEL_DOWN
+
+  pclSimState->update(fields[7].getID(), (double)(G2FPS2(fpac) * sin(HDG2RAD(trueHdg)))); // AC_ACCEL_NORTH
+  pclSimState->update(fields[8].getID(), (double)(G2FPS2(fpac) * cos(HDG2RAD(trueHdg)))); // AC_ACCEL_EAST
+}
 
 void ClCh10Format_1553_Nav::InitFieldSet(string prefix)
 {
-  fields.addField(FieldDescriptor(prefix + "AC_VEL_NORTH", FieldType::INTEGER_FIELD));
-  fields.addField(FieldDescriptor(prefix + "AC_VEL_EAST", FieldType::INTEGER_FIELD));
-  fields.addField(FieldDescriptor(prefix + "AC_VEL_DOWN", FieldType::INTEGER_FIELD));
-  fields.addField(FieldDescriptor(prefix + "AC_ROLL", FieldType::INTEGER_FIELD));
-  fields.addField(FieldDescriptor(prefix + "AC_PITCH", FieldType::INTEGER_FIELD));
-  fields.addField(FieldDescriptor(prefix + "AC_TRUE_HDG", FieldType::INTEGER_FIELD));
-  fields.addField(FieldDescriptor(prefix + "AC_MAG_HDG", FieldType::INTEGER_FIELD));
-  fields.addField(FieldDescriptor(prefix + "AC_ACCEL_NORTH", FieldType::INTEGER_FIELD));
-  fields.addField(FieldDescriptor(prefix + "AC_ACCEL_EAST", FieldType::INTEGER_FIELD));
-  fields.addField(FieldDescriptor(prefix + "AC_ACCEL_DOWN", FieldType::INTEGER_FIELD));
-  fields.addField(FieldDescriptor(prefix + "AC_LAT", FieldType::INTEGER_FIELD));
-  fields.addField(FieldDescriptor(prefix + "AC_LON", FieldType::INTEGER_FIELD));
-  fields.addField(FieldDescriptor(prefix + "AC_ALT", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor("AC_VEL_NORTH", FieldType::INTEGER_FIELD)); // derived
+  fields.addField(FieldDescriptor("AC_VEL_EAST", FieldType::INTEGER_FIELD)); // derived
+  fields.addField(FieldDescriptor("AC_VEL_DOWN", FieldType::INTEGER_FIELD)); // derived
+  fields.addField(FieldDescriptor("AC_ROLL", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor("AC_PITCH", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor("AC_TRUE_HDG", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor("AC_MAG_HDG", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor("AC_ACCEL_NORTH", FieldType::INTEGER_FIELD)); // derived
+  fields.addField(FieldDescriptor("AC_ACCEL_EAST", FieldType::INTEGER_FIELD)); // derived
+  fields.addField(FieldDescriptor("AC_ACCEL_DOWN", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor("AC_LAT", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor("AC_LON", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor("AC_ALT", FieldType::INTEGER_FIELD));
+
+  // Operands for derived parameters
+  fields.addField(FieldDescriptor("GS", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor("IVV", FieldType::INTEGER_FIELD));
+  fields.addField(FieldDescriptor("FPAC", FieldType::INTEGER_FIELD));
+
+  fields.applyPrefix(prefix);
 }
