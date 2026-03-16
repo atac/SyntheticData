@@ -89,7 +89,7 @@ private:
   // TODO: for general 1553 formatters, up to 6 parameters needed to define messages. None needed for hardcoded synthfmt1
   Ch10Formatter_1553* Create1553Formatter(Ch10Channel::ChannelDataFormat format, ClSource_Nav* src);
   // TODO: this should eventually take (or use) a structure containing source setup data rather than a csv source
-  Ch10Formatter_ARINC429* CreateA429Formatter(Ch10Channel::ChannelDataFormat format, ClSource_Nav* src, int busSpeed, int engineNumber);
+  Ch10Formatter_ARINC429* CreateA429Formatter(Ch10Channel::ChannelDataFormat format, ClSource_Nav* src, int busSpeed);
   // TODO: this should eventually take (or use) a structure containing source setup data rather than a csv source
   Ch10Formatter_Video* CreateVideoFormatter(Ch10Channel::ChannelDataFormat format, ClSource_Nav* src);
 

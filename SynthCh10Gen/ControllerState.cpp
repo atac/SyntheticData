@@ -200,7 +200,7 @@ ControllerStatus ControllerState::AddDataChannel(ConfigChannel config) {  // FOR
 
   case Ch10Channel::ChannelType::A429:
   {
-    Ch10Formatter_ARINC429* formatA429 = CreateA429Formatter(config.format, source, 0, 1);
+    Ch10Formatter_ARINC429* formatA429 = CreateA429Formatter(config.format, source, 0);
     ClCh10Writer_A429* writerA429 = new ClCh10Writer_A429();
     writerA429->Init(i106OutFileHandle, config.id, formatA429);
 
@@ -478,8 +478,10 @@ Ch10Formatter_1553* ControllerState::Create1553Formatter(Ch10Channel::ChannelDat
   return formatter;
 }
 
-Ch10Formatter_ARINC429* ControllerState::CreateA429Formatter(Ch10Channel::ChannelDataFormat format, ClSource_Nav* src, int busSpeed, int engineNumber)
+Ch10Formatter_ARINC429* ControllerState::CreateA429Formatter(Ch10Channel::ChannelDataFormat format, ClSource_Nav* src, int busSpeed)
 {
+  static int AR100_EngineNumber = 1;
+
   Ch10Formatter_ARINC429* formatter = nullptr;
 
   switch (format) {
@@ -489,7 +491,7 @@ Ch10Formatter_ARINC429* ControllerState::CreateA429Formatter(Ch10Channel::Channe
 
   case Ch10Channel::ChannelDataFormat::SYNTHFORMAT1:
   {
-    Ch10Format_ARINC429_AR100* formatA429 = new Ch10Format_ARINC429_AR100(0, busSpeed, engineNumber, src->sPrefix);
+    Ch10Format_ARINC429_AR100* formatA429 = new Ch10Format_ARINC429_AR100(0, busSpeed, AR100_EngineNumber++, src->sPrefix);
     formatter = dynamic_cast<Ch10Formatter_ARINC429*>(formatA429);
     break;
   }
