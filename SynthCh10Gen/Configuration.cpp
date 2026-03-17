@@ -33,8 +33,8 @@ void Config::ParseConfig() {
       return;
 
     ParseGeneralInfo();
-    ParseDataSources();
     ParseMappings();
+    ParseDataSources();
     ParseChannels();
   }
   catch (json::exception e) {
