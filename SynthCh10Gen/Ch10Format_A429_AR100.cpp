@@ -177,7 +177,7 @@ std::string Ch10Format_ARINC429_AR100::TMATS(ClTmatsIndexes& TmatsIndex, std::st
   ssTMATS <<
     "B-" << TmatsIndex.iBIndex << "\\MN-1-1-1:" << ssMeasurandName.str() << ";\n" // Link to C
     "B-" << TmatsIndex.iBIndex << "\\NML\\N-1-1-1:1;\n"
-    "B-" << TmatsIndex.iBIndex << "\\MWN-1-1-1-1:1;\n"
+    "B-" << TmatsIndex.iBIndex << "\\MWN-1-1-1-1:0;\n"
     "B-" << TmatsIndex.iBIndex << "\\MBM-1-1-1-1:00001111111111100000000000000000;\n";
 
   ssTMATS <<
@@ -210,7 +210,7 @@ std::string Ch10Format_ARINC429_AR100::TMATS(ClTmatsIndexes& TmatsIndex, std::st
   ssTMATS <<
     "B-" << TmatsIndex.iBIndex << "\\MN-1-2-1:" << ssMeasurandName.str() << ";\n" // Link to C
     "B-" << TmatsIndex.iBIndex << "\\NML\\N-1-2-1:1;\n"
-    "B-" << TmatsIndex.iBIndex << "\\MWN-1-2-1-1:1;\n"
+    "B-" << TmatsIndex.iBIndex << "\\MWN-1-2-1-1:0;\n"
     "B-" << TmatsIndex.iBIndex << "\\MBM-1-2-1-1:00001111111111100000000000000000;\n";
 
   ssTMATS <<
@@ -243,7 +243,7 @@ std::string Ch10Format_ARINC429_AR100::TMATS(ClTmatsIndexes& TmatsIndex, std::st
   ssTMATS <<
     "B-" << TmatsIndex.iBIndex << "\\MN-1-3-1:" << ssMeasurandName.str() << ";\n" // Link to C
     "B-" << TmatsIndex.iBIndex << "\\NML\\N-1-3-1:1;\n"
-    "B-" << TmatsIndex.iBIndex << "\\MWN-1-3-1-1:1;\n"
+    "B-" << TmatsIndex.iBIndex << "\\MWN-1-3-1-1:0;\n"
     "B-" << TmatsIndex.iBIndex << "\\MBM-1-3-1-1:00011111111111111111100000000000;\n";
 
   ssTMATS <<
@@ -263,7 +263,7 @@ std::string Ch10Format_ARINC429_AR100::TMATS(ClTmatsIndexes& TmatsIndex, std::st
   ssTMATS <<
     "B-" << TmatsIndex.iBIndex << "\\MN-1-3-2:" << ssMeasurandName.str() << ";\n" // Link to C
     "B-" << TmatsIndex.iBIndex << "\\NML\\N-1-3-2:1;\n"
-    "B-" << TmatsIndex.iBIndex << "\\MWN-1-3-2-1:1;\n"
+    "B-" << TmatsIndex.iBIndex << "\\MWN-1-3-2-1:0;\n"
     "B-" << TmatsIndex.iBIndex << "\\MBM-1-3-2-1:00000000000000000000010000000000;\n";
 
   ssTMATS <<
@@ -294,7 +294,7 @@ std::string Ch10Format_ARINC429_AR100::TMATS(ClTmatsIndexes& TmatsIndex, std::st
   ssTMATS <<
     "B-" << TmatsIndex.iBIndex << "\\MN-1-4-1:" << ssMeasurandName.str() << ";\n" // Link to C
     "B-" << TmatsIndex.iBIndex << "\\NML\\N-1-4-1:1;\n"
-    "B-" << TmatsIndex.iBIndex << "\\MWN-1-4-1-1:1;\n"
+    "B-" << TmatsIndex.iBIndex << "\\MWN-1-4-1-1:0;\n"
     "B-" << TmatsIndex.iBIndex << "\\MBM-1-4-1-1:00001111111111100000000000000000;\n";
 
   ssTMATS <<
@@ -327,7 +327,7 @@ std::string Ch10Format_ARINC429_AR100::TMATS(ClTmatsIndexes& TmatsIndex, std::st
   ssTMATS <<
     "B-" << TmatsIndex.iBIndex << "\\MN-1-5-1:" << ssMeasurandName.str() << ";\n" // Link to C
     "B-" << TmatsIndex.iBIndex << "\\NML\\N-1-5-1:1;\n"
-    "B-" << TmatsIndex.iBIndex << "\\MWN-1-5-1-1:1;\n"
+    "B-" << TmatsIndex.iBIndex << "\\MWN-1-5-1-1:0;\n"
     "B-" << TmatsIndex.iBIndex << "\\MBM-1-5-1-1:00001111111111100000000000000000;\n";
 
   ssTMATS <<
@@ -360,7 +360,7 @@ std::string Ch10Format_ARINC429_AR100::TMATS(ClTmatsIndexes& TmatsIndex, std::st
   ssTMATS <<
     "B-" << TmatsIndex.iBIndex << "\\MN-1-6-1:" << ssMeasurandName.str() << ";\n" // Link to C
     "B-" << TmatsIndex.iBIndex << "\\NML\\N-1-6-1:1;\n"
-    "B-" << TmatsIndex.iBIndex << "\\MWN-1-6-1-1:1;\n"
+    "B-" << TmatsIndex.iBIndex << "\\MWN-1-6-1-1:0;\n"
     "B-" << TmatsIndex.iBIndex << "\\MBM-1-6-1-1:00011111111110000000000000000000;\n";
 
   ssTMATS <<
@@ -393,7 +393,7 @@ std::string Ch10Format_ARINC429_AR100::TMATS(ClTmatsIndexes& TmatsIndex, std::st
   ssTMATS <<
     "B-" << TmatsIndex.iBIndex << "\\MN-1-7-1:" << ssMeasurandName.str() << ";\n" // Link to C
     "B-" << TmatsIndex.iBIndex << "\\NML\\N-1-7-1:1;\n"
-    "B-" << TmatsIndex.iBIndex << "\\MWN-1-7-1-1:1;\n"
+    "B-" << TmatsIndex.iBIndex << "\\MWN-1-7-1-1:0;\n"
     "B-" << TmatsIndex.iBIndex << "\\MBM-1-7-1-1:00001111111111111100000000000000;\n";
 
   ssTMATS <<
