@@ -321,7 +321,7 @@ int main(int iArgc, char* aszArgv[])
   // Initialize progress bar
   barStartTime = primarySrc->fStartTime;
   try {
-    progressBar = ConsoleProgressBar(barStartTime, primarySrc->fEndTime, 80);
+    progressBar = ConsoleProgressBar(barStartTime, primarySrc->fEndTime, 60);
     progressBar.SetProgress(barStartTime);
   }
   catch (exception ex) {
