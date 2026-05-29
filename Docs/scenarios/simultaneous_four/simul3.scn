@@ -1,0 +1,120 @@
+BlueMaxRunTitle Simultaneous_Four
+
+Aircraft F-15A
+
+CallSign SIMUL3
+
+EntityID 0:0:4:3
+
+ZuluTime 08:30:00.00
+
+TerrainElevationFt 1827
+ImageryInputFile NellisAFB
+
+InitialPositionLL 36.225494:N 115.043453:W
+
+InitialAltitudeMSLf 1827
+
+InitialMagHeading 30.3
+
+InitialAirspeedKtas 0
+
+InitialThroPosition Auto
+
+InitialGearPosition Down
+
+LoadStores 00
+LoadStores 02
+LoadStores 03
+LoadStores 04
+LoadStores 05
+LoadStores 06
+LoadStores 07
+LoadStores 08
+
+InternalFuelFraction 100
+
+OutputFileName Simultaneous_Four_3
+
+OutputRateSec 0.04
+
+ScreenOutput Off
+FlightOutput Off
+UserOutput On
+ReplayOutput Off
+WaypointOutput Off
+MissionOutput On
+EAROutput Off
+TGFPOutput Off
+TSPIOutput Off
+RoutePlot On
+
+RealTimeRunFactor 1.0
+
+HOTASControlMode Off
+
+UserVariable actime aclatd aclond acaltf acphid acthtad acpsid acvxi acvyi acvzi acaxi acayi acazi 
+UserVariable acaoad acnzb acmagd acktas cmthro acgear
+
+InitializeBlueMax
+
+
+ManeuverLimits Autopilot
+AutopilotMaxG 1.5
+AutopilotMaxRoll 20
+AutopilotMinPitch -15
+AutopilotMaxPitch 25
+
+
+WriteMessage Warm-Up @ 5% throttle for 15 seconds
+CmdThroPosition 5
+CmdWhbkPosition Auto
+CmdFlySegment 15
+
+WriteMessage Takeoff Nellis AFB Runway 3R
+CmdAltitudeMSLf 5000
+CmdMagHeading 35
+CmdGearPosition 100
+CmdAirspeedKtas 450
+CmdSegmentEndMode Altitude
+CmdFlySegment 
+
+
+CmdMagHeading 90
+CmdAltitudeMSLf 5000
+CmdAirspeedKtas 450
+CmdFlySegment 5.00
+
+ManeuverLimits Sustained
+
+
+WriteMessage Waypoint Las Vegas Bay
+CmdWaypointLL 36.098216397365945:N, 114.79467841468357:W
+CmdWaypointNavMode Direct
+CmdAltitudeMSLf 5000
+CmdAirspeedKtas 550
+CmdFlySegment
+
+
+CmdMagHeading 5
+CmdAltitudeMSLf 5000
+CmdAirspeedKtas 550
+CmdFlySegment 25.00
+
+ManeuverLimits Autopilot
+
+
+WriteMessage Waypoint Muddy Mountains Peak
+CmdWaypointLL 36.29820320566805:N 114.7180477471666:W
+CmdWaypointNavMode Direct
+CmdAltitudeMSLf 7000
+CmdAirspeedKtas 550
+CmdFlySegment
+
+CmdAltitudeMSLf 7000
+CmdAirspeedKtas 550
+CmdFlySegment 1.00
+
+ExitBlueMax
+
+

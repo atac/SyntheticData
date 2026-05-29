@@ -1,0 +1,114 @@
+{
+	"programName" : "Default BlueMax Flight Configuration",
+	"outputDirectory" : "C:/data/my-scenario",
+	"outputFilename" : "my-scenario.ch10",
+	"timeSource" : "PCMin20",
+
+    "sources" : {
+        "bmUDO" : {
+            "pathname" : "C:\\data\\my-scenario\\my-scenario-db.sql",
+			"timeUnits" : "seconds",
+			"mapping" : "SF1_PCM"
+        }
+    },
+	
+	"channels" : [
+		{
+			"name" : "Video_HUD",
+			"id" : 10,
+			"type" : "video",
+			"format" : "synthformat1",
+			"source" : {
+                "pathname" : "C:\\data\\my-scenario\\my-scenario-db.sql",
+                "table" : "Video_HUD"
+            },
+
+			"pollRate" : {
+				"value" : 40,
+				"unit" : "ms"
+			},
+			"packetRate" : {
+				"value" : 10,
+				"unit" : "hz"
+			}
+
+		},
+
+		{
+			"name" : "Video_F4_Cockpit",
+			"id" : 11,
+			"type" : "video",
+			"format" : "synthformat1",
+			"source" : {
+                "pathname" : "C:\\data\\my-scenario\\my-scenario-db.sql",
+                "table" : "Video_F4_Cockpit"
+            },
+			"pollRate" : {
+				"value" : 40,
+				"unit" : "ms"
+			},
+			"packetRate" : {
+				"value" : 10,
+				"unit" : "hz"
+			}
+		},
+		
+		{
+			"name" : "Video_F4_Chase",
+			"id" : 12,
+			"type" : "video",
+			"format" : "synthformat1",
+			"source" : {
+                "pathname" : "C:\\data\\my-scenario\\my-scenario-db.sql",
+                "table" : "Video_F4_Chase"
+            },
+			"pollRate" : {
+				"value" : 40,
+				"unit" : "ms"
+			},
+			"packetRate" : {
+				"value" : 10,
+				"unit" : "hz"
+			}
+		},
+		
+		{
+			"name" : "PCMin20",
+			"id" : 20,
+			"type" : "pcm",
+			"format" : "synthformat1",
+			"source" : {
+                "pathname" : "C:\\data\\my-scenario\\my-scenario-db.sql",
+				"table" : "BlueMax",
+				"mapping" : "SF1_PCM"
+            },
+			"pollRate" : {
+				"value" : 40,
+				"unit" : "ms"
+			},
+			"packetRate" : {
+				"value" : 10,
+				"unit" : "hz"
+			}
+		}
+		
+    ],
+	
+	"mappings" :
+	{
+		"SF1_PCM" :
+        {
+            "AC_TIME" : "actime",
+            "AC_LAT" : "aclatd",
+            "AC_LON" : "aclond",
+            "AC_ALT" : "acaltf",
+            "AC_TAS" : "acktas",
+            "AC_TRUE_HDG" : "acpsid",
+            "AC_MAG_HDR" : "acmagd",
+            "AC_PITCH" : "acthtad",
+            "AC_ROLL" : "acphid",
+            "AC_AOA" : "acaoad",
+            "AC_ACCEL_DOWN" : "acazi"
+        }
+	}
+}

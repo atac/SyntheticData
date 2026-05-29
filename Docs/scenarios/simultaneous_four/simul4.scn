@@ -1,0 +1,119 @@
+BlueMaxRunTitle Simultaneous_Four
+
+Aircraft F-15A
+
+CallSign SIMUL4
+
+EntityID 0:0:4:4
+
+ZuluTime 08:30:00.00
+
+TerrainElevationFt 1827
+ImageryInputFile NellisAFB
+
+InitialPositionLL 36.225294:N 115.043953:W
+
+InitialAltitudeMSLf 1827
+
+InitialMagHeading 30.3
+
+InitialAirspeedKtas 0
+
+InitialThroPosition Auto
+
+InitialGearPosition Down
+
+LoadStores 00
+LoadStores 01
+LoadStores 02
+LoadStores 03
+LoadStores 04
+LoadStores 05
+LoadStores 06
+LoadStores 07
+LoadStores 08
+LoadStores 09
+LoadStores 10
+LoadStores 11
+
+InternalFuelFraction 100
+
+OutputFileName Simultaneous_Four_4
+
+OutputRateSec 0.04
+
+ScreenOutput Off
+FlightOutput Off
+UserOutput On
+ReplayOutput Off
+WaypointOutput Off
+MissionOutput On
+EAROutput Off
+TGFPOutput Off
+TSPIOutput Off
+RoutePlot On
+
+RealTimeRunFactor 1.0
+
+HOTASControlMode Off
+
+UserVariable actime aclatd aclond acaltf acphid acthtad acpsid acvxi acvyi acvzi acaxi acayi acazi 
+UserVariable acaoad acnzb acmagd acktas cmthro acgear
+
+InitializeBlueMax
+
+
+ManeuverLimits Autopilot
+AutopilotMaxG 1.5
+AutopilotMaxRoll 20
+AutopilotMinPitch -15
+AutopilotMaxPitch 25
+
+
+WriteMessage Warm-Up @ 5% throttle for 20 seconds
+CmdThroPosition 5
+CmdWhbkPosition Auto
+CmdFlySegment 20
+
+WriteMessage Takeoff Nellis AFB Runway 3R
+CmdAltitudeMSLf 3000
+CmdMagHeading 32
+CmdGearPosition 100
+CmdAirspeedKtas 250
+CmdSegmentEndMode Position
+CmdFlySegment 
+
+WriteMessage Waypoint Nellis Dunes
+CmdWaypointLL 36.28947157530998:N 114.95742421109915:W
+CmdWaypointNavMode Direct
+CmdAltitudeMSLf 4500
+CmdAirspeedKtas 350
+CmdFlySegment
+
+
+AutopilotMaxG 2.5
+AutopilotMaxRoll 85
+
+
+CmdMagHeading 250
+CmdAltitudeMSLf 4500
+CmdAirspeedKtas 450
+CmdFlySegment 25.00
+
+ManeuverLimits Sustained
+
+
+WriteMessage Loiter Right
+CmdLoiterMode Right
+CmdLoiterMagHeading 250
+CmdLoiterRangeNm 6
+CmdAltitudeMSLf 4500
+CmdLoiterOutAirspeed KTAS 650
+CmdLoiterRtnAirspeed KTAS 550
+//CmdWeave 5
+CmdFlySegment 00:02:54.00
+
+
+ExitBlueMax
+
+

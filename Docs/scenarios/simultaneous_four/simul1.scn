@@ -1,0 +1,117 @@
+BlueMaxRunTitle Simultaneous_Four
+
+Aircraft F-15A
+
+CallSign SIMUL1
+
+EntityID 0:0:4:1
+
+ZuluTime 08:30:00.00
+
+TerrainElevationFt 1833.5
+ImageryInputFile NellisAFB
+
+InitialPositionLL 36.227294:N 115.046003:W
+
+InitialAltitudeMSLf 1833.5
+
+InitialMagHeading 30.3
+
+InitialAirspeedKtas 0
+
+InitialThroPosition Auto
+
+InitialGearPosition Down
+
+LoadStores 00
+LoadStores 02
+LoadStores 03
+LoadStores 04
+LoadStores 05
+LoadStores 06
+LoadStores 07
+LoadStores 08
+
+InternalFuelFraction 100
+
+OutputFileName Simultaneous_Four_1
+
+OutputRateSec 0.04
+
+ScreenOutput Off
+FlightOutput Off
+UserOutput On
+ReplayOutput Off
+WaypointOutput Off
+MissionOutput On
+EAROutput Off
+TGFPOutput Off
+TSPIOutput Off
+RoutePlot On
+
+RealTimeRunFactor 1.0
+
+HOTASControlMode Off
+
+UserVariable actime aclatd aclond acaltf acphid acthtad acpsid acvxi acvyi acvzi acaxi acayi acazi 
+UserVariable acaoad acnzb acmagd acktas cmthro acgear
+
+InitializeBlueMax
+
+
+ManeuverLimits Autopilot
+AutopilotMaxG 1.5
+AutopilotMaxRoll 20
+AutopilotMinPitch -15
+AutopilotMaxPitch 25
+
+
+WriteMessage Warm-Up @ 5% throttle for 5 seconds
+CmdThroPosition 5
+CmdWhbkPosition Auto
+CmdFlySegment 5
+
+WriteMessage Takeoff Nellis AFB Runway 3L
+CmdAltitudeMSLf 4000
+CmdMagHeading 30
+CmdGearPosition 100
+CmdAirspeedKtas 450
+CmdSegmentEndMode Altitude
+CmdFlySegment 
+
+
+ManeuverLimits Sustained
+
+
+CmdMagHeading 30
+CmdAltitudeMSLf 4000
+CmdAirspeedKtas 450
+CmdFlySegment 00:00:5.00
+
+
+WriteMessage Waypoint Las Vegas Lake
+CmdWaypointLL 36.117311470430415:N 114.9164846766368:W
+CmdWaypointNavMode CutCorner
+CmdAltitudeMSLf 4000
+CmdAirspeedKtas 450
+CmdFlySegment
+
+WriteMessage Waypoint The Strip
+CmdWaypointLL 36.14193119841915:N 115.1754727278418:W
+CmdWaypointNavMode CutCorner
+CmdAltitudeMSLf 4000
+CmdAirspeedKtas 450
+CmdFlySegment
+
+CmdLoiterMode Right
+CmdLoiterMagHeading 50
+CmdLoiterRangeNm 5
+CmdAltitudeMSLf 4000
+CmdLoiterOutAirspeed KTAS 400
+CmdLoiterRtnAirspeed KTAS 600
+CmdFlySegment 00:56.00
+
+
+ExitBlueMax
+
+

@@ -1,0 +1,112 @@
+{
+	"programName" : "Default BlueMax Flight Configuration",
+	"outputDirectory" : "C:/data/simulfour",
+	"outputFilename" : "simulfour4.ch10",
+	"timeSource" : "bm_pcm",
+
+    "sources" : {
+		"video_hud" : {
+			"pathname" : "C:\\data\\simulfour\\simulfour4.sql",
+			"table" : "Video_HUD"
+		},
+        "video_f4_cockpit" : {
+            "pathname" : "C:\\data\\simulfour\\simulfour4.sql",
+            "table" : "Video_F4_Cockpit"
+        },
+        "video_f4_chase" : {
+            "pathname" : "C:\\data\\simulfour\\simulfour4.sql",
+            "table" : "Video_F4_Chase"
+        },
+		"bm_pcm" :{
+			"pathname" : "C:\\data\\simulfour\\simulfour4.sql",
+			"table" : "BlueMax",
+			"mapping" : "SF1_PCM"
+		}
+    },
+	
+	"channels" : [
+		{
+			"name" : "Video_HUD",
+			"id" : 10,
+			"type" : "video",
+			"format" : "synthformat1",
+			"source" : "video_hud",
+			"pollRate" : {
+				"value" : 40,
+				"unit" : "ms"
+			},
+			"packetRate" : {
+				"value" : 10,
+				"unit" : "hz"
+			}
+
+		},
+
+		{
+			"name" : "Video_F4_Cockpit",
+			"id" : 11,
+			"type" : "video",
+			"format" : "synthformat1",
+			"source" : "video_f4_cockpit",
+			"pollRate" : {
+				"value" : 40,
+				"unit" : "ms"
+			},
+			"packetRate" : {
+				"value" : 10,
+				"unit" : "hz"
+			}
+		},
+		
+		{
+			"name" : "Video_F4_Chase",
+			"id" : 12,
+			"type" : "video",
+			"format" : "synthformat1",
+			"source" : "video_f4_chase",
+			"pollRate" : {
+				"value" : 40,
+				"unit" : "ms"
+			},
+			"packetRate" : {
+				"value" : 10,
+				"unit" : "hz"
+			}
+		},
+		
+		{
+			"name" : "PCMin20",
+			"id" : 20,
+			"type" : "pcm",
+			"format" : "synthformat1",
+			"source" : "bm_pcm",
+			"pollRate" : {
+				"value" : 40,
+				"unit" : "ms"
+			},
+			"packetRate" : {
+				"value" : 10,
+				"unit" : "hz"
+			}
+		}
+		
+    ],
+	
+	"mappings" :
+	{
+		"SF1_PCM" :
+        {
+            "AC_TIME" : "actime",
+            "AC_LAT" : "aclatd",
+            "AC_LON" : "aclond",
+            "AC_ALT" : "acaltf",
+            "AC_TAS" : "acktas",
+            "AC_TRUE_HDG" : "acpsid",
+            "AC_MAG_HDR" : "acmagd",
+            "AC_PITCH" : "acthtad",
+            "AC_ROLL" : "acphid",
+            "AC_AOA" : "acaoad",
+            "AC_ACCEL_DOWN" : "acazi"
+        }
+	}
+}
